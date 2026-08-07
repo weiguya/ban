@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   มุ่ยเฟย  Ver.5   ชุดสีอ่อน (ฟ้าใส) + กราฟมีตัวเลข
+   มุ่ยเฟย  Ver.6   ชุดสีอ่อน (ฟ้าใส) + กราฟมีตัวเลข + ตัวแยกประโยคเสียงตัวใหม่
    โทนฟ้า-ม่วง ลดความจัดลง / ไม่มีมาสคอต / เลือกธีมได้ 12 สี + โหมดกลางคืน
    เขียว = เงินเข้า, แดง = เงินออก  (จองไว้ ห้ามเอาไปใช้เป็นสีปุ่ม)
    ทุกสีอยู่ในตัวแปร --xxx เท่านั้น เพื่อให้เปลี่ยนธีมทั้งแอปได้จากที่เดียว
@@ -687,35 +687,75 @@ function thaiNum(txt){
   if(!found)return null;
   return tot+cur;
 }
-function parseSay(raw){
-  var s=String(raw||'').replace(/,/g,' ').trim();
-  var type='out';
-  if(/ได้รับ|รับเงิน|ได้เงิน|ขายได้|เงินเดือน|โอนเข้า|ได้มา|รายรับ|เข้ามา/.test(s))type='in';
-  if(/จ่าย|ซื้อ|เสีย|ค่า/.test(s)&&!/ได้รับ|ขายได้|เงินเดือน/.test(s))type='out';
-  var amt=null,m=s.match(/(\d+(?:\.\d+)?)\s*(?:บาท|฿)/);
-  if(m)amt=parseFloat(m[1]);
-  if(amt===null){var all=s.match(/\d+(?:\.\d+)?/g);if(all&&all.length)amt=parseFloat(all[all.length-1]);}
-  if(amt===null){var t=thaiNum(s);if(t!==null&&t>0)amt=t;}
-  var name=s.replace(/\d+(?:\.\d+)?/g,' ').replace(/บาท|฿|ถ้วน/g,' ')
-            .replace(/^(จ่าย|ซื้อ|ได้รับ|รับ|เสีย)\s*/,'').replace(/\s+/g,' ').trim();
-  if(!name)name=s.trim();
-  return {name:name,amount:(amt===null?'':amt),type:type,cat:''};
+function normSay(raw){return String(raw||'').replace(/[,]/g,' ').replace(/\s+/g,' ').trim();}
+var LEADV=/^(?:ซื้อ|จ่าย|เสีย|ได้รับ|รับ|ได้|เอา|จด)\s*/;
+var CONNECT=/\s*(?:แล้วก็|และก็|และ|กับ|อีก|ต่อด้วย|ส่วน)\s*/;
+var THNUM=/((?:ศูนย์|หนึ่ง|เอ็ด|สอง|ยี่|สาม|สี่|ห้า|หก|เจ็ด|แปด|เก้า|สิบ|ร้อย|พัน|หมื่น|แสน|ล้าน)+)\s*$/;
+var CONLEAD=/^\s*(?:แล้วก็|และก็|และ|กับ|อีก|ต่อด้วย|ส่วน)\s*/;
+function stripLead(x){return String(x||'').replace(CONLEAD,'').replace(LEADV,'').replace(CONLEAD,'').trim();}
+/* กติกาเดียวที่ใช้แยกราคาออกจากชื่อ: ราคาคือ "เลขตัวท้ายสุดของท่อน"
+   เพราะชื่อสินค้าจริงมีตัวเลขอยู่ในตัวได้ (M150, โค้ก 325, ลีโอ 630)
+   ห้ามกวาดตัวเลขทุกตัวออกจากชื่อเด็ดขาด ไม่งั้น M150 จะเหลือแค่ M */
+function pickAmount(chunk){
+  var c=String(chunk||'').trim();
+  var m=c.match(/(\d+(?:\.\d+)?)\s*$/);
+  if(m)return {amt:parseFloat(m[1]),name:c.slice(0,m.index).trim()};
+  var t=c.match(THNUM);
+  if(t){var v=thaiNum(t[1]);if(v>0)return {amt:v,name:c.slice(0,t.index).trim()};}
+  return {amt:'',name:c};
 }
-/* ตัดประโยคยาวเป็นหลายรายการ เช่น "ค่าข้าว 50 ค่าน้ำมัน 100" */
+function mkItem(rawName,amt){
+  var t=/เงินเดือน|ได้รับ|ขายได้|ขายของ|ขาย|โอนเข้า|รายรับ|ได้มา|ได้เงิน|เข้ามา|โบนัส|ค่าจ้าง|ค่าแรง|คืนเงิน/.test(rawName)?'in':'out';
+  var n=stripLead(rawName);
+  if(!n)n=String(rawName||'').trim();
+  return {name:n,amount:(amt===''||isNaN(amt))?'':amt,type:t,cat:''};
+}
+function parseSay(raw){
+  var s=normSay(raw),r=pickAmount(stripLead(s));
+  return mkItem(r.name||s,r.amt);
+}
+/* ลองตัดประโยคที่ไม่มีคำว่า "บาท" เช่น "ค่าข้าว 50 ค่าน้ำมัน 100"
+   ยอมตัดเฉพาะตอนที่ทุกท่อนมีชื่อเป็นภาษาไทยยาวพอ ไม่งั้นคืนค่า null แล้วไปนับเป็นรายการเดียว
+   (กันเคส "น้ำเปล่า 7 m150 12" ที่ตัดแล้วจะได้ชื่อว่า "m") */
+function trySplitAlt(s){
+  var re=/([^\d]{2,}?)\s*(\d+(?:\.\d+)?)/g,mm,out=[],last=0;
+  while((mm=re.exec(s))!==null){
+    var nm=mm[1].trim();
+    if(nm.length<2||!/[\u0E00-\u0E7F]/.test(nm))return null;
+    out.push(mkItem(nm,parseFloat(mm[2])));
+    last=re.lastIndex;
+  }
+  if(out.length<2)return null;
+  if(s.slice(last).trim())return null;
+  return out;
+}
 function splitSay(raw){
-  var s=String(raw||'').replace(/,/g,' ').replace(/\s+/g,' ').trim();
-  var parts=s.split(/(?:\s+(?:แล้วก็|และ|กับ|อีก)\s+)/).filter(function(x){return x.trim();});
+  var s=normSay(raw);
+  if(!s)return [mkItem('','')];
+  var parts=null;
+  if(/บาท|฿/.test(s))parts=s.split(/\s*(?:บาท|฿)\s*/);
+  else if(CONNECT.test(s))parts=s.split(CONNECT);
+  if(parts){
+    parts=parts.filter(function(x){return x&&x.trim();});
+    if(!parts.length)parts=null;
+  }
+  if(!parts){
+    var alt=trySplitAlt(s);
+    if(alt)return alt;
+    parts=[s];
+  }
   var out=[];
-  parts.forEach(function(p){
-    var re=/([^\d]+?)\s*(\d+(?:\.\d+)?)\s*(?:บาท|฿)?/g,mm,any=false;
-    while((mm=re.exec(p))!==null){
-      var nm=mm[1].replace(/^(จ่าย|ซื้อ|ได้รับ|รับ|เสีย)\s*/,'').trim();
-      if(!nm)continue;
-      any=true;out.push(parseSay(nm+' '+mm[2]+' บาท'));
-    }
-    if(!any&&p.trim())out.push(parseSay(p));
-  });
-  return out.length?out:[parseSay(s)];
+  for(var i=0;i<parts.length;i++){
+    var p=stripLead(parts[i].trim());
+    if(!p)continue;
+    var r=pickAmount(p);
+    if(!r.name&&r.amt!==''&&out.length&&out[out.length-1].amount===''){
+      out[out.length-1].amount=r.amt;continue;}     /* เลขลอยตามหลัง = ราคาของรายการก่อนหน้า */
+    if(!r.name&&r.amt==='')continue;
+    out.push(mkItem(r.name||p,r.amt));
+  }
+  if(!out.length)out=[parseSay(s)];
+  return out;
 }
 function learnKey(n){return String(n||'').replace(/\s+/g,'').toLowerCase();}
 function guessCat(text,type){
@@ -1072,10 +1112,10 @@ function dateChips(sel,openFlag,pickTodayFn,pickYesFn,toggleFn){
 
 /* ================= เสียง ================= */
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-var rec=null,draft=null,editId=null,quick=null,recTimer=null,readyTimer=null;
-var voice={state:'idle',text:'',msg:'',code:'',to:'basket'};
+var rec=null,draft=null,editId=null,quick=null,recTimer=null,readyTimer=null,silTimer=null;
+var voice={state:'idle',text:'',msg:'',code:'',to:'basket',last:''};
 function stopRec(){
-  clearTimeout(recTimer);clearTimeout(readyTimer);
+  clearTimeout(recTimer);clearTimeout(readyTimer);clearTimeout(silTimer);
   if(rec){try{rec.onend=null;rec.onresult=null;rec.onerror=null;rec.abort();}catch(e){}rec=null;}
   var s=document.getElementById('sayBtn');if(s)s.classList.remove('live');
   if(voice.state==='listening'||voice.state==='ready')voice.state='idle';
@@ -1097,20 +1137,25 @@ function realStart(onDone){
   var got='',fin='';
   try{
     rec=new SR();
-    rec.lang='th-TH';rec.interimResults=true;rec.maxAlternatives=1;rec.continuous=false;
+    /* continuous=true เพราะพูดหลายอย่างในประโยคเดียวจะมีจังหวะหยุดระหว่างอย่าง
+       ถ้าไม่เปิด เบราว์เซอร์จะตัดจบตั้งแต่อย่างแรก แล้วที่เหลือหายไปทั้งหมด
+       ปิดเองเมื่อเงียบครบ 2.5 วิ หรือครบ 20 วิ */
+    rec.lang='th-TH';rec.interimResults=true;rec.maxAlternatives=1;rec.continuous=true;
     voice.state='listening';voice.text='';onDone();
     var s=document.getElementById('sayBtn');if(s)s.classList.add('live');
-    rec.onstart=function(){clearTimeout(recTimer);recTimer=setTimeout(function(){if(rec){try{rec.stop();}catch(e){}}},15000);};
+    rec.onstart=function(){clearTimeout(recTimer);recTimer=setTimeout(function(){if(rec){try{rec.stop();}catch(e){}}},20000);};
     rec.onresult=function(ev){
       var it='';
       for(var i=ev.resultIndex;i<ev.results.length;i++){
-        if(ev.results[i].isFinal)fin+=ev.results[i][0].transcript;else it+=ev.results[i][0].transcript;}
+        if(ev.results[i].isFinal)fin+=ev.results[i][0].transcript+' ';else it+=ev.results[i][0].transcript;}
       got=(fin+it).trim();voice.text=got;
+      clearTimeout(silTimer);
+      silTimer=setTimeout(function(){if(rec){try{rec.stop();}catch(e){}}},2500);
       var h=document.getElementById('heard');
       if(h){h.textContent=got||'กำลังฟัง…';h.classList.toggle('dim',!got);}};
     rec.onerror=function(ev){
       var c=ev.error||'unknown';
-      voice.code=c;
+      clearTimeout(silTimer);voice.code=c;
       voice.msg=(c==='not-allowed'||c==='service-not-allowed')?'เบราว์เซอร์ยังไม่ให้ใช้ไมค์ กดไอคอนข้างช่องที่อยู่เว็บ แล้วเปิดสิทธิ์ไมโครโฟน'
         :c==='no-speech'?'ไม่ได้ยินเสียงเลย ลองพูดใกล้ๆ อีกที'
         :c==='network'?'ต่อบริการแปลงเสียงไม่ได้ ต้องมีเน็ตตอนพูด'
@@ -1118,7 +1163,7 @@ function realStart(onDone){
       rec=null;clearTimeout(recTimer);
       if(!got){voice.state='fail';onDone();}};
     rec.onend=function(){
-      rec=null;clearTimeout(recTimer);
+      rec=null;clearTimeout(recTimer);clearTimeout(silTimer);
       var s2=document.getElementById('sayBtn');if(s2)s2.classList.remove('live');
       var t=(fin||got).trim();
       if(t){buzz(14);voice.state='idle';voice.text='';gotSpeech(t);}
@@ -1134,6 +1179,7 @@ function gotSpeech(text){
       quick.picked.push({pin:-1,name:it.name,cat:cat,type:'out',amount:(it.amount===''?'':it.amount),pinIt:false});});
     toast('เพิ่ม '+items.length+' รายการจากเสียง','ok');drawQuick();return;
   }
+  voice.last=text;
   items.forEach(function(it){
     it.cat=guessCat(it.name,it.type);it.date=today();it.id=uid();
     D.basket.push(it);});
@@ -1160,9 +1206,11 @@ function drawSay(){
       +(voice.code?'<div class="diag">รหัส: '+esc(voice.code)+'</div>':'')+'</div>'
       +'<button class="micbig" onclick="saySpeakAgain()">'+micSvg()+'ลองพูดอีกครั้ง</button>';
   else
-    head='<div class="sh-t">พูดทีละอย่างก็ได้ หรือพูดรวดเดียว เช่น “ค่าข้าว 50 ค่าน้ำมัน 100”</div>'
+    head='<div class="sh-t">พูดทีละอย่างก็ได้ หรือพูดรวดเดียวหลายอย่าง — ลงท้ายราคาด้วยคำว่า <b>บาท</b> ทุกอย่าง จะแยกรายการได้แม่นที่สุด<br>เช่น “น้ำเปล่า 7 บาท M150 12 บาท”</div>'
       +'<button class="micbig" onclick="saySpeakAgain()">'+micSvg()+(D.basket.length?'พูดเพิ่มอีกรายการ':'แตะแล้วพูด')+'</button>';
-  var body=head+basketHtml()
+  var body=head
+   +(voice.last?'<div class="hintline" style="margin:10px 0 0">ได้ยินว่า “'+esc(voice.last)+'”</div>':'')
+   +basketHtml()
    +'<div class="btn-row"><button class="btn btn-out" onclick="openFormFromSay()">พิมพ์เองดีกว่า</button></div>';
   paint('จดด้วยเสียง',body);
 }
@@ -1435,7 +1483,7 @@ function renderSet(){
      +srow('🗑️','#E05548','ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:4px 0 26px;color:var(--ink3)">มุ่ยเฟย Ver.5 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:4px 0 26px;color:var(--ink3)">มุ่ยเฟย Ver.6 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
