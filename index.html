@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   มุ่ยเฟย  Ver.7  — ระบบพื้นผิวใหม่ทั้งแอป
+   มุ่ยเฟย  Ver.9  — โฉมกระจกใส (ดูชั้น skin9 ท้ายไฟล์)
    กติกาที่ยกมาจากงาน Onion ที่ผ่านการแก้มาหลายรอบแล้ว
    1. ไล่เฉดสีห้ามอยู่บนของที่กดได้  ปุ่ม/แท็บ/แถบ = สีทึบสีเดียว
       ไล่เฉดใช้ได้ที่เดียวคือ "ภาพ" บนการ์ดยอดเงิน  (Onion Ver.287)
@@ -115,12 +115,13 @@ body.dark .bk.old{color:#F0C878;background:#3A2E10}
     var(--m0);
   box-shadow:var(--sh2)}
 .hero::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(80% 60% at 78% 90%, rgba(255,255,255,.16) 0%, transparent 70%)}
-.hero .lb{font-size:12px;color:rgba(255,255,255,.86);position:relative;z-index:1}
+  background:radial-gradient(78% 58% at 82% 92%, rgba(255,255,255,.20) 0%, transparent 70%),
+             linear-gradient(160deg, rgba(0,0,0,.16) 0%, rgba(0,0,0,.05) 42%, transparent 70%)}
+.hero .lb{font-size:12px;color:rgba(255,255,255,.95);position:relative;z-index:1}
 .hero .amt{font-family:"Kanit",sans-serif;font-weight:600;font-size:37px;line-height:1.14;color:#fff;
   letter-spacing:-.025em;font-variant-numeric:tabular-nums;position:relative;z-index:1;margin-top:2px}
 .hero .amt .bt{font-size:19px;font-weight:400;opacity:.62;margin-right:4px}
-.hero .foot{position:relative;z-index:1;margin-top:9px;font-size:11.5px;color:rgba(255,255,255,.78)}
+.hero .foot{position:relative;z-index:1;margin-top:9px;font-size:11.5px;color:rgba(255,255,255,.9)}
 .streak{font-size:11.5px;color:var(--ink3);padding:0 4px 8px}
 
 /* ---------- การ์ดทั่วไป ---------- */
@@ -215,6 +216,22 @@ input[type=text],input[type=number]{
   padding:11px 12px;font-size:15px;transition:.16s}
 input:focus{background:var(--card);border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--tint)}
 input::placeholder{color:var(--ink3)}
+.frow{display:flex;gap:7px;align-items:center}
+.frow .fn{flex:1;min-width:0}
+.frow .fm{flex:0 0 116px}
+.frow .fx{flex:0 0 26px;height:26px;border-radius:8px;background:var(--card2);color:var(--ink3);
+  display:flex;align-items:center;justify-content:center;font-size:13px}
+.rowwrap{margin-bottom:9px}
+.rowcat{display:flex;align-items:center;gap:6px;padding:6px 0 0 2px}
+.rowcat .rc{font-size:11.5px;color:var(--ink2);display:inline-flex;align-items:center;gap:5px}
+.rowcat .rc .dot{width:7px;height:7px}
+.addrowbtn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;
+  border-radius:var(--r-ctl);background:var(--card2);color:var(--ink2);font-size:13.5px;font-weight:500;
+  transition:transform .13s var(--ez)}
+.addrowbtn:active{transform:scale(.98)}
+.ftot{display:flex;align-items:baseline;gap:8px;padding-top:10px;margin-top:2px;border-top:1px solid var(--line)}
+.ftot .k{font-size:12.5px;color:var(--ink2)}
+.ftot .v{margin-left:auto;font-family:"Kanit",sans-serif;font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
 .money{position:relative}
 .money .cur{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-family:"Kanit",sans-serif;font-size:16px;color:var(--ink3);pointer-events:none}
 .money input{border:1.5px solid var(--line2);background:var(--card);padding:12px 13px 12px 33px;
@@ -222,6 +239,8 @@ input::placeholder{color:var(--ink3)}
 .money input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--tint)}
 .money.filled input{border-color:var(--accent)}
 .money.filled .cur{color:var(--accent)}
+.money.sm input{padding:11px 11px 11px 30px;font-size:17px}
+.money.sm .cur{left:11px;font-size:14px}
 
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 15px;border-radius:var(--r-ctl);
   font-weight:600;font-size:15px;width:100%;transition:transform .13s var(--ez)}
@@ -257,7 +276,6 @@ input::placeholder{color:var(--ink3)}
 .dial .db{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:var(--sh3)}
 .dial1{bottom:calc(142px + var(--sb))}
 .dial2{bottom:calc(196px + var(--sb))}
-.dial3{bottom:calc(250px + var(--sb))}
 .dialscrim{position:fixed;inset:0;z-index:31;background:rgba(16,19,25,.26);opacity:0;pointer-events:none;transition:.2s}
 .dialscrim.on{opacity:1;pointer-events:auto}
 
@@ -440,6 +458,188 @@ input::placeholder{color:var(--ink3)}
 .first p{color:var(--ink2);font-size:14px;margin:0 0 20px}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important}}
 </style>
+<style id="skin9">
+/* ==========================================================
+   Ver.9 — โฉม "กระจกใส"
+   ชั้นนี้วางทับ CSS เดิมทั้งก้อน ต้องอยู่ท้ายสุดเสมอ ไม่งั้นแพ้ของเดิม
+   สิ่งที่เปลี่ยนคือ "วัสดุ" อย่างเดียว: พื้นหลัง สีการ์ด ความมน เงา แถบล่าง
+   โครงสร้าง คลาส และ JS เดิมไม่ถูกแตะ
+
+   กติกาที่ยังใช้อยู่เหมือนเดิม
+   1. ไล่เฉดสีห้ามอยู่บนของที่กดได้ — ที่นี่ไล่เฉดเป็น "วอลเปเปอร์" ซึ่งกดไม่ได้
+   2. เขียว = เงินเข้า  แดง = เงินออก  สีหมวดคนละชุด
+   3. ตัวอักษรบนพื้นสี คำนวณด้วยคอนทราสต์จริง (applyTheme ยังทำหน้าที่นี้)
+   ========================================================== */
+:root{
+  --ink:#2A2F45; --ink2:#5F6884; --ink3:#949CB4;
+  --card2:rgba(255,255,255,.46);
+  --line:rgba(78,90,140,.11); --line2:rgba(78,90,140,.20);
+  --r-tile:20px; --r-card:16px; --r-ctl:14px; --r-sheet:26px;
+  --glass:rgba(255,255,255,.62);
+  --gbd:1px solid rgba(255,255,255,.78);
+  --blur:saturate(165%) blur(20px);
+  --sh1:0 1px 2px rgba(60,70,120,.07);
+  --sh2:0 2px 6px -2px rgba(60,70,120,.10), 0 14px 30px -16px rgba(60,70,120,.42);
+  --sh3:0 12px 30px -12px rgba(60,70,120,.55);
+}
+/* วอลเปเปอร์ — ตรึงอยู่กับที่ ไม่เลื่อนตามเนื้อหา */
+body{
+  color:var(--ink);
+  padding-bottom:calc(104px + var(--sb));
+  background:
+    radial-gradient(78% 52% at 6% 2%,  #DCE4F7 0%, rgba(220,228,247,0) 62%),
+    radial-gradient(70% 46% at 98% 6%, #CDEBDF 0%, rgba(205,235,223,0) 60%),
+    radial-gradient(86% 56% at 88% 96%,#D7D2F6 0%, rgba(215,210,246,0) 64%),
+    radial-gradient(70% 44% at 4% 92%, #F1DCEB 0%, rgba(241,220,235,0) 62%),
+    #E7EDF8;
+  background-attachment:fixed;
+}
+body.dark{
+  --ink:#EDF0F8; --ink2:#A7AEC4; --ink3:#7B8299;
+  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --glass:rgba(255,255,255,.075);
+  --card2:rgba(255,255,255,.06);
+  --gbd:1px solid rgba(255,255,255,.11);
+  --sh1:0 1px 2px rgba(0,0,0,.3);
+  --sh2:0 2px 6px -2px rgba(0,0,0,.4), 0 14px 30px -16px rgba(0,0,0,.8);
+  --sh3:0 12px 30px -12px rgba(0,0,0,.9);
+  background:
+    radial-gradient(78% 52% at 6% 2%,  #26304F 0%, rgba(38,48,79,0) 62%),
+    radial-gradient(70% 46% at 98% 6%, #1E3F42 0%, rgba(30,63,66,0) 60%),
+    radial-gradient(86% 56% at 88% 96%,#2C2748 0%, rgba(44,39,72,0) 64%),
+    radial-gradient(70% 44% at 4% 92%, #331F30 0%, rgba(51,31,48,0) 62%),
+    #12151F;
+  background-attachment:fixed;
+}
+
+/* ---------- หัวจอ ----------
+   แถบบนเป็นกระจกจริง (เนื้อหาเลื่อนลอดใต้มัน) ใช้ผ้าขาวบางไล่จางลงล่าง
+   แทนการทาสีทึบ เพื่อให้สีวอลเปเปอร์ยังทะลุขึ้นมาและไม่เกิดรอยต่อเป็นแถบ */
+.top{padding:12px var(--pad) 8px;
+  background:linear-gradient(180deg,rgba(255,255,255,.58),rgba(255,255,255,.16));
+  backdrop-filter:saturate(160%) blur(16px);-webkit-backdrop-filter:saturate(160%) blur(16px)}
+body.dark .top{background:linear-gradient(180deg,rgba(18,21,31,.62),rgba(18,21,31,.18))}
+@supports not (backdrop-filter:blur(1px)){
+  .top{background:#E7EDF8}
+  body.dark .top{background:#12151F}
+}
+.mark{border-radius:13px;box-shadow:0 4px 12px -4px rgba(27,127,192,.55)}
+.brand b{font-size:22px;letter-spacing:-.02em}
+.bk{background:var(--glass);border:var(--gbd);box-shadow:none;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.tabs{display:none}
+
+/* ---------- การ์ด = กระจก ---------- */
+.tile,.card,.daygrp,.slist,.askbox{
+  background:var(--glass);
+  border:var(--gbd);
+  border-radius:var(--r-tile);
+  box-shadow:var(--sh2);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+}
+@supports not (backdrop-filter:blur(1px)){
+  .tile,.card,.daygrp,.slist,.askbox{background:rgba(255,255,255,.9)}
+  body.dark .tile,body.dark .card,body.dark .daygrp,body.dark .slist,body.dark .askbox{background:#1B1F2C}
+}
+.line,.srow,.brow,.bask-f{background:transparent}
+.line:active,.srow:active{background:var(--card2)}
+.bento{gap:10px;margin-bottom:10px}
+.card{padding:16px;margin-bottom:10px}
+/* ตัวหนังสือที่นั่งบนวอลเปเปอร์ตรงๆ ต้องเข้มขึ้นหนึ่งขั้น ไม่งั้นจาง */
+.streak,.sechd .sub,.dayhd{color:var(--ink2)}
+
+/* แถบสีบอกความหมายที่ขอบบนการ์ด (มาจากแท็บสีในรูปอ้างอิง
+   ทำเป็นเส้นเต็มความกว้าง ไม่ใช่แท็บมุม เพราะบนการ์ดโปร่งแท็บมุมจะดูลอยหลุดจากการ์ด) */
+.tile{position:relative;overflow:hidden}
+.tile.tabtop::after{content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--tabc,var(--accent));opacity:.85}
+
+/* ---------- ยอดเงิน: ไม่เป็นการ์ดอีกต่อไป นั่งบนวอลเปเปอร์เลย ----------
+   การ์ดไล่เฉดวางบนพื้นไล่เฉดจะกลืนกันเป็นก้อนเดียว ตัวแปร --m0..--m3 จาก meshOf()
+   จึงไม่ถูกใช้แล้วในโฉมนี้ (ปล่อยไว้ในโค้ด เผื่อย้อนกลับ) */
+.hero{background:none;box-shadow:none;border:0;padding:6px 4px 14px;overflow:visible}
+.hero::after{display:none}
+.hero .lb{color:var(--ink2);font-size:12.5px}
+.hero .amt{color:var(--ink);font-size:46px;letter-spacing:-.035em;margin-top:1px}
+.hero .amt .bt{color:var(--ink3);opacity:1;font-size:22px}
+.hero .foot{color:var(--ink2);margin-top:7px;font-size:12px}
+
+/* ---------- ชิป ปุ่ม ช่องกรอก ---------- */
+.chip{background:var(--glass);border:var(--gbd);color:var(--ink2)}
+.chip.on{background:var(--fill);border-color:transparent;color:var(--on-fill)}
+.seg,.tabs-in,.bask,.cal{background:var(--card2);border:var(--gbd)}
+.seg button.on{background:#fff}
+body.dark .seg button.on{background:#252A38}
+.btn{border-radius:15px}
+.btn-out{background:var(--glass);border:var(--gbd)}
+.addrowbtn,.frow .fx,.addgo,.shx,.shback,.qpin{background:var(--card2)}
+input[type=text],input[type=number]{background:rgba(255,255,255,.55);border:1.5px solid rgba(255,255,255,.9)}
+body.dark input[type=text],body.dark input[type=number]{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+input:focus{background:#fff;border-color:var(--accent)}
+body.dark input:focus{background:#242938}
+.money input{background:rgba(255,255,255,.72);border-color:var(--line2)}
+body.dark .money input{background:rgba(255,255,255,.07)}
+.money.filled input{border-color:var(--accent)}
+.si{background:var(--card2);border:var(--gbd)}
+.mb,.cal-h button{background:var(--glass);border:var(--gbd);box-shadow:none}
+
+/* ---------- แถบล่างลอย ---------- */
+.gnav{position:fixed;left:14px;right:14px;bottom:calc(14px + var(--sb));z-index:30;height:62px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-radius:22px;
+  background:color-mix(in srgb,#fff 72%, transparent);
+  border:1px solid rgba(255,255,255,.85);
+  box-shadow:0 6px 24px -10px rgba(60,70,120,.5);
+  backdrop-filter:saturate(160%) blur(20px);-webkit-backdrop-filter:saturate(160%) blur(20px)}
+@supports not (backdrop-filter:blur(1px)){.gnav{background:#fff}}
+body.dark .gnav{background:rgba(28,32,48,.72);border-color:rgba(255,255,255,.10)}
+.gn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;min-width:0;
+  color:var(--ink3);transition:transform .13s var(--ez),color .16s}
+.gn:active{transform:scale(.9)}
+.gn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round}
+.gn i{font-style:normal;font-size:9.5px;letter-spacing:.01em;white-space:nowrap}
+.gn.on{color:var(--fill)}
+body.dark .gn.on{color:var(--accent)}
+.gn.live{color:var(--out)}          /* ตอนไมค์กำลังฟัง */
+.gplus{flex:0 0 54px;height:54px;border-radius:19px;display:flex;align-items:center;justify-content:center;
+  background:var(--fill);box-shadow:0 8px 18px -7px rgba(27,127,192,.75);
+  transition:transform .18s var(--ez)}
+.gplus svg{width:25px;height:25px;stroke:var(--on-fill);stroke-width:2.4;fill:none;stroke-linecap:round}
+.gplus.rot{transform:rotate(45deg)}
+.gplus:active{transform:scale(.9)}
+.gplus.rot:active{transform:rotate(45deg) scale(.9)}
+.gplus.hide{display:none}
+/* เมนูที่เด้งขึ้นจากปุ่ม + ต้องขึ้นตรงกลางตามปุ่ม ไม่ใช่ชิดขวาแบบเดิม */
+.dial{left:0;right:0;justify-content:center}
+.dial1{bottom:calc(92px + var(--sb))}
+.dial2{bottom:calc(146px + var(--sb))}
+.dial .dl{background:var(--glass);border:var(--gbd);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.toast{bottom:calc(96px + var(--sb))}
+
+/* ---------- ชีต ---------- */
+.sheet{background:color-mix(in srgb,#fff 82%, transparent);
+  backdrop-filter:saturate(160%) blur(26px);-webkit-backdrop-filter:saturate(160%) blur(26px);
+  border-top:1px solid rgba(255,255,255,.9)}
+@supports not (backdrop-filter:blur(1px)){.sheet{background:#fff}}
+body.dark .sheet{background:rgba(24,28,42,.92);border-top-color:rgba(255,255,255,.12)}
+@supports not (backdrop-filter:blur(1px)){body.dark .sheet{background:#1B1F2C}}
+.shhead{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+
+/* แถบขาวใต้ปุ่มบันทึกในชีต — ของเดิมใช้ var(--card) ซึ่งทึบ เลยเป็นแผ่นขาวทับกระจก */
+.stick{background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.84) 30%)}
+body.dark .stick{background:linear-gradient(180deg,rgba(24,28,42,0),rgba(24,28,42,.92) 30%)}
+
+/* ---------- หน้าแรกสุด (ทับทั้งจอ ต้องมีวอลเปเปอร์ของตัวเอง ไม่งั้นเห็นแอปทะลุ) ---------- */
+.first{background:
+    radial-gradient(78% 52% at 6% 2%,  #DCE4F7 0%, rgba(220,228,247,0) 62%),
+    radial-gradient(70% 46% at 98% 6%, #CDEBDF 0%, rgba(205,235,223,0) 60%),
+    radial-gradient(86% 56% at 88% 96%,#D7D2F6 0%, rgba(215,210,246,0) 64%),
+    radial-gradient(70% 44% at 4% 92%, #F1DCEB 0%, rgba(241,220,235,0) 62%),
+    #E7EDF8}
+body.dark .first{background:#12151F}
+
+</style>
 </head>
 <body>
 
@@ -449,11 +649,6 @@ input::placeholder{color:var(--ink3)}
     <span class="brand"><b>มุ่ยเฟย</b><i>บัญชีรับ-จ่ายในบ้าน</i></span>
     <button class="bk tap" id="bkChip" onclick="openBackup()">สำรองข้อมูล</button>
   </div>
-  <nav class="tabs"><div class="tabs-in">
-    <button class="tab" id="tab-home" onclick="goTab('home')">หน้าแรก</button>
-    <button class="tab" id="tab-list" onclick="goTab('list')">รายการ</button>
-    <button class="tab" id="tab-set" onclick="goTab('set')">ตั้งค่า</button>
-  </div></nav>
 </header>
 
 <main class="page" id="page-home">
@@ -463,8 +658,8 @@ input::placeholder{color:var(--ink3)}
       <div class="amt" id="balNum"><span class="bt">฿</span>0</div>
       <div class="foot" id="heroFoot"></div>
     </section>
-    <div class="tile"><div class="tk">รับเดือนนี้</div><div class="tv i" id="mIn">0</div><div class="tsub" id="mInSub"></div></div>
-    <div class="tile"><div class="tk">จ่ายเดือนนี้</div><div class="tv o" id="mOut">0</div><div class="tsub" id="mOutSub"></div></div>
+    <div class="tile tabtop" style="--tabc:var(--in)"><div class="tk">รับเดือนนี้</div><div class="tv i" id="mIn">0</div><div class="tsub" id="mInSub"></div></div>
+    <div class="tile tabtop" style="--tabc:var(--out)"><div class="tk">จ่ายเดือนนี้</div><div class="tv o" id="mOut">0</div><div class="tsub" id="mOutSub"></div></div>
   </div>
   <div class="streak" id="streak"></div>
 
@@ -493,8 +688,8 @@ input::placeholder{color:var(--ink3)}
     <button class="mb tap" onclick="shiftMonth(1)" aria-label="เดือนถัดไป">›</button>
   </div>
   <div class="bento">
-    <div class="tile"><div class="tk">รับ</div><div class="tv i" id="lIn">0</div></div>
-    <div class="tile"><div class="tk">จ่าย</div><div class="tv o" id="lOut">0</div></div>
+    <div class="tile tabtop" style="--tabc:var(--in)"><div class="tk">รับ</div><div class="tv i" id="lIn">0</div></div>
+    <div class="tile tabtop" style="--tabc:var(--out)"><div class="tk">จ่าย</div><div class="tv o" id="lOut">0</div></div>
   </div>
   <div class="chiprow" id="filterChips" style="margin-bottom:9px"></div>
   <div id="fullList"></div>
@@ -504,26 +699,21 @@ input::placeholder{color:var(--ink3)}
   <div id="setBody"></div>
 </main>
 
-<div class="dock">
-  <button class="say" id="sayBtn" onclick="openSay()">
-    <svg class="mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
-    พูดเพื่อจด
-  </button>
-</div>
+<nav class="gnav">
+  <button class="gn" id="tab-home" onclick="goTab('home')"><svg viewBox="0 0 24 24"><path d="M4 11.4 12 4.6l8 6.8"/><path d="M6.4 10.2V19a1 1 0 0 0 1 1h9.2a1 1 0 0 0 1-1v-8.8"/></svg><i>หน้าแรก</i></button>
+  <button class="gn" id="tab-list" onclick="goTab('list')"><svg viewBox="0 0 24 24"><rect x="4" y="4.6" width="16" height="15" rx="3"/><path d="M8.2 9.4h7.6M8.2 13h7.6M8.2 16.4h4.4"/></svg><i>รายการ</i></button>
+  <button class="gplus" id="fab" onclick="toggleDial()" aria-label="จดรายการ"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button class="gn" id="sayBtn" onclick="openSay()"><svg viewBox="0 0 24 24"><rect x="9" y="3.4" width="6" height="10.4" rx="3"/><path d="M5.4 11.2a6.6 6.6 0 0 0 13.2 0"/><path d="M12 17.8v2.8"/></svg><i>พูดเพื่อจด</i></button>
+  <button class="gn" id="tab-set" onclick="goTab('set')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M12 3.6v2.2M12 18.2v2.2M4.6 12h2.2M17.2 12h2.2M6.8 6.8l1.6 1.6M15.6 15.6l1.6 1.6M17.2 6.8l-1.6 1.6M8.4 15.6l-1.6 1.6"/></svg><i>ตั้งค่า</i></button>
+</nav>
 
 <div class="dialscrim" id="dialScrim" onclick="closeDial()"></div>
-<div class="dial dial3" id="dial3"><span class="dl">ซื้อหลายอย่าง</span>
-  <button class="db" style="background:var(--fill)" onclick="dialGo('multi')" aria-label="ซื้อหลายอย่าง">
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button></div>
 <div class="dial dial2" id="dial2"><span class="dl">รับเข้า</span>
   <button class="db" style="background:var(--in)" onclick="dialGo('in')" aria-label="รับเข้า">
     <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></div>
 <div class="dial dial1" id="dial1"><span class="dl">จ่ายออก</span>
   <button class="db" style="background:var(--out)" onclick="dialGo('out')" aria-label="จ่ายออก">
     <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button></div>
-<button class="fab" id="fab" onclick="toggleDial()" aria-label="จดรายการ">
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-</button>
 
 <div class="scrim" id="scrim" onclick="closeSheet()"></div>
 <div class="sheet" id="sheet">
@@ -586,18 +776,11 @@ var DEF_IN=[
 /* ================= ธีมสี (ข้อ 7) ================= */
 /* เขียว = เงินเข้า, แดง = เงินออก จองไว้แล้ว ธีมจึงเลี่ยงเขียวสดกับแดงสด */
 var THEMES=[
- {id:'sky',      n:'ฟ้าใส',       b1:'#3FA7E8',bg:'#F1F5F9'},
- {id:'haze',     n:'ฟ้าหม่น',     b1:'#5B8DEF',bg:'#F2F4F9'},
- {id:'periw',    n:'ฟ้า-ม่วงนุ่ม',b1:'#6E86EE',bg:'#F3F4F9'},
- {id:'lavender', n:'ลาเวนเดอร์',  b1:'#8B93EE',bg:'#F5F4F9'},
- {id:'aqua',     n:'ฟ้าอมเขียว',  b1:'#3FA9BF',bg:'#F0F5F6'},
- {id:'steel',    n:'ฟ้าเทา',      b1:'#6A87B5',bg:'#F2F4F7'},
- {id:'indigo',   n:'คราม',        b1:'#6C7FD8',bg:'#F2F4F9'},
- {id:'orchid',   n:'ชมพูม่วง',    b1:'#B06BC9',bg:'#F6F2F8'},
- {id:'rose',     n:'กุหลาบ',      b1:'#DE7391',bg:'#F8F2F4'},
- {id:'peach',    n:'ส้มพีช',      b1:'#E8944F',bg:'#F8F4F0'},
- {id:'sand',     n:'ทองอ่อน',     b1:'#C9A63F',bg:'#F7F5EE'},
- {id:'graphite', n:'เทาหิน',      b1:'#8790A8',bg:'#F3F4F6'}];
+ /* Ver.9: ตัดระบบธีม 12 สีทิ้งตามที่สั่ง เหลือชุดเดียว
+    ฟังก์ชันสีทั้งชุด (_fillOf/_bestFg/applyTheme) เก็บไว้ เพราะยังเป็นตัวคำนวณ
+    ตัวอักษรบนพื้นสีให้ผ่านคอนทราสต์จริง — แค่ป้อนสีเดียวเข้าไป
+    themeOf() คืนตัวนี้เสมอ เครื่องที่เคยเก็บ id ธีมเก่าไว้จึงเด้งมาชุดนี้เอง */
+ {id:'sky', n:'ฟ้าใส', b1:'#3FA7E8', bg:'#E7EDF8'}];
 function themeOf(id){for(var i=0;i<THEMES.length;i++)if(THEMES[i].id===id)return THEMES[i];return THEMES[0];}
 
 /* --- คณิตศาสตร์สี: คำนวณจริง ไม่เดา (บทเรียนจาก Onion Ver.274) --- */
@@ -630,11 +813,11 @@ function _fromHsl(H,S,L){
 /* ภาพบนการ์ดยอดเงิน สร้างจากสีธีมเอง ไม่ใช่ชุดสีตายตัว
    ใช้สีเพี้ยนออกจากธีม ±40 องศา ไม่ใช่ไล่เฉดสีเดียวกัน (กติกา Onion Ver.287) */
 function meshOf(hexAccent,dark){
-  var h=_hsl(hexAccent),H=h[0],S=Math.max(0.40,Math.min(0.66,h[1]));
-  return {m0:_fromHsl(H,S*0.95,dark?0.20:0.31),
-          m1:_fromHsl(H-9,S*0.90,dark?0.29:0.43),
-          m2:_fromHsl(H+13,S*0.72,dark?0.31:0.47),
-          m3:_fromHsl(H-4,S*0.80,dark?0.25:0.38)};
+  var h=_hsl(hexAccent),H=h[0],S=Math.max(0.44,Math.min(0.70,h[1]));
+  return {m0:_fromHsl(H,S,dark?0.26:0.53),
+          m1:_fromHsl(H-9,S*0.94,dark?0.33:0.60),
+          m2:_fromHsl(H+13,S*0.80,dark?0.35:0.68),
+          m3:_fromHsl(H-4,S*0.88,dark?0.29:0.57)};
 }
 function applyTheme(){
   var t=themeOf(D.theme),r=document.documentElement.style;
@@ -959,7 +1142,6 @@ function goTab(t){
   ['home','list','set'].forEach(function(x){
     document.getElementById('page-'+x).classList.toggle('off',x!==t);
     document.getElementById('tab-'+x).classList.toggle('on',x===t);});
-  document.getElementById('fab').classList.toggle('hide',t==='set');
   window.scrollTo(0,0);render();
 }
 function render(){
@@ -1067,20 +1249,16 @@ function openDial(){
   dialOpen=true;buzz(10);
   document.getElementById('fab').classList.add('rot');
   document.getElementById('dialScrim').classList.add('on');
-  ['dial1','dial2','dial3'].forEach(function(id,i){
+  ['dial1','dial2'].forEach(function(id,i){
     setTimeout(function(){document.getElementById(id).classList.add('on');},i*45);});
 }
 function closeDial(){
   dialOpen=false;
   document.getElementById('fab').classList.remove('rot');
   document.getElementById('dialScrim').classList.remove('on');
-  ['dial1','dial2','dial3'].forEach(function(id){document.getElementById(id).classList.remove('on');});
+  ['dial1','dial2'].forEach(function(id){document.getElementById(id).classList.remove('on');});
 }
-function dialGo(what){
-  closeDial();
-  if(what==='multi')openQuick();
-  else openForm(null,{name:'',amount:'',type:what,cat:''});
-}
+function dialGo(what){closeDial();openForm(null,{name:'',amount:'',type:what,cat:''});}
 
 /* ================= ระบบชีต =================
    ปิดได้ 4 ทาง: ปุ่ม ✕ / ลากแถบขีดลง / แตะพื้นที่มืด / ปุ่มย้อนกลับของเครื่อง
@@ -1104,9 +1282,7 @@ function sheetBack(){
   sheetStack.pop();sheetStack[sheetStack.length-1]();buzz(8);
 }
 function sheetDirty(){
-  if(curSheet==='form'&&!editId&&draft)
-    return !!((draft.name&&draft.name.trim())||(draft.amount!==''&&!isNaN(draft.amount)));
-  if(curSheet==='quick'&&quick)return quick.picked.length>0;
+  if(curSheet==='form'&&!editId&&draft&&draft.rows)return liveRows().length>0;
   return false;
 }
 function closeSheet(force){
@@ -1120,7 +1296,7 @@ function closeSheet(force){
   sh.classList.remove('on');
   document.getElementById('scrim').classList.remove('on');
   var was=curSheet;
-  editId=null;quick=null;sheetStack=[];curSheet='';
+  editId=null;sheetStack=[];curSheet='';
   if(was==='voice'&&D.basket.length)toast('เก็บ '+D.basket.length+' รายการที่ยังไม่บันทึกไว้ให้','info');
   if(_histOn&&!_popping){try{history.back();}catch(e){}_histOn=false;}
   _histOn=false;
@@ -1184,7 +1360,7 @@ function dateChips(sel,openFlag,pickTodayFn,pickYesFn,toggleFn){
 
 /* ================= เสียง ================= */
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-var rec=null,draft=null,editId=null,quick=null,recTimer=null,readyTimer=null,silTimer=null;
+var rec=null,draft=null,editId=null,recTimer=null,readyTimer=null,silTimer=null;
 var voice={state:'idle',text:'',msg:'',code:'',to:'basket',last:''};
 function stopRec(){
   clearTimeout(recTimer);clearInterval(readyTimer);clearTimeout(silTimer);
@@ -1239,12 +1415,6 @@ function realStart(onDone){
 }
 function gotSpeech(text){
   var items=splitSay(text);
-  if(voice.to==='quick'){
-    items.forEach(function(it){
-      var cat=guessCat(it.name,'out');
-      quick.picked.push({pin:-1,name:it.name,cat:cat,type:'out',amount:(it.amount===''?'':it.amount),pinIt:false});});
-    toast('เพิ่ม '+items.length+' รายการจากเสียง','ok');drawQuick();return;
-  }
   voice.last=text;
   items.forEach(function(it){
     it.cat=guessCat(it.name,it.type);it.date=today();it.id=uid();
@@ -1312,14 +1482,19 @@ function saveBasket(){
 }
 
 /* ================= ฟอร์มรายการเดียว ================= */
+function newRow(n,a,cat,type){
+  n=n||'';return {n:n,a:(a===''||a==null||isNaN(a))?'':a,cat:cat||guessCat(n,type||'out'),catOpen:false,catSet:!!cat};}
 function openForm(id,pre,bidx,toBasket){
   stopRec();editId=id||null;
   var e=id?D.entries.filter(function(x){return x.id===id;})[0]:null;
   var mode=(typeof bidx==='number'&&bidx>=0)?'basketEdit':(toBasket?'basketNew':'db');
-  draft=e?{name:e.name,amount:e.amount,type:e.type,cat:e.cat,date:e.date}
-         :{name:(pre&&pre.name)||'',amount:(pre&&pre.amount!=null)?pre.amount:'',type:(pre&&pre.type)||'out',cat:(pre&&pre.cat)||'',date:(pre&&pre.date)||today()};
-  draft.mode=mode;draft.bidx=(typeof bidx==='number')?bidx:-1;draft.calOpen=false;draft.calYm=monthOf(draft.date);
-  if(!draft.cat)draft.cat=guessCat(draft.name,draft.type);
+  var type=e?e.type:((pre&&pre.type)||'out');
+  draft={type:type,date:e?e.date:((pre&&pre.date)||today()),mode:mode,
+         bidx:(typeof bidx==='number')?bidx:-1,calOpen:false};
+  draft.calYm=monthOf(draft.date);
+  draft.rows=[e?newRow(e.name,e.amount,e.cat,type)
+               :newRow((pre&&pre.name)||'',(pre&&pre.amount!=null)?pre.amount:'',(pre&&pre.cat)||'',type)];
+  draft.multi=(mode==='db'&&!editId);
   if(sheetStack.length)drawForm(!!(pre&&pre.name));
   else sheetOpen(function(){drawForm(!!(pre&&pre.name));});
 }
@@ -1328,18 +1503,32 @@ function recentNames(n){
   sortEntries(D.entries).forEach(function(e){var k=learnKey(e.name);if(seen[k])return;seen[k]=1;out.push(e);});
   return out.slice(0,n||8);
 }
+function rowsTotal(){var t=0;draft.rows.forEach(function(r){var v=parseFloat(r.a);if(v>0)t+=v;});return t;}
+function liveRows(){return draft.rows.filter(function(r){return (r.n&&r.n.trim())||(r.a!==''&&parseFloat(r.a)>0);});}
+function rowHtml(r,i){
+  var cats=D.cats[draft.type];
+  var filled=r.a!==''&&!isNaN(r.a)&&r.a>0;
+  var h='<div class="rowwrap"><div class="frow">'
+   +'<span class="fn"><input type="text" id="fNm'+i+'" value="'+esc(r.n)+'" oninput="onRowNm('+i+',this.value)" autocomplete="off" placeholder="เช่น ค่าข้าว"></span>'
+   +'<span class="fm money sm'+(filled?' filled':'')+'" id="moneyBox'+i+'"><span class="cur">฿</span>'
+   +'<input type="number" inputmode="decimal" id="fAmt'+i+'" value="'+(r.a===''?'':r.a)+'" oninput="onRowAmt('+i+',this.value)" placeholder="0"></span>'
+   +(draft.rows.length>1?'<button class="fx tap" onclick="delRow('+i+')" aria-label="ลบแถวนี้">✕</button>':'')
+   +'</div>';
+  h+='<div class="rowcat'+((r.n&&r.n.trim())?'':' hide')+'" id="rcw'+i+'"><button class="rc" onclick="toggleRowCat('+i+')" id="rcat'+i+'">'
+   +'<span class="dot" style="background:'+catColor(r.cat,draft.type)+'"></span>'+esc(r.cat)+' '+(r.catOpen?'▴':'▾')+'</button></div>';
+  if(r.catOpen)
+    h+='<div class="chiprow" style="margin-top:6px">'+cats.map(function(c,ci){
+      return '<button class="chip sm'+(c.n===r.cat?' on':'')+'" onclick="pickRowCat('+i+','+ci+')">'
+       +'<span class="dot" style="background:'+c.c+'"></span>'+esc(c.n)+'</button>';}).join('')+'</div>';
+  return h+'</div>';
+}
 function drawForm(fromVoice){
   curSheet='form';
-  var cats=D.cats[draft.type];
-  var catChips=cats.map(function(c,i){
-    return '<button class="chip'+(c.n===draft.cat?' on':'')+'" onclick="pickCat('+i+')">'
-     +'<span class="dot" style="background:'+c.c+'"></span>'+esc(c.n)+'</button>';}).join('');
-  /* ชิปซื้อประจำในหน้าจ่ายออก/รับเข้าด้วย ไม่ใช่มีแค่หน้าหลายรายการ */
   var pins=D.pins.filter(function(p){return (p.type||'out')===draft.type;});
   window._formPins=pins;
   var pinChips=pins.length?'<div class="field"><span class="fl">ซื้อประจำ — แตะแล้วชื่อกับหมวดมาเอง</span>'
    +'<div class="chiprow">'+pins.map(function(p,i){
-      return '<button class="chip'+(draft.name===p.n?' on':'')+'" onclick="useFormPin('+i+')">'
+      return '<button class="chip" onclick="useFormPin('+i+')">'
        +'<span class="dot" style="background:'+catColor(p.cat,p.type||'out')+'"></span>'+esc(p.n)+'</button>';}).join('')
    +'</div></div>':'';
   var rc=recentNames(8).filter(function(e){
@@ -1347,86 +1536,120 @@ function drawForm(fromVoice){
   window._recent=rc;
   var recChips=(rc.length&&!pins.length)?'<div class="field"><span class="fl">ล่าสุด</span><div class="chiprow">'
    +rc.map(function(e,i){return '<button class="chip sm" onclick="useRecent('+i+')">'+esc(e.name)+'</button>';}).join('')+'</div></div>':'';
-  var filled=draft.amount!==''&&!isNaN(draft.amount)&&draft.amount>0;
+  var n=draft.rows.length;
   var ttl=editId?'แก้รายการ':(draft.mode!=='db'?'ตรวจรายการ':(fromVoice?'ตรวจก่อนบันทึก':(draft.type==='in'?'รับเข้า':'จ่ายออก')));
-  var okTxt=draft.mode==='basketEdit'?'อัปเดตรายการนี้':(draft.mode==='basketNew'?'เพิ่มเข้ารายการรอบันทึก':(editId?'บันทึกการแก้':'บันทึก'));
+  var live=liveRows().length;
+  var okTxt=draft.mode==='basketEdit'?'อัปเดตรายการนี้':(draft.mode==='basketNew'?'เพิ่มเข้ารายการรอบันทึก'
+    :(editId?'บันทึกการแก้':(live>1?('บันทึก '+live+' รายการ'):'บันทึก')));
   paint(ttl,
-   '<div class="prev-line'+((draft.name||filled)?'':' hide')+'" id="pvLine"><span class="prev-nm" id="pvNm">'+esc(draft.name||'—')+'</span><span class="leader"></span>'
-  +'<span class="prev-amt" id="pvAmt" style="color:'+(draft.type==='in'?'var(--in)':'var(--out)')+'">'
-  +(draft.type==='in'?'+':'−')+(draft.amount===''?'0':fmt(draft.amount))+'</span></div>'
-  +'<div class="seg"><button class="'+(draft.type==='out'?'on o':'')+'" onclick="setType(\'out\')">จ่ายออก</button>'
+   '<div class="seg"><button class="'+(draft.type==='out'?'on o':'')+'" onclick="setType(\'out\')">จ่ายออก</button>'
   +'<button class="'+(draft.type==='in'?'on i':'')+'" onclick="setType(\'in\')">รับเข้า</button></div>'
-  +'<div class="field"><span class="fl">รายการ</span><input type="text" id="fNm" value="'+esc(draft.name)+'" oninput="onNm(this.value)" autocomplete="off" placeholder="เช่น ค่าข้าว"></div>'
-  +'<div class="field"><span class="fl">จำนวนเงิน</span><div class="money'+(filled?' filled':'')+'" id="moneyBox"><span class="cur">฿</span>'
-  +'<input type="number" inputmode="decimal" id="fAmt" value="'+(draft.amount===''?'':draft.amount)+'" oninput="onAmt(this.value)" placeholder="0"></div></div>'
+  +'<div class="field"><span class="fl">รายการ และ จำนวนเงิน</span>'
+  +draft.rows.map(rowHtml).join('')
+  +(draft.multi?'<button class="addrowbtn" onclick="addRow()">＋ เพิ่มแถว</button>':'')
+  +(n>1?'<div class="ftot"><span class="k" id="fTotK">รวม '+live+' รายการ</span><span class="v" id="fTot" style="color:'
+    +(draft.type==='in'?'var(--in)':'var(--out)')+'">'+(draft.type==='in'?'+':'−')+fmt(rowsTotal())+'</span></div>':'')
+  +'</div>'
   +pinChips+recChips
-  +'<div class="field"><span class="fl">หมวด</span><div class="chiprow" id="catWrap">'+catChips+'</div></div>'
   +'<div class="field"><span class="fl">วันที่</span><div class="chiprow">'
   +dateChips(draft.date,draft.calOpen,'pickDate(0)','pickDate(1)','toggleCal()')+'</div>'
   +(draft.calOpen?calGrid(draft.calYm,draft.date,'formPickDate','calShiftForm'):'')+'</div>'
   +'<div class="err hide" id="fErr"></div>'
-  +'<div class="stick"><button class="btn '+(draft.type==='in'?'btn-in':'btn-main')+'" onclick="saveEntry()">'+okTxt+'</button>'
+  +'<div class="stick"><button class="btn '+(draft.type==='in'?'btn-in':'btn-main')+'" id="fSave" onclick="saveEntry()">'+okTxt+'</button>'
   +(editId?'<div class="btn-row"><button class="btn btn-out" onclick="pinThis()">ปักหมุดเป็นชิป</button>'
     +'<button class="btn btn-danger" onclick="delEntry()">ลบ</button></div>':'')+'</div>');
-  if(!draft.name){var f=document.getElementById('fNm');if(f)setTimeout(function(){f.focus();},300);}
+  /* ไม่เรียกคีย์บอร์ดขึ้นมาเอง ให้เขาแตะช่องก่อน */
+}
+function onRowNm(i,v){
+  var r=draft.rows[i];if(!r)return;
+  r.n=v;
+  if(!r.catSet){r.cat=guessCat(v,draft.type);
+    var el=document.getElementById('rcat'+i);
+    if(el)el.innerHTML='<span class="dot" style="background:'+catColor(r.cat,draft.type)+'"></span>'+esc(r.cat)+' ▾';}
+  var w=document.getElementById('rcw'+i);
+  if(w)w.classList.toggle('hide',!(r.n&&r.n.trim()));
+  _syncFoot();
+}
+function onRowAmt(i,v){
+  var r=draft.rows[i];if(!r)return;
+  r.a=v===''?'':parseFloat(v);
+  var ok=!(r.a===''||isNaN(r.a)||r.a<=0);
+  var box=document.getElementById('moneyBox'+i);if(box)box.classList.toggle('filled',ok);
+  _syncFoot();
+}
+function _syncFoot(){
+  var t=document.getElementById('fTot');
+  if(t)t.textContent=(draft.type==='in'?'+':'−')+fmt(rowsTotal());
+  var k=document.getElementById('fTotK'),n=liveRows().length;
+  if(k)k.textContent='รวม '+n+' รายการ';
+  var b=document.getElementById('fSave');
+  if(b&&draft.mode==='db'&&!editId)b.textContent=n>1?('บันทึก '+n+' รายการ'):'บันทึก';
+}
+function toggleRowCat(i){
+  draft.rows.forEach(function(r,j){r.catOpen=(j===i)?!r.catOpen:false;});
+  buzz(8);drawForm(false);
+}
+function pickRowCat(i,ci){
+  var r=draft.rows[i];if(!r)return;
+  r.cat=D.cats[draft.type][ci].n;r.catSet=true;r.catOpen=false;buzz(8);drawForm(false);
+}
+function addRow(){
+  draft.rows.push(newRow('','','',draft.type));buzz(10);drawForm(false);
+  var i=draft.rows.length-1,f=document.getElementById('fNm'+i);
+  if(f)setTimeout(function(){f.focus();},80);
+}
+function delRow(i){
+  if(draft.rows.length<2)return;
+  draft.rows.splice(i,1);buzz(10);drawForm(false);
 }
 function useFormPin(i){
   var p=window._formPins[i];if(!p)return;
-  draft.name=p.n;draft.cat=p.cat;draft.type=p.type||'out';
-  if(draft.amount===''||draft.amount==null||isNaN(draft.amount))draft.amount=p.last>0?p.last:'';
+  var at=-1;
+  draft.rows.forEach(function(r,j){if(at<0&&!(r.n&&r.n.trim()))at=j;});
+  var row=newRow(p.n,(p.last>0?p.last:''),p.cat,draft.type);
+  if(at>=0)draft.rows[at]=row;
+  else if(draft.multi)draft.rows.push(row);
+  else draft.rows[draft.rows.length-1]=row;
   buzz(10);drawForm(false);
 }
-function toggleCal(){draft.calOpen=!draft.calOpen;draft.calYm=monthOf(draft.date);buzz(8);drawForm(false);showCal();}
-function showCal(){setTimeout(function(){var c=document.querySelector('.cal');
-  if(c&&c.scrollIntoView)c.scrollIntoView({behavior:'smooth',block:'center'});},70);}
-function calShiftForm(d){draft.calYm=shiftYM(draft.calYm,d);buzz(8);drawForm(false);showCal();}
-function formPickDate(k){draft.date=k;draft.calOpen=false;buzz(10);drawForm(false);}
-function pickCat(i){
-  draft.cat=D.cats[draft.type][i].n;buzz(8);
-  var w=document.getElementById('catWrap').children;
-  for(var j=0;j<w.length;j++)w[j].classList.toggle('on',j===i);
-  if(w[i]&&w[i].scrollIntoView)w[i].scrollIntoView({block:'nearest',inline:'nearest'});
-}
-function pickDate(i){var d=new Date();if(i===1)d.setDate(d.getDate()-1);draft.date=dkey(d);draft.calOpen=false;drawForm(false);buzz(8);}
 function useRecent(i){
   var e=window._recent[i];if(!e)return;
-  draft.name=e.name;draft.cat=e.cat;draft.type=e.type;
-  if(draft.amount===''||draft.amount==null)draft.amount=e.amount;
+  var at=-1;
+  draft.rows.forEach(function(r,j){if(at<0&&!(r.n&&r.n.trim()))at=j;});
+  var row=newRow(e.name,e.amount,e.cat,draft.type);
+  if(at>=0)draft.rows[at]=row;else if(draft.multi)draft.rows.push(row);else draft.rows[0]=row;
   buzz(10);drawForm(false);
 }
-function _pvShow(){var l=document.getElementById('pvLine');
-  if(l)l.classList.toggle('hide',!(draft.name||(draft.amount!==''&&!isNaN(draft.amount)&&draft.amount>0)));}
-function onNm(v){
-  draft.name=v;document.getElementById('pvNm').textContent=v||'—';_pvShow();
-  if(!editId){var g=guessCat(v,draft.type);draft.cat=g;
-    var w=document.getElementById('catWrap').children,cats=D.cats[draft.type];
-    for(var j=0;j<w.length;j++)w[j].classList.toggle('on',cats[j].n===g);}
-}
-function onAmt(v){
-  draft.amount=v===''?'':parseFloat(v);
-  var ok=!(draft.amount===''||isNaN(draft.amount)||draft.amount<=0);
-  document.getElementById('moneyBox').classList.toggle('filled',ok);
-  document.getElementById('pvAmt').textContent=(draft.type==='in'?'+':'−')+(ok?fmt(draft.amount):'0');_pvShow();
-}
 function setType(t){
-  draft.type=t;var cats=D.cats[t],ok=false;
-  for(var i=0;i<cats.length;i++)if(cats[i].n===draft.cat)ok=true;
-  if(!ok)draft.cat=guessCat(draft.name,t);
+  draft.type=t;
+  draft.rows.forEach(function(r){
+    var ok=false,cats=D.cats[t];
+    for(var i=0;i<cats.length;i++)if(cats[i].n===r.cat)ok=true;
+    if(!ok){r.cat=guessCat(r.n,t);r.catSet=false;}
+    r.catOpen=false;});
   buzz(8);drawForm(false);
 }
 function saveEntry(){
-  var err=document.getElementById('fErr'),amt=parseFloat(draft.amount);
-  if(!draft.name||!draft.name.trim()){err.textContent='ยังไม่ได้ใส่ชื่อรายการ';err.classList.remove('hide');return;}
-  if(!(amt>0)){err.textContent='ใส่จำนวนเงินที่มากกว่า 0';err.classList.remove('hide');return;}
-  var r={id:editId||uid(),name:draft.name.trim(),amount:amt,type:draft.type,cat:draft.cat,date:draft.date||today()};
-  if(draft.mode==='basketEdit'){D.basket[draft.bidx]=r;save();buzz(14);sheetBack();drawSay();toast('แก้ '+r.name+' แล้ว','ok');return;}
-  if(draft.mode==='basketNew'){D.basket.push(r);save();buzz(14);sheetBack();drawSay();toast('เพิ่ม '+r.name+' เข้ารายการรอบันทึก','ok');return;}
-  var was=!!editId;
-  if(editId){for(var i=0;i<D.entries.length;i++)if(D.entries[i].id===editId)D.entries[i]=r;}
-  else D.entries.push(r);
-  D.learned[learnKey(r.name)]={cat:r.cat,type:r.type};
+  var err=document.getElementById('fErr');
+  var rows=liveRows();
+  if(!rows.length){err.textContent='ยังไม่ได้กรอกอะไรเลย';err.classList.remove('hide');return;}
+  for(var i=0;i<rows.length;i++){
+    if(!rows[i].n||!rows[i].n.trim()){err.textContent='มีแถวที่ใส่เงินแต่ยังไม่ได้ใส่ชื่อรายการ';err.classList.remove('hide');return;}
+    if(!(parseFloat(rows[i].a)>0)){err.textContent='แถว “'+rows[i].n+'” ยังไม่ได้ใส่จำนวนเงิน';err.classList.remove('hide');return;}}
+  var mk=function(r,id){return {id:id||uid(),name:r.n.trim(),amount:parseFloat(r.a),type:draft.type,cat:r.cat,date:draft.date||today()};};
+  if(draft.mode==='basketEdit'){D.basket[draft.bidx]=mk(rows[0]);save();buzz(14);sheetBack();drawSay();toast('แก้ '+rows[0].n+' แล้ว','ok');return;}
+  if(draft.mode==='basketNew'){D.basket.push(mk(rows[0]));save();buzz(14);sheetBack();drawSay();toast('เพิ่ม '+rows[0].n+' เข้ารายการรอบันทึก','ok');return;}
+  if(editId){
+    var r=mk(rows[0],editId);
+    for(var j=0;j<D.entries.length;j++)if(D.entries[j].id===editId)D.entries[j]=r;
+    D.learned[learnKey(r.name)]={cat:r.cat,type:r.type};
+    save();buzz(18);closeSheet(true);render();toast('แก้ '+r.name+' แล้ว · '+fmt(r.amount),'ok');return;}
+  var sum=0,first='';
+  rows.forEach(function(x){var o=mk(x);sum+=o.amount;if(!first)first=o.name;
+    D.entries.push(o);D.learned[learnKey(o.name)]={cat:o.cat,type:o.type};});
   save();buzz(18);closeSheet(true);render();
-  toast(was?('แก้ '+r.name+' แล้ว · '+fmt(amt)):('บันทึก'+(r.type==='in'?'รายรับ ':'รายจ่าย ')+r.name+' '+fmt(amt)+' แล้ว'),'ok');
+  toast(rows.length>1?('บันทึก '+rows.length+' รายการ · รวม '+fmt(sum))
+    :('บันทึก'+(draft.type==='in'?'รายรับ ':'รายจ่าย ')+first+' '+fmt(sum)+' แล้ว'),'ok');
 }
 function delEntry(){
   if(!editId)return;
@@ -1436,102 +1659,20 @@ function delEntry(){
     save();closeSheet(true);render();toast('ลบ '+(e?e.name:'รายการ')+' แล้ว','del');},true);
 }
 function pinThis(){
-  if(!draft.name)return;
-  addPin(draft.name.trim(),draft.cat,draft.type,parseFloat(draft.amount)||0);
-  toast('ปักหมุด '+draft.name+' เป็นชิปแล้ว','ok');
+  var r=draft.rows[0];if(!r||!r.n)return;
+  addPin(r.n.trim(),r.cat,draft.type,parseFloat(r.a)||0);
+  toast('ปักหมุด '+r.n+' เป็นชิปแล้ว','ok');
 }
 function addPin(n,cat,type,last){
   for(var i=0;i<D.pins.length;i++)if(learnKey(D.pins[i].n)===learnKey(n)){
     D.pins[i].last=last||D.pins[i].last;D.pins[i].cat=cat||D.pins[i].cat;save();return;}
   D.pins.push({n:n,cat:cat,type:type||'out',last:last||0});save();
 }
-
-/* ================= ซื้อหลายอย่าง (มีไมค์ + พิมพ์ได้ + เลือกวันได้) ================= */
-function openQuick(){stopRec();quick={picked:[],date:today(),calOpen:false,calYm:monthOf(today()),nm:''};sheetOpen(drawQuick);buzz(10);}
-function drawQuick(){
-  curSheet='quick';
-  var _op=[];D.pins.forEach(function(p,i){if((p.type||'out')==='out')_op.push(i);});
-  var chips=_op.length?_op.map(function(i){
-      var p=D.pins[i],on=quick.picked.some(function(x){return x.pin===i;});
-      return '<button class="chip'+(on?' on':'')+'" onclick="togglePin('+i+')">'
-       +'<span class="dot" style="background:'+catColor(p.cat,'out')+'"></span>'+esc(p.n)+'</button>';}).join('')
-    :'<div class="hintline">ยังไม่มีชิป พิมพ์หรือพูดชื่อของข้างล่างได้เลย แล้วค่อยกดหมุดเก็บไว้ใช้ครั้งหน้า</div>';
-  var rows=quick.picked.map(function(it,i){
-    return '<div class="qrow"><span class="qn"><span class="a">'+esc(it.name)+'</span><span class="b">'+esc(it.cat)+'</span></span>'
-     +(it.pin<0?'<button class="qpin'+(it.pinIt?' on':'')+'" onclick="qPin('+i+')" aria-label="ปักหมุด">'+(it.pinIt?'<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" stroke="none"><path d="M8.5 3h7l-1 6 3 3v2.4H13V21h-2v-6.6H6.5V12l3-3z"/></svg>':'<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 21v-6.6"/><path d="M8.5 3h7l-1 6 3 3v2.4H6.5V12l3-3z"/></svg>')+'</button>':'')
-     +'<span class="qp"><input type="number" inputmode="decimal" placeholder="ราคา" value="'+(it.amount===''?'':it.amount)+'" oninput="qAmt('+i+',this.value)"></span>'
-     +'<button class="qx tap" onclick="qDel('+i+')">✕</button></div>';}).join('');
-  var tot=quick.picked.reduce(function(s,x){var v=parseFloat(x.amount);return s+(v>0?v:0);},0);
-  paint('จดหลายรายการ',
-   '<div class="grp"><div class="grp-h">ของที่ซื้อประจำ<span class="r">แตะได้หลายอัน</span></div>'
-  +'<div class="chipwrap" style="margin-bottom:11px">'+chips+'</div>'
-  +'<span class="fl">หรือพูด / พิมพ์ชื่อของเอง</span>'
-  +'<div class="addrow"><button class="addmic" id="qMic" onclick="quickMic()" aria-label="พูด">'
-  +'<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></button>'
-  +'<input type="text" id="qNm" value="'+esc(quick.nm||'')+'" placeholder="เช่น หมูสามชั้น" oninput="quick.nm=this.value" onkeydown="if(event.key===\'Enter\')quickAdd()">'
-  +'<button class="addgo tap" onclick="quickAdd()" aria-label="เพิ่ม">＋</button></div>'
-  +(quick.micState?'<div class="hintline" style="margin-top:8px">'+esc(quick.micState)+'</div>':'')
-  +'</div>'
-  +(quick.picked.length
-    ?'<div class="grp"><div class="grp-h">ใส่ราคาแต่ละอัน<span class="r">'+quick.picked.length+' รายการ</span></div>'
-      +rows
-      +'<div class="prev-line" style="padding:11px 0 0"><span class="prev-nm" style="font-size:15px;color:var(--ink2)">รวม</span><span class="leader"></span>'
-      +'<span class="prev-amt" style="color:var(--out);font-size:21px" id="qTot">−'+fmt(tot)+'</span></div></div>'
-    :'<div class="empty" style="padding:12px 8px">แตะชิป หรือพูด/พิมพ์ชื่อของด้านบนเพื่อเริ่ม</div>')
-  +'<div class="grp plain"><div class="grp-h">วันที่ของบิลนี้</div>'
-  +'<div class="chiprow">'+dateChips(quick.date,quick.calOpen,'qDate(0)','qDate(1)','qToggleCal()')+'</div>'
-  +(quick.calOpen?calGrid(quick.calYm,quick.date,'qPickDate','qCalShift'):'')+'</div>'
-  +(quick.picked.length?'<div class="stick"><button class="btn btn-main" onclick="saveQuick()">บันทึก '+quick.picked.length+' รายการ</button></div>':'')
-  +'<div class="btn-row" style="margin-top:2px"><button class="btn btn-out" onclick="goManagePins()">จัดการชิป</button></div>');
-}
-function qToggleCal(){quick.calOpen=!quick.calOpen;quick.calYm=monthOf(quick.date);buzz(8);drawQuick();showCal();}
-function qCalShift(d){quick.calYm=shiftYM(quick.calYm,d);buzz(8);drawQuick();showCal();}
-function qPickDate(k){quick.date=k;quick.calOpen=false;buzz(10);drawQuick();}
-function qDate(i){var d=new Date();if(i===1)d.setDate(d.getDate()-1);quick.date=dkey(d);quick.calOpen=false;buzz(8);drawQuick();}
-function quickAdd(){
-  var v=(quick.nm||'').trim();if(!v){toast('ยังไม่ได้พิมพ์ชื่อของ','del');return;}
-  var p=parseSay(v);
-  var nm=p.name||v;
-  quick.picked.push({pin:-1,name:nm,cat:guessCat(nm,'out'),type:'out',amount:(p.amount===''?'':p.amount),pinIt:false});
-  quick.nm='';buzz(10);drawQuick();
-  var f=document.getElementById('qNm');if(f)setTimeout(function(){f.focus();},60);
-}
-function quickMic(){
-  if(voice.state==='listening'){stopRec();quick.micState='';drawQuick();return;}
-  startListen('quick',function(){
-    quick.micState=voice.state==='listening'?'กำลังฟัง พูดได้เลย เช่น “หมูสามชั้น 120 บาท”':(voice.state==='fail'?voice.msg+(voice.code?' (รหัส: '+voice.code+')':''):'');
-    var el=document.getElementById('qMic');if(el)el.classList.toggle('live',voice.state==='listening');
-    drawQuick();});
-}
-function togglePin(i){
-  var at=-1;
-  for(var j=0;j<quick.picked.length;j++)if(quick.picked[j].pin===i)at=j;
-  if(at>=0)quick.picked.splice(at,1);
-  else{var p=D.pins[i];quick.picked.push({pin:i,name:p.n,cat:p.cat,type:p.type||'out',amount:(p.last>0?p.last:''),pinIt:false});}
-  buzz(8);drawQuick();
-}
-function qPin(i){quick.picked[i].pinIt=!quick.picked[i].pinIt;buzz(8);drawQuick();}
-function qAmt(i,v){
-  if(quick.picked[i])quick.picked[i].amount=v===''?'':parseFloat(v);
-  var tot=quick.picked.reduce(function(s,x){var q=parseFloat(x.amount);return s+(q>0?q:0);},0);
-  var el=document.getElementById('qTot');if(el)el.textContent='−'+fmt(tot);
-}
-function qDel(i){quick.picked.splice(i,1);drawQuick();}
-function goManagePins(){var q=quick;quick=null;closeSheet(true);setTimeout(openPins,120);}
-function saveQuick(){
-  var ok=quick.picked.filter(function(x){return parseFloat(x.amount)>0;});
-  if(!ok.length){toast('ยังไม่ได้ใส่ราคาสักอัน','del');return;}
-  var d=quick.date||today(),sum=0;
-  ok.forEach(function(x){
-    var amt=parseFloat(x.amount);sum+=amt;
-    D.entries.push({id:uid(),name:x.name,amount:amt,type:x.type||'out',cat:x.cat,date:d});
-    if(x.pin>=0&&D.pins[x.pin])D.pins[x.pin].last=amt;
-    if(x.pin<0&&x.pinIt)addPin(x.name,x.cat,x.type||'out',amt);
-    D.learned[learnKey(x.name)]={cat:x.cat,type:x.type||'out'};});
-  quick=null;save();buzz(20);closeSheet(true);render();
-  toast('บันทึก '+ok.length+' รายการแล้ว · รวม '+fmt(sum),'ok');
-}
-
+function toggleCal(){draft.calOpen=!draft.calOpen;draft.calYm=monthOf(draft.date);buzz(8);drawForm(false);showCal();}
+function showCal(){setTimeout(function(){var c=document.querySelector('.cal');
+  if(c&&c.scrollIntoView)c.scrollIntoView({behavior:'smooth',block:'center'});},70);}
+function calShiftForm(d){draft.calYm=shiftYM(draft.calYm,d);buzz(8);drawForm(false);showCal();}
+function formPickDate(k){draft.date=k;draft.calOpen=false;buzz(10);drawForm(false);}
 /* ================= หน้าตั้งค่า (จัดใหม่เป็นกลุ่มเมนู) ================= */
 var advOpen=false;
 var ICO={
@@ -1553,11 +1694,9 @@ function srow(icon,title,sub,val,onclick,extra){
    +(extra||'<span class="sgo">›</span>')+'</button>';
 }
 function renderSet(){
-  var t=themeOf(D.theme);
   var nOut=D.cats.out.length,nIn=D.cats['in'].length,nL=Object.keys(D.learned).length;
   var h='';
   h+='<div class="sgrp"><div class="gt">หน้าตา</div><div class="slist">'
-   +srow(ICO.theme,'ธีมสี','เปลี่ยนสีทั้งแอป',t.n,'openTheme()')
    +srow(ICO.moon,'โหมดกลางคืน','พื้นหลังเข้ม สบายตาตอนกลางคืน','','toggleDark()','<span class="sw2'+(D.dark?' on':'')+'"></span>')
    +'</div></div>';
   h+='<div class="sgrp"><div class="gt">เงินและหมวดหมู่</div><div class="slist">'
@@ -1576,28 +1715,11 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.7 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.9 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
 function toggleDark(){D.dark=!D.dark;save();applyTheme();buzz(10);renderSet();toast(D.dark?'เปิดโหมดกลางคืน':'ปิดโหมดกลางคืน','info');}
-
-/* ---- ธีมสี ---- */
-function openTheme(){sheetOpen(drawTheme);}
-function drawTheme(){
-  curSheet='theme';
-  var g=THEMES.map(function(t){
-    return '<button class="th'+(D.theme===t.id?' on':'')+'" onclick="pickTheme(\''+t.id+'\')">'
-     +'<div class="bar2" style="background:'+t.b1+'"></div>'
-     +'<div class="tn">'+t.n+'</div></button>';}).join('');
-  paint('ธีมสี','<div class="sh-t">สีเขียว = เงินเข้า และสีแดง = เงินออก ไม่เปลี่ยนตามธีม เพราะใช้บอกทิศทางของเงิน · สีประจำหมวดก็คงเดิม</div>'
-   +'<div class="thgrid">'+g+'</div>'
-   +'<div class="grp" style="margin-top:14px"><div class="grp-h">โหมดกลางคืน<span class="r">ใช้ได้กับทุกธีม</span></div>'
-   +'<div class="btn-row" style="margin:0"><button class="btn '+(D.dark?'btn-out':'btn-main')+'" onclick="setDark(false)">กลางวัน</button>'
-   +'<button class="btn '+(D.dark?'btn-main':'btn-out')+'" onclick="setDark(true)">กลางคืน</button></div></div>');
-}
-function pickTheme(id){D.theme=id;save();applyTheme();buzz(12);drawTheme();render();toast('เปลี่ยนเป็นธีม '+themeOf(id).n,'info');}
-function setDark(v){D.dark=!!v;save();applyTheme();buzz(10);drawTheme();render();}
 
 /* ---- เงินตั้งต้น ---- */
 function openOpening(){sheetOpen(drawOpening);}
