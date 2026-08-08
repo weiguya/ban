@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   มุ่ยเฟย  Ver.10 — โฉมขาวทึบ + วอลเปเปอร์แยกตามหน้า (ดูชั้น skin10 ใน head)
+   มุ่ยเฟย  Ver.11 — พื้นหลังหน้าละสีเดียว + การ์ดเงินสีเต็ม + เงาเบาลง (ชั้น skin10 ใน head)
    กติกาที่ยกมาจากงาน Onion ที่ผ่านการแก้มาหลายรอบแล้ว
    1. ไล่เฉดสีห้ามอยู่บนของที่กดได้  ปุ่ม/แท็บ/แถบ = สีทึบสีเดียว
       ไล่เฉดใช้ได้ที่เดียวคือ "ภาพ" บนการ์ดยอดเงิน  (Onion Ver.287)
@@ -476,19 +476,21 @@ input::placeholder{color:var(--ink3)}
   --card2:#F2F5FB;
   --line:rgba(78,90,140,.11); --line2:rgba(78,90,140,.20);
   --r-tile:20px; --r-card:16px; --r-ctl:14px; --r-sheet:26px;
-  --sh1:0 1px 2px rgba(60,70,120,.07);
-  --sh2:0 2px 6px -2px rgba(60,70,120,.10), 0 14px 30px -16px rgba(60,70,120,.42);
-  --sh3:0 12px 30px -12px rgba(60,70,120,.55);
+  --sh1:0 1px 2px rgba(60,70,120,.05);
+  /* Ver.11: เงาเบาลง — ชั้นล่างจาก .42 เหลือ .26 และระยะฟุ้ง 30→16px
+     การ์ดยังลอยอยู่ แต่ไม่มีคราบเทาใต้ทุกใบ */
+  --sh2:0 1px 2px rgba(60,70,120,.05), 0 6px 16px -10px rgba(60,70,120,.26);
+  --sh3:0 8px 22px -10px rgba(60,70,120,.34);
 }
-body{color:var(--ink);background:#E4EDF9;padding-bottom:calc(104px + var(--sb))}
+body{color:var(--ink);background:#E9F2FB;padding-bottom:calc(104px + var(--sb))}
 body.dark{
   --ink:#EDF0F8; --ink2:#A7AEC4; --ink3:#7B8299;
   --glass:#1C2130; --card2:#232939;
   --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
-  --sh1:0 1px 2px rgba(0,0,0,.3);
-  --sh2:0 2px 6px -2px rgba(0,0,0,.4), 0 14px 30px -16px rgba(0,0,0,.8);
-  --sh3:0 12px 30px -12px rgba(0,0,0,.9);
-  background:#141726;
+  --sh1:0 1px 2px rgba(0,0,0,.22);
+  --sh2:0 1px 2px rgba(0,0,0,.25), 0 6px 16px -10px rgba(0,0,0,.55);
+  --sh3:0 8px 22px -10px rgba(0,0,0,.6);
+  background:#131A28;
 }
 
 /* ---------- วอลเปเปอร์ ----------
@@ -501,44 +503,18 @@ body[data-tab="home"] .w1,
 body[data-tab="list"] .w2,
 body[data-tab="set"]  .w3{opacity:1}
 
-/* หน้าแรก — ชุดเดียวกับหน้า Collections/Browse ในรูป
-   ฟ้า #DBEBF8 · มิ้นต์ #C8EEE6 · คราม #C9D6F9 · ลาเวนเดอร์ #DCD4FB */
-.w1{background:
-  radial-gradient(88% 62% at 2% 0%,   #DBEBF8 0%, rgba(219,235,248,0) 66%),
-  radial-gradient(80% 56% at 100% 3%, #C8EEE6 0%, rgba(200,238,230,0) 62%),
-  radial-gradient(92% 66% at 0% 100%, #C9D6F9 0%, rgba(201,214,249,0) 68%),
-  radial-gradient(84% 58% at 100% 98%,#DCD4FB 0%, rgba(220,212,251,0) 64%),
-  #E4EDF9}
-/* รายการ — ชุดเดียวกับหน้า Inspiration
-   ลาเวนเดอร์ #E2DBFB · คราม #C8D1F9 · ฟ้าอ่อน #DEEFF9 */
-.w2{background:
-  radial-gradient(96% 60% at 6% 0%,   #E2DBFB 0%, rgba(226,219,251,0) 68%),
-  radial-gradient(78% 54% at 96% 6%,  #C8D1F9 0%, rgba(200,209,249,0) 64%),
-  radial-gradient(120% 68% at 50% 100%,#DEEFF9 0%, rgba(222,239,249,0) 72%),
-  #E8EEF9}
-/* ตั้งค่า — ชุดเดียวกับหน้า Lists/Smartmark
-   ลาเวนเดอร์จาง #E9E5FD · คราม #CDDAFC · ฟ้าน้ำทะเล #CBF4FD */
-.w3{background:
-  radial-gradient(100% 56% at 12% 0%, #E9E5FD 0%, rgba(233,229,253,0) 66%),
-  radial-gradient(72% 46% at 62% 4%,  #CDDAFC 0%, rgba(205,218,252,0) 62%),
-  radial-gradient(118% 64% at 46% 100%,#CBF4FD 0%, rgba(203,244,253,0) 70%),
-  #E9F2FD}
-body.dark .w1{background:
-  radial-gradient(88% 62% at 2% 0%,   #1B2740 0%, rgba(27,39,64,0) 66%),
-  radial-gradient(80% 56% at 100% 3%, #14322E 0%, rgba(20,50,46,0) 62%),
-  radial-gradient(92% 66% at 0% 100%, #1B2447 0%, rgba(27,36,71,0) 68%),
-  radial-gradient(84% 58% at 100% 98%,#251F42 0%, rgba(37,31,66,0) 64%),
-  #141726}
-body.dark .w2{background:
-  radial-gradient(96% 60% at 6% 0%,   #251F44 0%, rgba(37,31,68,0) 68%),
-  radial-gradient(78% 54% at 96% 6%,  #1A2246 0%, rgba(26,34,70,0) 64%),
-  radial-gradient(120% 68% at 50% 100%,#16283C 0%, rgba(22,40,60,0) 72%),
-  #141726}
-body.dark .w3{background:
-  radial-gradient(100% 56% at 12% 0%, #272146 0%, rgba(39,33,70,0) 66%),
-  radial-gradient(72% 46% at 62% 4%,  #1A2449 0%, rgba(26,36,73,0) 62%),
-  radial-gradient(118% 64% at 46% 100%,#122F3E 0%, rgba(18,47,62,0) 70%),
-  #141726}
+/* Ver.11: หน้าละ "สีเดียว" ไล่เฉดในตัวเอง ไม่แซมสีอื่นในหน้าเดียวกันแล้ว
+   ทุกจุดหยุดของแต่ละหน้าล็อกไว้ที่ค่าสีเดียวกัน เปลี่ยนแค่ความอ่อน-แก่
+     หน้าแรก  ฟ้า        hue 206
+     รายการ   ลาเวนเดอร์  hue 250
+     ตั้งค่า   ฟ้าน้ำทะเล  hue 190
+   ทั้งสามยังอยู่ในวงสีเดียวกับรูปอ้างอิง (167–253) แค่แยกกันคนละหน้า */
+.w1{background:linear-gradient(168deg,#F1F7FD 0%,#DCEDFA 46%,#C2DFF6 100%)}
+.w2{background:linear-gradient(168deg,#F4F2FE 0%,#E4E0FB 46%,#CEC8F6 100%)}
+.w3{background:linear-gradient(168deg,#EDF8FB 0%,#D6EFF6 46%,#BCE4EF 100%)}
+body.dark .w1{background:linear-gradient(168deg,#111826 0%,#152238 46%,#1A2E4A 100%)}
+body.dark .w2{background:linear-gradient(168deg,#151327 0%,#1C1938 46%,#241F4B 100%)}
+body.dark .w3{background:linear-gradient(168deg,#0F1B22 0%,#122831 46%,#143643 100%)}
 
 /* ---------- หัวจอ: ไม่ตรึงแล้ว เลื่อนหายไปกับเนื้อหา ---------- */
 .top{position:static;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;
@@ -567,13 +543,23 @@ body.dark .w3{background:
 .tile.tabtop::after{content:"";position:absolute;top:0;left:0;right:0;height:3px;
   background:var(--tabc,var(--accent));opacity:.85}
 
-/* ---------- การ์ดเงิน: กลับมาเป็นการ์ดจริง มีกรอบมีเงา ---------- */
-.hero{overflow:hidden;padding:16px 17px 17px}
-.hero::after{display:none}          /* ภาพไล่เฉดเดิม ปิดไว้ — บนการ์ดขาวไม่ต้องใช้ */
-.hero .lb{color:var(--ink2);font-size:12.5px}
-.hero .amt{color:var(--ink);font-size:40px;letter-spacing:-.03em;margin-top:2px}
-.hero .amt .bt{color:var(--ink3);opacity:1;font-size:20px}
-.hero .foot{color:var(--ink2);margin-top:6px;font-size:12px}
+/* ---------- การ์ดเงิน ----------
+   ขาวล้วนแล้วมันเป็นแค่กล่องใบหนึ่งในหกใบ ไม่มีอะไรบอกว่านี่คือ "เงิน"
+   จึงให้เป็นใบเดียวในแอปที่มีสีเต็ม — สีฟ้าของแอปเอง ไล่เฉดในสีเดียว (hue 203-204)
+   ตัวหนังสือขาวผ่านคอนทราสต์จริง: มุมบนซ้าย 6.47:1 · มุมล่างซ้าย ~4.5:1 */
+.hero{overflow:hidden;padding:18px 18px 19px;border-radius:22px;
+  background:linear-gradient(150deg,#1F6390 0%,#2C82B8 52%,#3E93C9 100%);
+  box-shadow:0 2px 4px rgba(24,70,105,.18), 0 10px 22px -12px rgba(24,70,105,.55)}
+.hero::after{display:block;content:"";position:absolute;right:-46px;top:-58px;
+  width:186px;height:186px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.15), rgba(255,255,255,0) 72%)}
+.hero>*{position:relative;z-index:1}
+.hero .lb{color:rgba(255,255,255,.86);font-size:12.5px;display:inline-flex;align-items:center;gap:6px}
+.hero .lb::before{content:"";width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.7)}
+.hero .amt{color:#fff;font-size:41px;letter-spacing:-.03em;margin-top:5px}
+.hero .amt .bt{color:rgba(255,255,255,.62);opacity:1;font-size:20px}
+.hero .foot{color:rgba(255,255,255,.82);margin-top:8px;font-size:12px}
+body.dark .hero{background:linear-gradient(150deg,#17466A 0%,#1E6491 52%,#2A7DAE 100%)}
 
 /* ---------- ชิป ปุ่ม ช่องกรอก ---------- */
 .chip{background:var(--card2);border:1px solid var(--line);color:var(--ink2)}
@@ -627,7 +613,7 @@ input:focus{background:var(--glass);border-color:var(--accent)}
 .gnav{position:fixed;left:14px;right:14px;bottom:calc(14px + var(--sb));z-index:30;height:62px;
   display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-radius:22px;
   background:var(--glass);border:1px solid var(--line);
-  box-shadow:0 6px 24px -10px rgba(60,70,120,.5);
+  box-shadow:0 4px 16px -9px rgba(60,70,120,.34);
   backdrop-filter:none;-webkit-backdrop-filter:none}
 .gn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;min-width:0;
   color:var(--ink3);transition:transform .13s var(--ez),color .16s}
@@ -655,7 +641,7 @@ body.dark .gn.on{color:var(--accent)}
 
 /* ---------- ชีต ---------- */
 .sheet{background:var(--glass);backdrop-filter:none;-webkit-backdrop-filter:none;
-  border-top:0;box-shadow:0 -10px 40px -12px rgba(40,50,90,.45)}
+  border-top:0;box-shadow:0 -8px 26px -14px rgba(40,50,90,.34)}
 .shhead{background:var(--glass);backdrop-filter:none;-webkit-backdrop-filter:none}
 .stick{background:linear-gradient(180deg,rgba(255,255,255,0),var(--glass) 26%)}
 body.dark .stick{background:linear-gradient(180deg,rgba(28,33,48,0),var(--glass) 26%)}
@@ -1769,7 +1755,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.10 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.11 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
