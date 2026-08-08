@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   มุ่ยเฟย  Ver.11 — พื้นหลังหน้าละสีเดียว + การ์ดเงินสีเต็ม + เงาเบาลง (ชั้น skin10 ใน head)
+   มุ่ยเฟย  Ver.13 — พื้นสีเรียบ + การ์ดเงินโทนอ่อน + เลขบนแท่งเอียง + กราฟเส้นเงินคงเหลือ
    กติกาที่ยกมาจากงาน Onion ที่ผ่านการแก้มาหลายรอบแล้ว
    1. ไล่เฉดสีห้ามอยู่บนของที่กดได้  ปุ่ม/แท็บ/แถบ = สีทึบสีเดียว
       ไล่เฉดใช้ได้ที่เดียวคือ "ภาพ" บนการ์ดยอดเงิน  (Onion Ver.287)
@@ -503,18 +503,11 @@ body[data-tab="home"] .w1,
 body[data-tab="list"] .w2,
 body[data-tab="set"]  .w3{opacity:1}
 
-/* Ver.11: หน้าละ "สีเดียว" ไล่เฉดในตัวเอง ไม่แซมสีอื่นในหน้าเดียวกันแล้ว
-   ทุกจุดหยุดของแต่ละหน้าล็อกไว้ที่ค่าสีเดียวกัน เปลี่ยนแค่ความอ่อน-แก่
-     หน้าแรก  ฟ้า        hue 206
-     รายการ   ลาเวนเดอร์  hue 250
-     ตั้งค่า   ฟ้าน้ำทะเล  hue 190
-   ทั้งสามยังอยู่ในวงสีเดียวกับรูปอ้างอิง (167–253) แค่แยกกันคนละหน้า */
-.w1{background:linear-gradient(168deg,#F1F7FD 0%,#DCEDFA 46%,#C2DFF6 100%)}
-.w2{background:linear-gradient(168deg,#F4F2FE 0%,#E4E0FB 46%,#CEC8F6 100%)}
-.w3{background:linear-gradient(168deg,#EDF8FB 0%,#D6EFF6 46%,#BCE4EF 100%)}
-body.dark .w1{background:linear-gradient(168deg,#111826 0%,#152238 46%,#1A2E4A 100%)}
-body.dark .w2{background:linear-gradient(168deg,#151327 0%,#1C1938 46%,#241F4B 100%)}
-body.dark .w3{background:linear-gradient(168deg,#0F1B22 0%,#122831 46%,#143643 100%)}
+/* Ver.13: สีพื้นเรียบ ไม่ไล่เฉด ค่าที่วัดจากจุดที่เขาวงในสกรีนช็อตหน้าตั้งค่า = #E7F6FB
+   เลเยอร์ .w1/.w2/.w3 เลิกใช้แล้ว (เก็บมาร์กอัปไว้เฉยๆ) */
+.wall{background:#E8F6FA}
+.wall i{display:none}
+body.dark .wall{background:#141B24}
 
 /* ---------- หัวจอ: ไม่ตรึงแล้ว เลื่อนหายไปกับเนื้อหา ---------- */
 .top{position:static;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;
@@ -548,18 +541,23 @@ body.dark .w3{background:linear-gradient(168deg,#0F1B22 0%,#122831 46%,#143643 1
    จึงให้เป็นใบเดียวในแอปที่มีสีเต็ม — สีฟ้าของแอปเอง ไล่เฉดในสีเดียว (hue 203-204)
    ตัวหนังสือขาวผ่านคอนทราสต์จริง: มุมบนซ้าย 6.47:1 · มุมล่างซ้าย ~4.5:1 */
 .hero{overflow:hidden;padding:18px 18px 19px;border-radius:22px;
-  background:linear-gradient(150deg,#1F6390 0%,#2C82B8 52%,#3E93C9 100%);
-  box-shadow:0 2px 4px rgba(24,70,105,.18), 0 10px 22px -12px rgba(24,70,105,.55)}
+  /* Ver.13: อ่อนลงมาก ตัวหนังสือกลับไปเป็นสีเข้มบนพื้นฟ้าอ่อน
+     วัดจริง: #123C58 บน #B4DCF4 = 7.9:1 ยังเป็นการ์ดใบเดียวที่มีสี จึงยังแยกออกว่าคือการ์ดเงิน */
+  background:linear-gradient(150deg,#B4DCF4 0%,#CBE8FA 55%,#DCF0FD 100%);
+  box-shadow:0 1px 2px rgba(40,90,130,.10), 0 8px 18px -12px rgba(40,90,130,.34)}
 .hero::after{display:block;content:"";position:absolute;right:-46px;top:-58px;
   width:186px;height:186px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.15), rgba(255,255,255,0) 72%)}
+  background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.55), rgba(255,255,255,0) 72%)}
 .hero>*{position:relative;z-index:1}
-.hero .lb{color:rgba(255,255,255,.86);font-size:12.5px;display:inline-flex;align-items:center;gap:6px}
-.hero .lb::before{content:"";width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.7)}
-.hero .amt{color:#fff;font-size:41px;letter-spacing:-.03em;margin-top:5px}
-.hero .amt .bt{color:rgba(255,255,255,.62);opacity:1;font-size:20px}
-.hero .foot{color:rgba(255,255,255,.82);margin-top:8px;font-size:12px}
-body.dark .hero{background:linear-gradient(150deg,#17466A 0%,#1E6491 52%,#2A7DAE 100%)}
+.hero .lb{color:#2C5C7A;font-size:12.5px;display:inline-flex;align-items:center;gap:6px}
+.hero .lb::before{content:"";width:5px;height:5px;border-radius:50%;background:#5D93B5}
+.hero .amt{color:#123C58;font-size:41px;letter-spacing:-.03em;margin-top:5px}
+.hero .amt .bt{color:#6EA0C0;opacity:1;font-size:20px}
+.hero .foot{color:#2C5C7A;margin-top:8px;font-size:12px}
+body.dark .hero{background:linear-gradient(150deg,#1B3A52 0%,#22506E 55%,#2A6084 100%)}
+body.dark .hero .lb,body.dark .hero .foot{color:#B6D6EA}
+body.dark .hero .amt{color:#EAF5FC}
+body.dark .hero .amt .bt{color:#7FAAC6}
 
 /* ---------- ชิป ปุ่ม ช่องกรอก ---------- */
 .chip{background:var(--card2);border:1px solid var(--line);color:var(--ink2)}
@@ -609,6 +607,35 @@ input:focus{background:var(--glass);border-color:var(--accent)}
 .legend>span:last-child{flex-basis:auto;margin-left:auto;text-align:right;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* ---------- ตัวเลขบนหัวแท่ง: เอียงขึ้นซ้าย ----------
+   จุดหมุนอยู่มุมขวาล่างของตัวเลข และมุมนั้นถูกตรึงไว้กลางคอลัมน์
+   ตัวเลขจึงพาดขึ้นไปทางซ้ายแทนที่จะกางออกด้านข้างไปชนคอลัมน์ข้างๆ */
+.bars{height:132px}
+.bpair{height:78px}
+.numwrap{height:30px;position:relative;display:block;width:100%;overflow:visible}
+.bnum{position:absolute;bottom:1px;right:50%;font-size:8.5px;
+  transform:rotate(-55deg);transform-origin:100% 100%}
+.bnum.i{color:var(--in);font-weight:500}
+
+/* ---------- กราฟเส้นเงินคงเหลือ ---------- */
+#trSel{max-width:158px}
+.trwrap{position:relative;margin-top:2px}
+.trsvg{display:block;width:100%;height:118px;overflow:visible}
+.trfoot{display:flex;align-items:baseline;gap:8px;margin-top:8px;padding-top:8px;
+  border-top:1px solid var(--line);font-size:11.5px;color:var(--ink2)}
+.trfoot .now{font-family:"Kanit",sans-serif;font-size:16px;letter-spacing:-.02em}
+.trfoot .rr{margin-left:auto;font-size:11px;color:var(--ink3)}
+.trax{display:flex;justify-content:space-between;font-size:10px;color:var(--ink3);margin-top:4px}
+
+/* ---------- ฟิลเตอร์หน้ารายการ ---------- */
+.tfbtn{display:block;width:100%;text-align:left;font-family:inherit;
+  transition:transform .12s var(--ez),box-shadow .16s}
+.tfbtn:active{transform:scale(.975)}
+.tfbtn.on{box-shadow:var(--sh2), inset 0 0 0 2px var(--tabc)}
+.chip.on.ci{background:var(--in)}
+.chip.on.co{background:var(--out)}
+.chipsep{flex:0 0 1px;align-self:stretch;margin:4px 3px;background:var(--line2);border-radius:1px}
+
 /* ---------- แถบล่างลอย ---------- */
 .gnav{position:fixed;left:14px;right:14px;bottom:calc(14px + var(--sb));z-index:30;height:62px;
   display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-radius:22px;
@@ -628,13 +655,23 @@ body.dark .gn.on{color:var(--accent)}
   background:var(--fill);box-shadow:0 8px 18px -7px rgba(27,127,192,.75);
   transition:transform .18s var(--ez)}
 .gplus svg{width:25px;height:25px;stroke:var(--on-fill);stroke-width:2.4;fill:none;stroke-linecap:round}
-.gplus.rot{transform:rotate(45deg)}
-.gplus:active{transform:scale(.9)}
-.gplus.rot:active{transform:rotate(45deg) scale(.9)}
+/* Ver.12: หมุนเฉพาะเครื่องหมาย ไม่หมุนตัวปุ่ม — ของเดิมหมุนทั้งปุ่ม
+   สี่เหลี่ยมมนเลยกลายเป็นข้าวหลามตัดตอนเมนูเปิด ดูไม่เข้ากับปุ่มกลมสองใบที่เด้งขึ้นมา */
+.gplus svg{transition:transform .2s var(--ez)}
+.gplus.rot svg{transform:rotate(45deg)}
+.gplus:active,.gplus.rot:active{transform:scale(.9)}
 .gplus.hide{display:none}
-.dial{left:0;right:0;justify-content:center}
-.dial1{bottom:calc(92px + var(--sb))}
-.dial2{bottom:calc(146px + var(--sb))}
+/* Ver.12: เดิม .dial เป็น flex จัดกึ่งกลางทั้งคู่ [ป้าย][ปุ่ม] ปุ่มกลมจึงเยื้องไปทางขวา
+   ของกึ่งกลางจอเท่ากับครึ่งหนึ่งของความกว้างป้าย = ไม่ตรงแกนปุ่ม +
+   เปลี่ยนเป็นกริด 1fr auto 1fr ปุ่มกลมอยู่ช่องกลางเสมอ ป้ายดันชิดขวาในช่องซ้าย
+   ระยะแนวตั้ง: จุดกึ่งกลางปุ่ม + อยู่ที่ 45px จากขอบล่าง ปุ่มกลม 48px
+   จึงตั้ง bottom = 45+62-24 = 83 และ 45+124-24 = 145 ให้ห่างเท่ากันช่องละ 62px */
+.dial{left:0;right:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
+.dial>.dl{justify-self:end;margin-right:8px}
+.dial>.db{justify-self:center}
+.dial1{bottom:calc(83px + var(--sb))}
+.dial2{bottom:calc(145px + var(--sb))}
+.dial .db{width:48px;height:48px;border-radius:16px}
 .dial .dl{background:var(--glass);border:1px solid var(--line);
   backdrop-filter:none;-webkit-backdrop-filter:none}
 .toast{bottom:calc(96px + var(--sb))}
@@ -693,6 +730,12 @@ body.dark .first{background:#141726}
     <div id="sumBody"></div>
   </section>
 
+  <section class="card">
+    <div class="ct"><h2>เงินคงเหลือย้อนหลัง</h2><span class="sub" id="trSub"></span></div>
+    <div class="selrow" id="trSel"></div>
+    <div id="trBody"></div>
+  </section>
+
   <div class="sechd"><h2>รายการล่าสุด</h2><span class="sub" id="recentR"></span></div>
   <div id="homeList"></div>
   <button class="linkbtn" onclick="goTab('list')">ดูทั้งหมด</button>
@@ -705,8 +748,8 @@ body.dark .first{background:#141726}
     <button class="mb tap" onclick="shiftMonth(1)" aria-label="เดือนถัดไป">›</button>
   </div>
   <div class="bento">
-    <div class="tile tabtop" style="--tabc:var(--in)"><div class="tk">รับ</div><div class="tv i" id="lIn">0</div></div>
-    <div class="tile tabtop" style="--tabc:var(--out)"><div class="tk">จ่าย</div><div class="tv o" id="lOut">0</div></div>
+    <button class="tile tabtop tfbtn" id="ltIn" style="--tabc:var(--in)" onclick="setTypeFilter('in')"><div class="tk">รับ</div><div class="tv i" id="lIn">0</div></button>
+    <button class="tile tabtop tfbtn" id="ltOut" style="--tabc:var(--out)" onclick="setTypeFilter('out')"><div class="tk">จ่าย</div><div class="tv o" id="lOut">0</div></button>
   </div>
   <div class="chiprow" id="filterChips" style="margin-bottom:9px"></div>
   <div id="fullList"></div>
@@ -886,8 +929,8 @@ var DAYS1=['อา','จ','อ','พ','พฤ','ศ','ส'];
 function fmt(n){n=Math.round((Number(n)||0)*100)/100;
   var s=Math.abs(n).toFixed(Math.abs(n)%1?2:0).replace(/\B(?=(\d{3})+(?!\d))/g,',');return (n<0?'-':'')+s;}
 function fmtK(n){n=Math.abs(Number(n)||0);
-  if(n>=1000000)return (n/1000000).toFixed(1).replace(/\.0$/,'')+'ล';
-  if(n>=1000)return (n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,'')+'พ';return String(Math.round(n));}
+  if(n>=1000000)return (n/1000000).toFixed(1).replace(/\.0$/,'')+'M';
+  if(n>=1000)return (n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,'')+'k';return String(Math.round(n));}
 function dkey(dt){return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');}
 function today(){return dkey(new Date());}
 function parseKey(k){var p=k.split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
@@ -1087,18 +1130,26 @@ function renderChart(){
      ไม่งั้นเงินเดือนก้อนเดียวจะกดแท่งจ่ายให้แบนติดพื้นทั้งแถว */
   var mxI=1,mxO=1;
   data.forEach(function(d){mxI=Math.max(mxI,d['in']);mxO=Math.max(mxO,d.out);});
+  /* Ver.13: กลับมาใช้สเกลเดียวกันทั้งสองสี ตามที่เขายืนยันว่ารายรับเขาเข้าทุกวันจากแกร็บ
+     ไม่มีก้อนเงินเดือนเดือนละครั้งมากดกราฟให้แบน แท่งจึงสูงต่ำตามค่าจริงเทียบกันได้ตรงๆ
+     ถ้าวันไหนมีก้อนใหญ่ผิดปกติแล้วแท่งอื่นแบน ให้กลับไปใช้ mxI/mxO แยกกันได้ */
+  var mxB=Math.max(mxI,mxO);
   var h='';
   data.forEach(function(d,i){
     var bi,bo,num='';
     if(chShow==='in'){bi=d['in']?Math.max(4,Math.round(d['in']/mxI*100)):0;bo=0;}
     else if(chShow==='out'){bo=d.out?Math.max(4,Math.round(d.out/mxO*100)):0;bi=0;}
-    else{bo=d.out?Math.max(4,Math.round(d.out/mxO*100)):0;
-         bi=d['in']?Math.max(6,Math.round(d['in']/mxI*26)):0;}
-    if(chShow==='in')num=d['in']?'+'+fmtK(d['in']):'';
+    else{bo=d.out?Math.max(4,Math.round(d.out/mxB*100)):0;
+         bi=d['in']?Math.max(4,Math.round(d['in']/mxB*100)):0;}
+    /* Ver.13: ไม่มีเครื่องหมาย + แล้ว ใช้สีบอกฝั่งแทน (เขียว=รับ เทา=จ่าย)
+       และเอียงตัวเลขไว้ เพราะแนวนอนพอเลข 3-4 หลักติดกันสองคอลัมน์จะชนกันทันที */
+    var isIn=false;
+    if(chShow==='in'){num=d['in']?fmtK(d['in']):'';isIn=true;}
     else if(chShow==='out')num=d.out?fmtK(d.out):'';
-    else num=d.out?fmtK(d.out):(d['in']?'+'+fmtK(d['in']):'');
+    else if(d['in']>d.out){num=fmtK(d['in']);isIn=true;}
+    else num=d.out?fmtK(d.out):'';
     h+='<div class="bcol'+(chSel===i?' sel':'')+'" onclick="pickBar('+i+')">'
-     +'<div class="numwrap"><span class="bnum">'+num+'</span></div><div class="bpair">';
+     +'<div class="numwrap"><span class="bnum'+(isIn?' i':'')+'">'+num+'</span></div><div class="bpair">';
     if(chShow!=='out')h+='<div class="bar i'+(d['in']?'':' z')+(chShow==='both'?' bmark':'')+'" data-h="'+bi+'"></div>';
     if(chShow!=='in')h+='<div class="bar o'+(d.out?'':' z')+'" data-h="'+bo+'"></div>';
     h+='</div><div class="blab">'+esc(d.lab)+'</div></div>';});
@@ -1147,6 +1198,62 @@ function setRange(r){chRange=r;chSel=-1;renderChart();buzz(8);}
 function setShow(s){chShow=s;renderChart();buzz(8);}
 function pickBar(i){chSel=(chSel===i?-1:i);renderChart();buzz(8);}
 
+/* ================= กราฟเส้นเงินคงเหลือ (แบบกราฟหุ้น) =================
+   เส้นคือยอดคงเหลือ ณ สิ้นวัน ไม่ใช่ยอดรับ-จ่ายรายวัน
+   เดินยอดจากเงินตั้งต้นมาเรื่อยๆ จึงตรงกับเลขใหญ่บนการ์ดเงินเสมอที่จุดขวาสุด */
+var trRange='d30';
+function setTrRange(r){trRange=r;renderTrend();buzz(8);}
+function trendData(){
+  var days=trRange==='d30'?30:(trRange==='d90'?90:365);
+  var by={};
+  D.entries.forEach(function(e){by[e.date]=(by[e.date]||0)+(e.type==='in'?e.amount:-e.amount);});
+  var st=new Date();st.setDate(st.getDate()-(days-1));
+  var stK=dkey(st),run=D.opening;
+  Object.keys(by).forEach(function(k){if(k<stK)run+=by[k];});
+  var out=[],c=new Date(st);
+  for(var i=0;i<days;i++){var k=dkey(c);run+=(by[k]||0);out.push({k:k,v:run});c.setDate(c.getDate()+1);}
+  return out;
+}
+function renderTrend(){
+  var rc=[['d30','30 วัน'],['d90','90 วัน'],['d365','1 ปี']];
+  document.getElementById('trSel').innerHTML=mselHtml('tr',trRange,rc,'setTrRange');
+  var pts=trendData(),body=document.getElementById('trBody');
+  document.getElementById('trSub').textContent='';   /* ดรอปดาวน์บอกช่วงเวลาอยู่แล้ว ไม่ต้องซ้ำที่หัวการ์ด */
+  if(D.entries.length<2){body.innerHTML='<div class="empty" style="padding:14px 4px">ยังมีรายการน้อยเกินไป จดสัก 2-3 วันแล้วเส้นจะขึ้น</div>';return;}
+  var W=300,H=104,PB=6;
+  var vs=pts.map(function(p){return p.v;});
+  var mn=Math.min.apply(null,vs),mx=Math.max.apply(null,vs);
+  if(mx===mn){mx=mn+1;}
+  var pad=(mx-mn)*0.12;mx+=pad;mn-=pad;
+  function X(i){return pts.length<2?0:(i/(pts.length-1))*W;}
+  function Y(v){return PB+(1-(v-mn)/(mx-mn))*(H-PB*2);}
+  var dd='',i;
+  for(i=0;i<pts.length;i++)dd+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(pts[i].v).toFixed(1);
+  var up=pts[pts.length-1].v>=pts[0].v;
+  var col=up?'var(--in)':'var(--out)';
+  var area=dd+'L'+W+' '+H+'L0 '+H+'Z';
+  /* เส้นศูนย์ ให้เห็นชัดว่าช่วงไหนติดลบ */
+  var zero=(mn<0&&mx>0)?'<line x1="0" y1="'+Y(0).toFixed(1)+'" x2="'+W+'" y2="'+Y(0).toFixed(1)
+    +'" stroke="var(--line2)" stroke-width="1" stroke-dasharray="3 3"></line>':'';
+  var iMx=vs.indexOf(Math.max.apply(null,vs)),iMn=vs.indexOf(Math.min.apply(null,vs));
+  body.innerHTML='<div class="trwrap"><svg class="trsvg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'
+   +'<defs><linearGradient id="trg" x1="0" y1="0" x2="0" y2="1">'
+   +'<stop offset="0%" stop-color="'+(up?'#0E8A5F':'#C7453A')+'" stop-opacity=".18"></stop>'
+   +'<stop offset="100%" stop-color="'+(up?'#0E8A5F':'#C7453A')+'" stop-opacity="0"></stop></linearGradient></defs>'
+   +zero
+   +'<path d="'+area+'" fill="url(#trg)"></path>'
+   +'<path d="'+dd+'" fill="none" stroke="'+col+'" stroke-width="2" vector-effect="non-scaling-stroke" '
+   +'stroke-linejoin="round" stroke-linecap="round"></path>'
+   +'<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(pts[pts.length-1].v).toFixed(1)+'" r="3" fill="'+col+'"'
+   +' vector-effect="non-scaling-stroke"></circle>'
+   +'</svg></div>'
+   +'<div class="trax"><span>'+thShort(pts[0].k)+'</span><span>'+thShort(pts[pts.length-1].k)+'</span></div>'
+   +'<div class="trfoot"><span>ตอนนี้</span><span class="now" style="color:'+col+'">'+fmt(pts[pts.length-1].v)+'</span>'
+   +'<span class="rr">สูงสุด '+sgnK(vs[iMx])+' · ต่ำสุด '+sgnK(vs[iMn])+'</span></div>';
+}
+function sgnK(v){return (v<0?'−':'')+fmtK(v);}   /* fmtK ใช้ Math.abs ตัวเลขติดลบจึงต้องเติมเครื่องหมายเอง */
+function thShort(k){var dt=parseKey(k);return dt.getDate()+' '+MTHS[dt.getMonth()];}
+
 /* ================= สรุปเดือน ================= */
 function renderSummary(){
   var ym=monthOf(today()),by={},tot=0;
@@ -1176,6 +1283,7 @@ function renderSummary(){
 
 /* ================= วาดหน้า ================= */
 var curTab='home',curMonth=monthOf(today()),curFilter='',_lastBal=null;
+var curType='';      /* Ver.12: '' | 'in' | 'out' — ฟิลเตอร์ชนิดของหน้ารายการ */
 function goTab(t){
   curTab=t;closeDial();
   document.body.setAttribute('data-tab',t);   /* Ver.10: วอลเปเปอร์คนละชุดต่อหน้า */
@@ -1186,7 +1294,7 @@ function goTab(t){
 }
 function render(){
   renderBk();
-  if(curTab==='home'){renderHome();renderChart();renderSummary();}
+  if(curTab==='home'){renderHome();renderChart();renderSummary();renderTrend();}
   if(curTab==='list')renderList();
   if(curTab==='set')renderSet();
 }
@@ -1224,11 +1332,22 @@ function renderList(){
   var s=sumMonth(curMonth);
   document.getElementById('lIn').textContent=fmt(s['in']);
   document.getElementById('lOut').textContent=fmt(s.out);
-  var by={},types={},list=D.entries.filter(function(e){return monthOf(e.date)===curMonth;});
+  var list=D.entries.filter(function(e){return monthOf(e.date)===curMonth;});
+  /* Ver.12: กรองด้วยชนิดก่อน (แตะการ์ดรับ/จ่ายด้านบนก็ได้) แล้วค่อยกรองด้วยหมวด
+     ชิปหมวดที่ขึ้นจึงเป็นเฉพาะหมวดที่มีจริงในชนิดที่เลือกอยู่ */
+  document.getElementById('ltIn').classList.toggle('on',curType==='in');
+  document.getElementById('ltOut').classList.toggle('on',curType==='out');
+  if(curType)list=list.filter(function(e){return e.type===curType;});
+  var by={},types={};
   list.forEach(function(e){by[e.cat]=(by[e.cat]||0)+e.amount;types[e.cat]=e.type;});
   var ks=Object.keys(by).sort(function(a,b){return by[b]-by[a];});
   window._chipKeys=ks;
-  var chips='<button class="chip'+(curFilter?'':' on')+'" onclick="setFilter(-1)">ทั้งหมด</button>';
+  if(curFilter&&ks.indexOf(curFilter)<0)curFilter='';
+  var chips='<button class="chip'+(curType?'':' on')+'" onclick="setTypeFilter(\'\')">ทั้งหมด</button>'
+   +'<button class="chip'+(curType==='in'?' on ci':'')+'" onclick="setTypeFilter(\'in\')">รับ</button>'
+   +'<button class="chip'+(curType==='out'?' on co':'')+'" onclick="setTypeFilter(\'out\')">จ่าย</button>'
+   +'<span class="chipsep"></span>'
+   +'<button class="chip'+(curFilter?'':' on')+'" onclick="setFilter(-1)">ทุกหมวด</button>';
   ks.forEach(function(c,i){
     chips+='<button class="chip'+(curFilter===c?' on':'')+'" onclick="setFilter('+i+')">'
      +'<span class="dot" style="background:'+catColor(c,types[c])+'"></span>'+esc(c)+' '+fmtK(by[c])+'</button>';});
@@ -1238,6 +1357,12 @@ function renderList(){
   document.getElementById('fullList').innerHTML=list.length?dayHtml(list,true):'<div class="card"><div class="empty">เดือนนี้ยังไม่มีรายการ</div></div>';
 }
 function setFilter(i){curFilter=i<0?'':(window._chipKeys[i]||'');renderList();buzz(8);}
+function setTypeFilter(t){
+  curType=(curType===t?'':t);   /* แตะซ้ำที่เดิม = เอาฟิลเตอร์ออก */
+  curFilter='';
+  if(curTab!=='list')goTab('list'); else renderList();
+  buzz(8);
+}
 function shiftMonth(d){
   var y=+curMonth.slice(0,4),m=+curMonth.slice(5,7)+d;
   if(m<1){m=12;y--;}if(m>12){m=1;y++;}
@@ -1566,16 +1691,15 @@ function drawForm(fromVoice){
   curSheet='form';
   var pins=D.pins.filter(function(p){return (p.type||'out')===draft.type;});
   window._formPins=pins;
-  var pinChips=pins.length?'<div class="field"><span class="fl">ซื้อประจำ — แตะแล้วชื่อกับหมวดมาเอง</span>'
+  var pinLbl=draft.type==='in'?'รับประจำ — แตะแล้วชื่อกับหมวดมาเอง':'ซื้อประจำ — แตะแล้วชื่อกับหมวดมาเอง';
+  var pinChips=pins.length?'<div class="field"><span class="fl">'+pinLbl+'</span>'
    +'<div class="chiprow">'+pins.map(function(p,i){
       return '<button class="chip" onclick="useFormPin('+i+')">'
        +'<span class="dot" style="background:'+catColor(p.cat,p.type||'out')+'"></span>'+esc(p.n)+'</button>';}).join('')
-   +'</div></div>':'';
-  var rc=recentNames(8).filter(function(e){
-    return !pins.some(function(p){return learnKey(p.n)===learnKey(e.name);});}).slice(0,6);
-  window._recent=rc;
-  var recChips=(rc.length&&!pins.length)?'<div class="field"><span class="fl">ล่าสุด</span><div class="chiprow">'
-   +rc.map(function(e,i){return '<button class="chip sm" onclick="useRecent('+i+')">'+esc(e.name)+'</button>';}).join('')+'</div></div>':'';
+   +'</div></div>'
+   :'<div class="field"><span class="fl">'+pinLbl.split(' —')[0]+'</span>'
+    +'<div class="hintline" style="padding:0">ยังไม่มีชิปฝั่งนี้ เพิ่มได้ที่ ตั้งค่า → ชิปซื้อประจำ</div></div>';
+  /* Ver.12: ตัดแถว "ล่าสุด" ออกตามที่สั่ง — ชิปประจำทำหน้าที่นี้แทนทั้งสองฝั่ง */
   var n=draft.rows.length;
   var ttl=editId?'แก้รายการ':(draft.mode!=='db'?'ตรวจรายการ':(fromVoice?'ตรวจก่อนบันทึก':(draft.type==='in'?'รับเข้า':'จ่ายออก')));
   var live=liveRows().length;
@@ -1590,7 +1714,7 @@ function drawForm(fromVoice){
   +(n>1?'<div class="ftot"><span class="k" id="fTotK">รวม '+live+' รายการ</span><span class="v" id="fTot" style="color:'
     +(draft.type==='in'?'var(--in)':'var(--out)')+'">'+(draft.type==='in'?'+':'−')+fmt(rowsTotal())+'</span></div>':'')
   +'</div>'
-  +pinChips+recChips
+  +pinChips
   +'<div class="field"><span class="fl">วันที่</span><div class="chiprow">'
   +dateChips(draft.date,draft.calOpen,'pickDate(0)','pickDate(1)','toggleCal()')+'</div>'
   +(draft.calOpen?calGrid(draft.calYm,draft.date,'formPickDate','calShiftForm'):'')+'</div>'
@@ -1703,6 +1827,19 @@ function pinThis(){
   addPin(r.n.trim(),r.cat,draft.type,parseFloat(r.a)||0);
   toast('ปักหมุด '+r.n+' เป็นชิปแล้ว','ok');
 }
+/* Ver.12: ฝั่งรับไม่เคยมีชิปมาก่อน ใส่ชุดตั้งต้นให้ครั้งเดียว แก้/ลบได้ในตั้งค่า */
+function seedInPins(){
+  if(D.pinsInV12)return;
+  D.pinsInV12=1;
+  var has=D.pins.some(function(p){return (p.type||'out')==='in';});
+  if(!has){
+    [['เงินเดือน','เงินเดือน'],['โบนัส','เงินเดือน'],['ขายของ','ขายของ'],['ได้เงินคืน','ได้รับจากคนอื่น']]
+    .forEach(function(x){
+      var c=(D.cats['in']||[]).some(function(k){return k.n===x[1];})?x[1]:(D.cats['in'][0]||{}).n;
+      D.pins.push({n:x[0],cat:c,type:'in',last:0});});
+  }
+  save();
+}
 function addPin(n,cat,type,last){
   for(var i=0;i<D.pins.length;i++)if(learnKey(D.pins[i].n)===learnKey(n)){
     D.pins[i].last=last||D.pins[i].last;D.pins[i].cat=cat||D.pins[i].cat;save();return;}
@@ -1755,7 +1892,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.11 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.13 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
@@ -1951,6 +2088,7 @@ document.getElementById('askOk').onclick=function(){askClose(true);};
 document.getElementById('askNo').onclick=function(){askClose(false);};
 document.getElementById('ask').onclick=function(e){if(e.target===this)askClose(false);};
 applyTheme();
+seedInPins();
 goTab('home');
 if(!D.setup)document.getElementById('first').classList.remove('hide');
 </script>
