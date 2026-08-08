@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   มุ่ยเฟย  Ver.9  — โฉมกระจกใส (ดูชั้น skin9 ท้ายไฟล์)
+   มุ่ยเฟย  Ver.10 — โฉมขาวทึบ + วอลเปเปอร์แยกตามหน้า (ดูชั้น skin10 ใน head)
    กติกาที่ยกมาจากงาน Onion ที่ผ่านการแก้มาหลายรอบแล้ว
    1. ไล่เฉดสีห้ามอยู่บนของที่กดได้  ปุ่ม/แท็บ/แถบ = สีทึบสีเดียว
       ไล่เฉดใช้ได้ที่เดียวคือ "ภาพ" บนการ์ดยอดเงิน  (Onion Ver.287)
@@ -458,140 +458,177 @@ input::placeholder{color:var(--ink3)}
 .first p{color:var(--ink2);font-size:14px;margin:0 0 20px}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important}}
 </style>
-<style id="skin9">
+<style id="skin10">
 /* ==========================================================
-   Ver.9 — โฉม "กระจกใส"
-   ชั้นนี้วางทับ CSS เดิมทั้งก้อน ต้องอยู่ท้ายสุดเสมอ ไม่งั้นแพ้ของเดิม
-   สิ่งที่เปลี่ยนคือ "วัสดุ" อย่างเดียว: พื้นหลัง สีการ์ด ความมน เงา แถบล่าง
-   โครงสร้าง คลาส และ JS เดิมไม่ถูกแตะ
+   Ver.10 — โฉมกระจก (แบบขาวทึบ) + วอลเปเปอร์แยกตามหน้า
+   ชั้นนี้ต้องอยู่ท้ายสุดเสมอ ไม่งั้นแพ้ CSS เดิม
 
-   กติกาที่ยังใช้อยู่เหมือนเดิม
-   1. ไล่เฉดสีห้ามอยู่บนของที่กดได้ — ที่นี่ไล่เฉดเป็น "วอลเปเปอร์" ซึ่งกดไม่ได้
-   2. เขียว = เงินเข้า  แดง = เงินออก  สีหมวดคนละชุด
-   3. ตัวอักษรบนพื้นสี คำนวณด้วยคอนทราสต์จริง (applyTheme ยังทำหน้าที่นี้)
+   สิ่งที่เปลี่ยนจาก Ver.9 และเหตุผล
+   - ไม่มี backdrop-filter เหลืออยู่ในไฟล์เลยแม้แต่จุดเดียว (เดิม 5 จุด)
+     การเบลอต้องอ่านพิกเซลข้างหลังใหม่ทุกเฟรมตอนเลื่อน = ต้นเหตุการกระตุก
+   - ไม่ใช้ background-attachment:fixed อีกแล้ว บนมือถือมันบังคับวาดพื้นใหม่
+     ทุกเฟรม ย้ายไปเป็น .wall ที่เป็น element ลอยนิ่ง ระบบยกไปไว้บน GPU ได้
+   - สีวอลเปเปอร์ก๊อปค่าจริงมาจากรูปอ้างอิงทีละจุด และแยกคนละชุดต่อหน้า
    ========================================================== */
 :root{
   --ink:#2A2F45; --ink2:#5F6884; --ink3:#949CB4;
-  --card2:rgba(255,255,255,.46);
+  --glass:#FFFFFF;
+  --card2:#F2F5FB;
   --line:rgba(78,90,140,.11); --line2:rgba(78,90,140,.20);
   --r-tile:20px; --r-card:16px; --r-ctl:14px; --r-sheet:26px;
-  --glass:rgba(255,255,255,.62);
-  --gbd:1px solid rgba(255,255,255,.78);
-  --blur:saturate(165%) blur(20px);
   --sh1:0 1px 2px rgba(60,70,120,.07);
   --sh2:0 2px 6px -2px rgba(60,70,120,.10), 0 14px 30px -16px rgba(60,70,120,.42);
   --sh3:0 12px 30px -12px rgba(60,70,120,.55);
 }
-/* วอลเปเปอร์ — ตรึงอยู่กับที่ ไม่เลื่อนตามเนื้อหา */
-body{
-  color:var(--ink);
-  padding-bottom:calc(104px + var(--sb));
-  background:
-    radial-gradient(78% 52% at 6% 2%,  #DCE4F7 0%, rgba(220,228,247,0) 62%),
-    radial-gradient(70% 46% at 98% 6%, #CDEBDF 0%, rgba(205,235,223,0) 60%),
-    radial-gradient(86% 56% at 88% 96%,#D7D2F6 0%, rgba(215,210,246,0) 64%),
-    radial-gradient(70% 44% at 4% 92%, #F1DCEB 0%, rgba(241,220,235,0) 62%),
-    #E7EDF8;
-  background-attachment:fixed;
-}
+body{color:var(--ink);background:#E4EDF9;padding-bottom:calc(104px + var(--sb))}
 body.dark{
   --ink:#EDF0F8; --ink2:#A7AEC4; --ink3:#7B8299;
+  --glass:#1C2130; --card2:#232939;
   --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
-  --glass:rgba(255,255,255,.075);
-  --card2:rgba(255,255,255,.06);
-  --gbd:1px solid rgba(255,255,255,.11);
   --sh1:0 1px 2px rgba(0,0,0,.3);
   --sh2:0 2px 6px -2px rgba(0,0,0,.4), 0 14px 30px -16px rgba(0,0,0,.8);
   --sh3:0 12px 30px -12px rgba(0,0,0,.9);
-  background:
-    radial-gradient(78% 52% at 6% 2%,  #26304F 0%, rgba(38,48,79,0) 62%),
-    radial-gradient(70% 46% at 98% 6%, #1E3F42 0%, rgba(30,63,66,0) 60%),
-    radial-gradient(86% 56% at 88% 96%,#2C2748 0%, rgba(44,39,72,0) 64%),
-    radial-gradient(70% 44% at 4% 92%, #331F30 0%, rgba(51,31,48,0) 62%),
-    #12151F;
-  background-attachment:fixed;
+  background:#141726;
 }
 
-/* ---------- หัวจอ ----------
-   แถบบนเป็นกระจกจริง (เนื้อหาเลื่อนลอดใต้มัน) ใช้ผ้าขาวบางไล่จางลงล่าง
-   แทนการทาสีทึบ เพื่อให้สีวอลเปเปอร์ยังทะลุขึ้นมาและไม่เกิดรอยต่อเป็นแถบ */
-.top{padding:12px var(--pad) 8px;
-  background:linear-gradient(180deg,rgba(255,255,255,.58),rgba(255,255,255,.16));
-  backdrop-filter:saturate(160%) blur(16px);-webkit-backdrop-filter:saturate(160%) blur(16px)}
-body.dark .top{background:linear-gradient(180deg,rgba(18,21,31,.62),rgba(18,21,31,.18))}
-@supports not (backdrop-filter:blur(1px)){
-  .top{background:#E7EDF8}
-  body.dark .top{background:#12151F}
-}
+/* ---------- วอลเปเปอร์ ----------
+   ค่าสีทุกตัวข้างล่างวัดมาจากรูปที่ส่งมาโดยตรง ไม่ได้ผสมเอง
+   ทั้งสามชุดอยู่ในวงสีเดียวกันหมด (ฟ้า-เขียวมิ้นต์-คราม-ม่วงลาเวนเดอร์)
+   ไม่มีสีชมพู เพราะในรูปอ้างอิงไม่มีสักรูป */
+.wall{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.wall i{position:absolute;inset:0;opacity:0;transition:opacity .45s ease}
+body[data-tab="home"] .w1,
+body[data-tab="list"] .w2,
+body[data-tab="set"]  .w3{opacity:1}
+
+/* หน้าแรก — ชุดเดียวกับหน้า Collections/Browse ในรูป
+   ฟ้า #DBEBF8 · มิ้นต์ #C8EEE6 · คราม #C9D6F9 · ลาเวนเดอร์ #DCD4FB */
+.w1{background:
+  radial-gradient(88% 62% at 2% 0%,   #DBEBF8 0%, rgba(219,235,248,0) 66%),
+  radial-gradient(80% 56% at 100% 3%, #C8EEE6 0%, rgba(200,238,230,0) 62%),
+  radial-gradient(92% 66% at 0% 100%, #C9D6F9 0%, rgba(201,214,249,0) 68%),
+  radial-gradient(84% 58% at 100% 98%,#DCD4FB 0%, rgba(220,212,251,0) 64%),
+  #E4EDF9}
+/* รายการ — ชุดเดียวกับหน้า Inspiration
+   ลาเวนเดอร์ #E2DBFB · คราม #C8D1F9 · ฟ้าอ่อน #DEEFF9 */
+.w2{background:
+  radial-gradient(96% 60% at 6% 0%,   #E2DBFB 0%, rgba(226,219,251,0) 68%),
+  radial-gradient(78% 54% at 96% 6%,  #C8D1F9 0%, rgba(200,209,249,0) 64%),
+  radial-gradient(120% 68% at 50% 100%,#DEEFF9 0%, rgba(222,239,249,0) 72%),
+  #E8EEF9}
+/* ตั้งค่า — ชุดเดียวกับหน้า Lists/Smartmark
+   ลาเวนเดอร์จาง #E9E5FD · คราม #CDDAFC · ฟ้าน้ำทะเล #CBF4FD */
+.w3{background:
+  radial-gradient(100% 56% at 12% 0%, #E9E5FD 0%, rgba(233,229,253,0) 66%),
+  radial-gradient(72% 46% at 62% 4%,  #CDDAFC 0%, rgba(205,218,252,0) 62%),
+  radial-gradient(118% 64% at 46% 100%,#CBF4FD 0%, rgba(203,244,253,0) 70%),
+  #E9F2FD}
+body.dark .w1{background:
+  radial-gradient(88% 62% at 2% 0%,   #1B2740 0%, rgba(27,39,64,0) 66%),
+  radial-gradient(80% 56% at 100% 3%, #14322E 0%, rgba(20,50,46,0) 62%),
+  radial-gradient(92% 66% at 0% 100%, #1B2447 0%, rgba(27,36,71,0) 68%),
+  radial-gradient(84% 58% at 100% 98%,#251F42 0%, rgba(37,31,66,0) 64%),
+  #141726}
+body.dark .w2{background:
+  radial-gradient(96% 60% at 6% 0%,   #251F44 0%, rgba(37,31,68,0) 68%),
+  radial-gradient(78% 54% at 96% 6%,  #1A2246 0%, rgba(26,34,70,0) 64%),
+  radial-gradient(120% 68% at 50% 100%,#16283C 0%, rgba(22,40,60,0) 72%),
+  #141726}
+body.dark .w3{background:
+  radial-gradient(100% 56% at 12% 0%, #272146 0%, rgba(39,33,70,0) 66%),
+  radial-gradient(72% 46% at 62% 4%,  #1A2449 0%, rgba(26,36,73,0) 62%),
+  radial-gradient(118% 64% at 46% 100%,#122F3E 0%, rgba(18,47,62,0) 70%),
+  #141726}
+
+/* ---------- หัวจอ: ไม่ตรึงแล้ว เลื่อนหายไปกับเนื้อหา ---------- */
+.top{position:static;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;
+  padding:12px var(--pad) 8px}
 .mark{border-radius:13px;box-shadow:0 4px 12px -4px rgba(27,127,192,.55)}
 .brand b{font-size:22px;letter-spacing:-.02em}
-.bk{background:var(--glass);border:var(--gbd);box-shadow:none;
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.bk{background:var(--glass);border:1px solid var(--line);box-shadow:var(--sh1);
+  backdrop-filter:none;-webkit-backdrop-filter:none}
 .tabs{display:none}
 
-/* ---------- การ์ด = กระจก ---------- */
-.tile,.card,.daygrp,.slist,.askbox{
+/* ---------- การ์ด: ขาวทึบ ไม่มีเบลอ ---------- */
+.tile,.card,.daygrp,.slist,.askbox,.hero{
   background:var(--glass);
-  border:var(--gbd);
+  border:0;
   border-radius:var(--r-tile);
   box-shadow:var(--sh2);
-  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
-}
-@supports not (backdrop-filter:blur(1px)){
-  .tile,.card,.daygrp,.slist,.askbox{background:rgba(255,255,255,.9)}
-  body.dark .tile,body.dark .card,body.dark .daygrp,body.dark .slist,body.dark .askbox{background:#1B1F2C}
+  backdrop-filter:none;-webkit-backdrop-filter:none;
 }
 .line,.srow,.brow,.bask-f{background:transparent}
 .line:active,.srow:active{background:var(--card2)}
 .bento{gap:10px;margin-bottom:10px}
 .card{padding:16px;margin-bottom:10px}
-/* ตัวหนังสือที่นั่งบนวอลเปเปอร์ตรงๆ ต้องเข้มขึ้นหนึ่งขั้น ไม่งั้นจาง */
 .streak,.sechd .sub,.dayhd{color:var(--ink2)}
 
-/* แถบสีบอกความหมายที่ขอบบนการ์ด (มาจากแท็บสีในรูปอ้างอิง
-   ทำเป็นเส้นเต็มความกว้าง ไม่ใช่แท็บมุม เพราะบนการ์ดโปร่งแท็บมุมจะดูลอยหลุดจากการ์ด) */
 .tile{position:relative;overflow:hidden}
 .tile.tabtop::after{content:"";position:absolute;top:0;left:0;right:0;height:3px;
   background:var(--tabc,var(--accent));opacity:.85}
 
-/* ---------- ยอดเงิน: ไม่เป็นการ์ดอีกต่อไป นั่งบนวอลเปเปอร์เลย ----------
-   การ์ดไล่เฉดวางบนพื้นไล่เฉดจะกลืนกันเป็นก้อนเดียว ตัวแปร --m0..--m3 จาก meshOf()
-   จึงไม่ถูกใช้แล้วในโฉมนี้ (ปล่อยไว้ในโค้ด เผื่อย้อนกลับ) */
-.hero{background:none;box-shadow:none;border:0;padding:6px 4px 14px;overflow:visible}
-.hero::after{display:none}
+/* ---------- การ์ดเงิน: กลับมาเป็นการ์ดจริง มีกรอบมีเงา ---------- */
+.hero{overflow:hidden;padding:16px 17px 17px}
+.hero::after{display:none}          /* ภาพไล่เฉดเดิม ปิดไว้ — บนการ์ดขาวไม่ต้องใช้ */
 .hero .lb{color:var(--ink2);font-size:12.5px}
-.hero .amt{color:var(--ink);font-size:46px;letter-spacing:-.035em;margin-top:1px}
-.hero .amt .bt{color:var(--ink3);opacity:1;font-size:22px}
-.hero .foot{color:var(--ink2);margin-top:7px;font-size:12px}
+.hero .amt{color:var(--ink);font-size:40px;letter-spacing:-.03em;margin-top:2px}
+.hero .amt .bt{color:var(--ink3);opacity:1;font-size:20px}
+.hero .foot{color:var(--ink2);margin-top:6px;font-size:12px}
 
 /* ---------- ชิป ปุ่ม ช่องกรอก ---------- */
-.chip{background:var(--glass);border:var(--gbd);color:var(--ink2)}
+.chip{background:var(--card2);border:1px solid var(--line);color:var(--ink2)}
 .chip.on{background:var(--fill);border-color:transparent;color:var(--on-fill)}
-.seg,.tabs-in,.bask,.cal{background:var(--card2);border:var(--gbd)}
+.seg,.tabs-in,.bask,.cal{background:var(--card2);border:1px solid var(--line)}
 .seg button.on{background:#fff}
-body.dark .seg button.on{background:#252A38}
+body.dark .seg button.on{background:#2C3348}
 .btn{border-radius:15px}
-.btn-out{background:var(--glass);border:var(--gbd)}
+.btn-out{background:var(--card2);border:1px solid var(--line2)}
 .addrowbtn,.frow .fx,.addgo,.shx,.shback,.qpin{background:var(--card2)}
-input[type=text],input[type=number]{background:rgba(255,255,255,.55);border:1.5px solid rgba(255,255,255,.9)}
-body.dark input[type=text],body.dark input[type=number]{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
-input:focus{background:#fff;border-color:var(--accent)}
-body.dark input:focus{background:#242938}
-.money input{background:rgba(255,255,255,.72);border-color:var(--line2)}
-body.dark .money input{background:rgba(255,255,255,.07)}
+input[type=text],input[type=number]{background:var(--card2);border:1.5px solid var(--line)}
+input:focus{background:var(--glass);border-color:var(--accent)}
+.money input{background:var(--glass);border-color:var(--line2)}
 .money.filled input{border-color:var(--accent)}
-.si{background:var(--card2);border:var(--gbd)}
-.mb,.cal-h button{background:var(--glass);border:var(--gbd);box-shadow:none}
+.si{background:var(--card2)}
+.mb,.cal-h button{background:var(--glass);border:1px solid var(--line);box-shadow:var(--sh1)}
+
+/* ---------- ตัวเลือกแบบดรอปดาวน์ (แทนแถวชิป 2 แถวบนกราฟ) ----------
+   สองแถวชิปเดิมกิน 79px ก่อนจะเห็นกราฟสักแท่ง แถวนี้เหลือ 34px */
+.selrow{display:flex;gap:8px;margin-bottom:10px}
+.msel{position:relative;flex:1;min-width:0}
+.mselb{width:100%;height:34px;border-radius:11px;padding:0 10px;
+  background:var(--card2);border:1px solid var(--line);color:var(--ink);
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+  font-size:13px;font-family:inherit;transition:transform .12s var(--ez)}
+.mselb:active{transform:scale(.97)}
+.mselb span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mselb svg{flex:0 0 12px;width:12px;height:12px;fill:none;stroke:var(--ink3);
+  stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s var(--ez)}
+.msel.open .mselb{border-color:var(--accent)}
+.msel.open .mselb svg{transform:rotate(180deg)}
+.mselm{position:absolute;top:38px;left:0;right:0;z-index:14;display:none;padding:5px;
+  background:var(--glass);border-radius:13px;box-shadow:var(--sh3);border:1px solid var(--line)}
+.msel.open .mselm{display:block}
+.mseli{display:block;width:100%;text-align:left;padding:9px 10px;border-radius:9px;
+  font-size:13.5px;font-family:inherit;color:var(--ink2);background:transparent}
+.mseli.on{background:var(--tint);color:var(--fill);font-weight:600}
+.mseli:active{background:var(--card2)}
+
+/* ---------- กราฟ: ลดพื้นที่ที่ไม่ได้ใช้ ----------
+   เดิม แถวชิป 2 แถว 79px + แท่ง 148px + คำอธิบายตกบรรทัดที่สอง
+   ตอนนี้ ดรอปดาวน์ 34px + แท่ง 124px + คำอธิบายบรรทัดเดียว */
+.bars{height:124px;margin-top:8px}
+.bpair{height:84px}
+.readout{margin-top:7px;padding-top:8px;min-height:0}
+.legend{flex-wrap:nowrap;align-items:center;width:100%;gap:10px}
+.legend>span:last-child{flex-basis:auto;margin-left:auto;text-align:right;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* ---------- แถบล่างลอย ---------- */
 .gnav{position:fixed;left:14px;right:14px;bottom:calc(14px + var(--sb));z-index:30;height:62px;
   display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-radius:22px;
-  background:color-mix(in srgb,#fff 72%, transparent);
-  border:1px solid rgba(255,255,255,.85);
+  background:var(--glass);border:1px solid var(--line);
   box-shadow:0 6px 24px -10px rgba(60,70,120,.5);
-  backdrop-filter:saturate(160%) blur(20px);-webkit-backdrop-filter:saturate(160%) blur(20px)}
-@supports not (backdrop-filter:blur(1px)){.gnav{background:#fff}}
-body.dark .gnav{background:rgba(28,32,48,.72);border-color:rgba(255,255,255,.10)}
+  backdrop-filter:none;-webkit-backdrop-filter:none}
 .gn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;min-width:0;
   color:var(--ink3);transition:transform .13s var(--ez),color .16s}
 .gn:active{transform:scale(.9)}
@@ -600,7 +637,7 @@ body.dark .gnav{background:rgba(28,32,48,.72);border-color:rgba(255,255,255,.10)
 .gn i{font-style:normal;font-size:9.5px;letter-spacing:.01em;white-space:nowrap}
 .gn.on{color:var(--fill)}
 body.dark .gn.on{color:var(--accent)}
-.gn.live{color:var(--out)}          /* ตอนไมค์กำลังฟัง */
+.gn.live{color:var(--out)}
 .gplus{flex:0 0 54px;height:54px;border-radius:19px;display:flex;align-items:center;justify-content:center;
   background:var(--fill);box-shadow:0 8px 18px -7px rgba(27,127,192,.75);
   transition:transform .18s var(--ez)}
@@ -609,39 +646,34 @@ body.dark .gn.on{color:var(--accent)}
 .gplus:active{transform:scale(.9)}
 .gplus.rot:active{transform:rotate(45deg) scale(.9)}
 .gplus.hide{display:none}
-/* เมนูที่เด้งขึ้นจากปุ่ม + ต้องขึ้นตรงกลางตามปุ่ม ไม่ใช่ชิดขวาแบบเดิม */
 .dial{left:0;right:0;justify-content:center}
 .dial1{bottom:calc(92px + var(--sb))}
 .dial2{bottom:calc(146px + var(--sb))}
-.dial .dl{background:var(--glass);border:var(--gbd);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.dial .dl{background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:none;-webkit-backdrop-filter:none}
 .toast{bottom:calc(96px + var(--sb))}
 
 /* ---------- ชีต ---------- */
-.sheet{background:color-mix(in srgb,#fff 82%, transparent);
-  backdrop-filter:saturate(160%) blur(26px);-webkit-backdrop-filter:saturate(160%) blur(26px);
-  border-top:1px solid rgba(255,255,255,.9)}
-@supports not (backdrop-filter:blur(1px)){.sheet{background:#fff}}
-body.dark .sheet{background:rgba(24,28,42,.92);border-top-color:rgba(255,255,255,.12)}
-@supports not (backdrop-filter:blur(1px)){body.dark .sheet{background:#1B1F2C}}
-.shhead{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+.sheet{background:var(--glass);backdrop-filter:none;-webkit-backdrop-filter:none;
+  border-top:0;box-shadow:0 -10px 40px -12px rgba(40,50,90,.45)}
+.shhead{background:var(--glass);backdrop-filter:none;-webkit-backdrop-filter:none}
+.stick{background:linear-gradient(180deg,rgba(255,255,255,0),var(--glass) 26%)}
+body.dark .stick{background:linear-gradient(180deg,rgba(28,33,48,0),var(--glass) 26%)}
 
-/* แถบขาวใต้ปุ่มบันทึกในชีต — ของเดิมใช้ var(--card) ซึ่งทึบ เลยเป็นแผ่นขาวทับกระจก */
-.stick{background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.84) 30%)}
-body.dark .stick{background:linear-gradient(180deg,rgba(24,28,42,0),rgba(24,28,42,.92) 30%)}
-
-/* ---------- หน้าแรกสุด (ทับทั้งจอ ต้องมีวอลเปเปอร์ของตัวเอง ไม่งั้นเห็นแอปทะลุ) ---------- */
+/* ---------- จอแรกสุด ---------- */
 .first{background:
-    radial-gradient(78% 52% at 6% 2%,  #DCE4F7 0%, rgba(220,228,247,0) 62%),
-    radial-gradient(70% 46% at 98% 6%, #CDEBDF 0%, rgba(205,235,223,0) 60%),
-    radial-gradient(86% 56% at 88% 96%,#D7D2F6 0%, rgba(215,210,246,0) 64%),
-    radial-gradient(70% 44% at 4% 92%, #F1DCEB 0%, rgba(241,220,235,0) 62%),
-    #E7EDF8}
-body.dark .first{background:#12151F}
+  radial-gradient(88% 62% at 2% 0%,   #DBEBF8 0%, rgba(219,235,248,0) 66%),
+  radial-gradient(80% 56% at 100% 3%, #C8EEE6 0%, rgba(200,238,230,0) 62%),
+  radial-gradient(92% 66% at 0% 100%, #C9D6F9 0%, rgba(201,214,249,0) 68%),
+  radial-gradient(84% 58% at 100% 98%,#DCD4FB 0%, rgba(220,212,251,0) 64%),
+  #E4EDF9}
+body.dark .first{background:#141726}
 
 </style>
 </head>
 <body>
+<div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
+
 
 <header class="top">
   <div class="trow">
@@ -665,14 +697,13 @@ body.dark .first{background:#12151F}
 
   <section class="card">
     <div class="ct"><h2>กราฟรับ-จ่าย</h2><span class="sub" id="chSub"></span></div>
-    <div class="chiprow" id="chRange"></div>
-    <div class="chiprow" style="margin-top:7px" id="chShow"></div>
+    <div class="selrow" id="chSel2"></div>
     <div class="bars" id="bars"></div>
     <div class="readout" id="readout"></div>
   </section>
 
   <section class="card">
-    <div class="ct"><h2>สรุปเดือนนี้</h2><span class="sub" id="sumSub"></span></div>
+    <div class="ct"><h2>เดือนนี้จ่ายไปกับอะไร</h2><span class="sub" id="sumSub"></span></div>
     <div id="sumBody"></div>
   </section>
 
@@ -1063,11 +1094,9 @@ function buildChart(){
 function renderChart(){
   var data=buildChart();
   var rc=[['day14','รายวัน'],['wk8','รายสัปดาห์'],['mo6','รายเดือน']];
-  document.getElementById('chRange').innerHTML=rc.map(function(r){
-    return '<button class="chip sm'+(chRange===r[0]?' on':'')+'" onclick="setRange(\''+r[0]+'\')">'+r[1]+'</button>';}).join('');
   var sc=[['both','รับ-จ่าย'],['in','เฉพาะรับ'],['out','เฉพาะจ่าย']];
-  document.getElementById('chShow').innerHTML=sc.map(function(r){
-    return '<button class="chip sm'+(chShow===r[0]?' on':'')+'" onclick="setShow(\''+r[0]+'\')">'+r[1]+'</button>';}).join('');
+  document.getElementById('chSel2').innerHTML=
+    mselHtml('range',chRange,rc,'setRange')+mselHtml('show',chShow,sc,'setShow');
   /* รายจ่ายคือสิ่งที่ดูทุกวัน จึงให้เต็มสเกลเสมอ ส่วนวันที่มีเงินเข้าใช้แท่งเขียวเตี้ยกำกับ
      ไม่งั้นเงินเดือนก้อนเดียวจะกดแท่งจ่ายให้แบนติดพื้นทั้งแถว */
   var mxI=1,mxO=1;
@@ -1100,11 +1129,34 @@ function drawReadout(){
   if(!d){
     el.innerHTML='<div class="legend"><span><i style="background:var(--out)"></i>จ่าย</span>'
      +'<span><i style="background:var(--in)"></i>รับ</span>'
-     +'<span style="color:var(--ink3)">'+(chShow==='both'?'แท่งเขียวเตี้ย = วันที่มีเงินเข้า แตะดูตัวเลขเต็ม':'แตะแท่งเพื่อดูตัวเลขเต็ม')+'</span></div>';return;}
+     +'<span style="color:var(--ink3)">'+'แตะแท่งเพื่อดูตัวเลข'+'</span></div>';return;}
   el.innerHTML='<span class="rl">'+esc(d.full)+'</span>'
    +'<span class="rv" style="color:var(--in)">+'+fmt(d['in'])+'</span>'
    +'<span class="rv" style="color:var(--out)">−'+fmt(d.out)+'</span>';
 }
+/* ---- ดรอปดาวน์เล็ก: ใช้แทนแถวชิปที่กินพื้นที่ ---- */
+function mselHtml(id,cur,opts,fn){
+  var lab=opts.filter(function(o){return o[0]===cur;})[0];
+  lab=lab?lab[1]:opts[0][1];
+  var items=opts.map(function(o){
+    return '<button class="mseli'+(o[0]===cur?' on':'')+'" onclick="'+fn+'(\''+o[0]+'\')">'+o[1]+'</button>';}).join('');
+  return '<div class="msel" id="ms-'+id+'">'
+   +'<button class="mselb" onclick="mselTog(event,\''+id+'\')"><span>'+lab+'</span>'
+   +'<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>'
+   +'<div class="mselm">'+items+'</div></div>';
+}
+function mselTog(ev,id){
+  if(ev)ev.stopPropagation();
+  var el=document.getElementById('ms-'+id),was=el&&el.classList.contains('open');
+  mselCloseAll();
+  if(el&&!was){el.classList.add('open');buzz(8);}
+}
+function mselCloseAll(){
+  var a=document.querySelectorAll('.msel.open');
+  for(var i=0;i<a.length;i++)a[i].classList.remove('open');
+}
+document.addEventListener('click',function(){mselCloseAll();});
+
 function setRange(r){chRange=r;chSel=-1;renderChart();buzz(8);}
 function setShow(s){chShow=s;renderChart();buzz(8);}
 function pickBar(i){chSel=(chSel===i?-1:i);renderChart();buzz(8);}
@@ -1128,8 +1180,9 @@ function renderSummary(){
     return '<div class="crow"><span class="dot" style="background:'+catColor(k,'out')+'"></span>'
      +'<span class="cnm">'+esc(k)+'</span><span class="cpc">'+fmt(by[k])+' · '+Math.round(by[k]/tot*100)+'%</span></div>';}).join('');
   document.getElementById('sumBody').innerHTML=
-   '<div class="headline">จ่ายมากที่สุดคือ <b>'+esc(ks[0])+'</b><br><span class="big" style="color:'+catColor(ks[0],'out')+'">'+fmt(by[ks[0]])+'</span> จากทั้งหมด '+fmt(tot)+'</div>'
-   +'<div class="donutwrap"><div class="donut"><svg width="110" height="110">'
+   /* Ver.10: ตัดประโยค "จ่ายมากที่สุดคือ..." ออก — ตัวเลขและอันดับอยู่ในโดนัท
+      กับรายการข้างล่างอยู่แล้ว และยอดรวมก็อยู่กลางโดนัท */
+   '<div class="donutwrap"><div class="donut"><svg width="110" height="110">'
    +'<circle cx="55" cy="55" r="37" fill="none" stroke="var(--line)" stroke-width="14"></circle>'+segs+'</svg>'
    +'<div class="mid"><div class="m1">จ่ายรวม</div><div class="m2">'+fmtK(tot)+'</div></div></div>'
    +'<div class="catlist">'+rows+'</div></div>';
@@ -1139,6 +1192,7 @@ function renderSummary(){
 var curTab='home',curMonth=monthOf(today()),curFilter='',_lastBal=null;
 function goTab(t){
   curTab=t;closeDial();
+  document.body.setAttribute('data-tab',t);   /* Ver.10: วอลเปเปอร์คนละชุดต่อหน้า */
   ['home','list','set'].forEach(function(x){
     document.getElementById('page-'+x).classList.toggle('off',x!==t);
     document.getElementById('tab-'+x).classList.toggle('on',x===t);});
@@ -1715,7 +1769,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.9 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.10 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
