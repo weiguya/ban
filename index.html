@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.20 — หน้าเคลื่อนไหว + ปฏิทินเป็นป๊อปอัปลอย (ลอกจากแอปร้านหอม)
+   Muifei  Ver.21 — แถวรวมใต้โดนัท + ยอดรวมท้ายวันในหน้ารายการ + ปุ่มเลื่อนขึ้น/ลง
    (Ver.18 เดิม: พื้นไล่เฉดชุดเดิม + การ์ดไม่มีเส้นขอบ)
    (Ver.17 เดิม: ฟอนต์ LINE Seed + โลโก้หมูคาบซิการ์ + กราฟ 7 วัน + พื้นโทน Sofascore)
    (Ver.14 เดิม: โลโก้หมู-เฟย + การ์ดเงินแบบบัตร + กราฟรับ-จ่ายวิ่งไล่ + เมนู + ไล่โผล่
@@ -1044,6 +1044,57 @@ body.dark{
 }
 .mvcv,.mvc-d b,.mvc-v{font-family:'LINE Seed Sans TH','IBM Plex Sans Thai',-apple-system,"Segoe UI",sans-serif}
 </style>
+<style id="skin20">
+/* ============================================================
+   Ver.21 — แถวรวมใต้โดนัท · ยอดรวมรับ/จ่าย/สุทธิ ท้ายแต่ละวันในหน้ารายการ
+   · ปุ่มเลื่อนล่างสุด + กลับขึ้นข้างบน (ยกมาจากแอปร้านหอม)
+   ============================================================ */
+
+/* ---------- แถวรวมใต้โดนัท ---------- */
+.sumfoot{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.sfk{font-size:12px;font-weight:600;color:var(--ink2)}
+.sfk i{font-style:normal;font-weight:400;font-size:11px;color:var(--ink3)}
+.sfv{font-size:16px;font-weight:600;color:var(--out);letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ---------- ท้ายแต่ละวันในหน้ารายการ ----------
+   สุทธิเคยอยู่มุมขวาบนคู่กับวันที่ ย้ายลงมาอยู่แถวเดียวกับรับรวม/จ่ายรวม
+   หัวกลุ่มเหลือแค่วันที่ ตัวเลขทั้งหมดของวันจึงอยู่ที่เดียวกันหมด */
+.dfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:9px 14px 11px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink3)}
+.dfk{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dfk em{font-style:normal;padding:0 6px;color:var(--ink3);opacity:.7}
+.dfn{white-space:nowrap}
+.dfoot b{font-weight:600;font-variant-numeric:tabular-nums}
+.dfoot b.i{color:var(--in)}
+.dfoot b.o{color:var(--out)}
+.dfoot b.z{color:var(--ink3);font-weight:400}
+.dfn b{font-size:12.5px}
+
+/* ---------- ปุ่มเลื่อน ----------
+   ลูกศรกลมลอยกลางจอ เหนือแถบล่าง (.gnav สูง 62 อยู่ที่ bottom:14+safe-area)
+   ใช้ visibility คู่กับ opacity ไม่ใช่ display เพื่อให้จางเข้าจางออกได้ */
+.sbdown{position:fixed;left:0;right:0;margin:0 auto;bottom:calc(88px + var(--sb));
+  width:44px;height:44px;border-radius:50%;z-index:29;
+  background:var(--glass);border:1px solid var(--line2);box-shadow:var(--sh3);
+  display:flex;align-items:center;justify-content:center;color:var(--fill);padding:0;
+  opacity:0;visibility:hidden;transform:translateY(6px);
+  transition:opacity .2s var(--ez),transform .2s var(--ez),visibility .2s}
+.sbdown.on{opacity:.96;visibility:visible;transform:none}
+.sbdown:active{transform:scale(.9)}
+.sbdown svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2.4;
+  stroke-linecap:round;stroke-linejoin:round}
+
+.uptop{display:none;width:fit-content;margin:14px auto 4px;padding:9px 18px;
+  border-radius:var(--r-full);background:var(--glass);border:1px solid var(--line2);
+  box-shadow:var(--sh1);color:var(--fill);font-size:11.5px;font-weight:600;
+  align-items:center;gap:6px}
+.uptop:active{transform:scale(.97)}
+.uptop svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;
+  stroke-linecap:round;stroke-linejoin:round}
+.sfv,.dfoot b{font-family:'LINE Seed Sans TH','IBM Plex Sans Thai',-apple-system,"Segoe UI",sans-serif}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1098,6 +1149,7 @@ body.dark{
   </div>
   <div class="chiprow" id="filterChips" style="margin-bottom:9px"></div>
   <div id="fullList"></div>
+  <button class="uptop" onclick="scrollTopFast()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg><span>กลับขึ้นข้างบน</span></button>
 </main>
 
 <main class="page off" id="page-mv">
@@ -1124,6 +1176,7 @@ body.dark{
     </div>
   </div>
   <div id="mvBody"></div>
+  <button class="uptop" onclick="scrollTopFast()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg><span>กลับขึ้นข้างบน</span></button>
 </main>
 
 <main class="page off" id="page-set">
@@ -1134,6 +1187,7 @@ body.dark{
   <button class="gn" id="tab-home" onclick="goTab('home')"><svg viewBox="0 0 24 24"><path d="M4 11.4 12 4.6l8 6.8"/><path d="M6.4 10.2V19a1 1 0 0 0 1 1h9.2a1 1 0 0 0 1-1v-8.8"/></svg><i>หน้าแรก</i></button>
   <button class="gn" id="tab-list" onclick="goTab('list')"><svg viewBox="0 0 24 24"><rect x="4" y="4.6" width="16" height="15" rx="3"/><path d="M8.2 9.4h7.6M8.2 13h7.6M8.2 16.4h4.4"/></svg><i>รายการ</i></button>
   <button class="gplus" id="fab" onclick="toggleDial()" aria-label="จดรายการ"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button id="sbDown" class="sbdown" onclick="scrollBottomFast()" aria-label="เลื่อนไปล่างสุด"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
   <button class="gn" id="tab-mv" onclick="goTab('mv')"><svg viewBox="0 0 24 24"><rect x="3.6" y="4.6" width="16.8" height="15" rx="3"/><path d="M3.6 9.2h16.8M9 9.2v10.4"/><path d="M12.4 12.6h4.6M12.4 16h3"/></svg><i>เคลื่อนไหว</i></button>
   <button class="gn" id="tab-set" onclick="goTab('set')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M12 3.6v2.2M12 18.2v2.2M4.6 12h2.2M17.2 12h2.2M6.8 6.8l1.6 1.6M15.6 15.6l1.6 1.6M17.2 6.8l-1.6 1.6M8.4 15.6l-1.6 1.6"/></svg><i>ตั้งค่า</i></button>
 </nav>
@@ -1713,7 +1767,12 @@ function renderSummary(){
    '<div class="donutwrap"><div class="donut"><svg width="110" height="110">'
    +'<circle cx="55" cy="55" r="37" fill="none" stroke="var(--line)" stroke-width="14"></circle>'+segs+'</svg>'
    +'<div class="mid"><div class="m1">จ่ายรวม</div><div class="m2">'+fmtK(tot)+'</div></div></div>'
-   +'<div class="catlist">'+rows+'</div></div>';
+   +'<div class="catlist">'+rows+'</div></div>'
+   /* Ver.21: แถวรวมล่างสุด — เลขกลางโดนัทเป็นแบบย่อ (4.7k) และรายการข้างๆ โชว์แค่ 5 หมวดแรก
+      ถ้าจ่ายกระจายหลายหมวด ยอดที่เห็นในลิสต์จะบวกกันไม่ครบ แถวนี้จึงเป็นตัวเลขเต็มของทั้งเดือน */
+   +'<div class="sumfoot"><span class="sfk">รวมทั้งหมด'
+   +(ks.length>5?' <i>('+ks.length+' หมวด)</i>':'')+'</span>'
+   +'<span class="sfv">'+fmt(tot)+'</span></div>';
 }
 
 /* ================= วาดหน้า ================= */
@@ -1735,6 +1794,7 @@ function render(){
   if(curTab==='list')renderList();
   if(curTab==='mv')renderMv();
   if(curTab==='set')renderSet();
+  setTimeout(_scrollBtns,0);   /* Ver.21: เช็คหลังวาดเสร็จ ความสูงหน้าถึงจะเป็นค่าจริง */
 }
 function renderHome(){
   var b=balance(),el=document.getElementById('balNum');
@@ -1930,19 +1990,64 @@ function renderMv(){
 function dayHtml(list,showTot){
   var b=byDay(list),h='';
   b.keys.forEach(function(k){
-    var rows=b.g[k],net=0;
-    rows.forEach(function(e){net+=e.type==='in'?e.amount:-e.amount;});
-    h+='<div class="daygrp"><div class="dayhd"><span>'+esc(thDate(k))+'</span>'
-      +(showTot?'<span class="dn">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>':'')+'</div>';
+    /* Ver.21: สุทธิเคยอยู่มุมขวาบนคู่กับวันที่ ย้ายลงมาอยู่แถวสรุปล่างสุดของวัน
+       ที่เดียวกับยอดรับรวมและจ่ายรวม — อ่านเป็นก้อนเดียวจบ ไม่ต้องกวาดตาขึ้นลง */
+    var rows=b.g[k],din=0,dout=0;
+    rows.forEach(function(e){if(e.type==='in')din+=e.amount;else dout+=e.amount;});
+    var net=din-dout;
+    h+='<div class="daygrp"><div class="dayhd"><span>'+esc(thDate(k))+'</span></div>';
     rows.forEach(function(e){
       var col=catColor(e.cat,e.type);
       h+='<button class="line" data-id="'+esc(e.id)+'">'
        +'<span class="ico" style="background:'+col+'1F;color:'+col+'">'+esc((e.cat||'?').trim().charAt(0))+'</span>'
        +'<span class="nm"><span class="t1">'+esc(e.name)+'</span><span class="t2">'+esc(e.cat)+'</span></span>'
        +'<span class="amt '+(e.type==='in'?'i':'o')+'">'+(e.type==='in'?'+':'−')+fmt(e.amount)+'</span></button>';});
+    if(showTot)h+='<div class="dfoot">'
+      +'<span class="dfk">รับ <b class="'+(din?'i':'z')+'">'+fmt(din)+'</b>'
+      +'<em>·</em>จ่าย <b class="'+(dout?'o':'z')+'">'+fmt(dout)+'</b></span>'
+      +'<span class="dfn">สุทธิ <b class="'+(net>=0?'i':'o')+'">'
+      +(net>=0?'+':'−')+fmt(Math.abs(net))+'</b></span></div>';
     h+='</div>';});
   return h;
 }
+/* ================= ปุ่มเลื่อนล่างสุด / กลับขึ้นข้างบน (Ver.21) =================
+   ยกมาจากแอปร้านหอมทั้งชุด: ลูกศรกลมลอยกลางจอเหนือแถบล่าง กดแล้ววิ่งลงล่างสุด
+   โผล่ตอนเลื่อน แล้วจางหายเองใน 1 วินาที ถ้าอยู่ล่างสุดแล้วไม่โผล่
+   กับปุ่ม "กลับขึ้นข้างบน" ท้ายหน้า
+   ต่างจากของเขาตรงเดียว: เขาไล่เปิดทีละหน้าด้วยรายชื่อ page id
+   อันนี้ดูจากความยาวจริงของหน้าแทน หน้าไหนไม่ยาวพอก็ไม่ต้องมีปุ่มทั้งคู่ */
+function fastScrollTo(y,ms){
+  ms=ms||260;
+  var y0=window.scrollY,d=y-y0,t0=performance.now();
+  if(Math.abs(d)<2)return;
+  function step(now){
+    var t=Math.min(1,(now-t0)/ms);
+    window.scrollTo(0,y0+d*(1-(1-t)*(1-t)));      /* easeOutQuad */
+    if(t<1)requestAnimationFrame(step);}
+  requestAnimationFrame(step);
+}
+function scrollTopFast(){fastScrollTo(0,260);buzz(8);}
+function scrollBottomFast(){fastScrollTo(document.documentElement.scrollHeight,300);buzz(8);}
+var _sbTimer=null;
+function _scrollBtns(){
+  var doc=document.documentElement;
+  var over=doc.scrollHeight-window.innerHeight;
+  var fromBottom=doc.scrollHeight-window.scrollY-window.innerHeight;
+  var dn=document.getElementById('sbDown');
+  var ups=document.querySelectorAll('.uptop');
+  var i,show=over>300;
+  /* ต้องเซ็ต 'flex' ตรงๆ ไม่ใช่ '' — เพราะ CSS ตั้งค่าเริ่มต้นของ .uptop เป็น display:none
+     คืนค่าเป็นสตริงว่างมันจะย้อนไปใช้กฎ CSS = none ปุ่มไม่โผล่สักที */
+  for(i=0;i<ups.length;i++)ups[i].style.display=show?'flex':'none';
+  if(!dn)return;
+  clearTimeout(_sbTimer);
+  if(!show||fromBottom<50){dn.classList.remove('on');return;}
+  dn.classList.add('on');
+  _sbTimer=setTimeout(function(){dn.classList.remove('on');},1000);
+}
+window.addEventListener('scroll',_scrollBtns,{passive:true});
+window.addEventListener('resize',_scrollBtns);
+
 function renderBk(){
   var c=document.getElementById('bkChip');
   if(!D.backupAt){c.textContent='ยังไม่เคยสำรอง';c.classList.add('old');return;}
@@ -2453,7 +2558,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.20 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.21 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
