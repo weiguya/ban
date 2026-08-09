@@ -10,7 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   มุ่ยเฟย  Ver.14 — โลโก้หมู-เฟย + การ์ดเงินแบบบัตร + กราฟรับ-จ่ายวิ่งไล่ + เมนู + ไล่โผล่
+   มุ่ยเฟย  Ver.15 — โลโก้หมูสูบซิการ์ + กราฟ 7 วัน + พื้นโทน Sofascore
+   (Ver.14 เดิม: โลโก้หมู-เฟย + การ์ดเงินแบบบัตร + กราฟรับ-จ่ายวิ่งไล่ + เมนู + ไล่โผล่
    กติกาที่ยกมาจากงาน Onion ที่ผ่านการแก้มาหลายรอบแล้ว
    1. ไล่เฉดสีห้ามอยู่บนของที่กดได้  ปุ่ม/แท็บ/แถบ = สีทึบสีเดียว
       ไล่เฉดใช้ได้ที่เดียวคือ "ภาพ" บนการ์ดยอดเงิน  (Onion Ver.287)
@@ -728,6 +729,56 @@ body.dark .stick{background:linear-gradient(180deg,rgba(28,33,48,0),var(--glass)
 body.dark .first{background:#141726}
 
 </style>
+
+<style id="skin15">
+/* ============================================================
+   Ver.15 — พื้นหลังโทน Sofascore · กราฟแท่ง 7 วัน ตัวเลขเกาะหัวแท่ง · โลโก้หมูสูบซิการ์
+   ลบทั้งบล็อกนี้แล้วหน้าตาจะกลับไปเป็น Ver.14 (ยกเว้นตัวเลขบนกราฟกับโลโก้ ซึ่งแก้ที่ตัวมาร์กอัป)
+   ============================================================ */
+
+/* ---------- พื้นหลัง: วัดจากสกรีนช็อต Sofascore แล้วปรับความเข้ม ----------
+   พื้นของ Sofascore จริงคือ #EDF0F5 (hue 218) — สวย แต่ต่างจากการ์ดขาวแค่ 1.14 เท่า
+   ซึ่งคือปัญหา "พื้นหลังกลืนกับกรอบขาว" ที่เพิ่งแก้ไปรอบที่แล้วเป๊ะๆ
+   จึงเอา "โทน" ของเขามา (เทาอมน้ำเงิน hue 218 เท่ากัน) แต่คุมความเข้มไว้ที่ 1.25 เท่า
+   เท่ากับ #DCE7EC ของ Ver.14 ที่ผ่านตาแล้ว — การ์ดขาวจึงยังลอยออกมาชัด */
+body{background:#E1E6EF}
+.wall{background:#E1E6EF}
+body.dark, body.dark .wall{background:#141B24}
+/* หมายเหตุ: applyTheme() เซ็ต --bg ลงบน :root แบบอินไลน์ การเขียนทับที่ตัวแปรจึงไม่ชนะ ต้องเขียนทับที่ body ตรงๆ */
+
+/* ---------- กราฟแท่ง: 7 วัน + ตัวเลขเกาะหัวแท่งจริง ----------
+   ของเดิม (Ver.13/14) ตัวเลขอยู่ในแถบ .numwrap สูง 40px ที่ยอดกราฟ ตำแหน่งตายตัว
+   แท่งเตี้ยๆ ตัวเลขจึงลอยห่างจากหัวแท่งครึ่งจอ และต้องเอียง 55 องศาเพื่อไม่ให้ชนกัน
+   ตอนนี้ตัวเลขอยู่ "ใน" ตัวแท่ง เกาะขอบบนด้วย bottom:100% จึงเลื่อนตามความสูงเสมอ
+   7 คอลัมน์ทำให้ช่องกว้าง ~43px (เดิม 14 วัน = 21px) วางแนวนอนสองเลขได้พอดี */
+.numwrap{display:none}
+.bars{height:132px;overflow:visible}
+.bpair{height:96px;gap:4px;overflow:visible}
+.bar{flex:0 0 14px;width:14px;position:relative;border-radius:6px 6px 3px 3px}
+/* แท่งรับเคยแคบกว่า (6px) ตั้งแต่สมัยที่สเกลสองสีไม่เท่ากัน ตอนนี้สเกลเดียวกันแล้ว
+   และรูปตัวอย่างที่เขาส่งมาเป็นแท่งคู่กว้างเท่ากัน จึงให้เท่ากัน */
+.bar.bmark{flex:0 0 14px;width:14px}
+.bnum{position:absolute;right:auto;left:50%;bottom:100%;margin-bottom:3px;
+  font-size:9px;line-height:1;transform:translateX(-58%)}
+.bar.o .bnum{transform:translateX(-42%)}
+.bpair.one .bnum{transform:translateX(-50%)}
+.bnum.i{bottom:100%;color:var(--in);font-weight:500}
+.bnum.o{bottom:100%;color:var(--ink2)}
+.bcol.sel .bnum{color:var(--ink);font-weight:600}
+.blab{font-size:11px}
+
+/* ---------- โลโก้: หมูสูบซิการ์ ทับอักษร 妃 ที่เป็นพื้นหลังใหญ่เต็มกรอบ ----------
+   ใช้ <text> ไม่ใช่ path เพราะรูปทรงตัวอักษรต้องถูกต้องจริง และแอปนี้ใช้เครื่องเดียว
+   ซึ่งพิสูจน์แล้วตั้งแต่ Ver.14 ว่าเรนเดอร์ 妃 ได้
+   หัวหมูกับซิการ์ถูก "เจาะ" ด้วยสีพื้นไทล์ก่อน ตัวอักษรจึงไม่วิ่งทับหน้าหมูจนรก */
+.mkicon{width:94%;height:94%}
+.first .mkicon{width:90%;height:90%}
+.mkfei{font-size:33px;opacity:.22;fill:var(--on-fill)}
+.mkcut{color:var(--fill)}
+.mkband{stroke:var(--fill)}
+.mksmk{opacity:.75}
+.mkember{fill:#FFC46B}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -735,7 +786,7 @@ body.dark .first{background:#141726}
 
 <header class="top">
   <div class="trow">
-    <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><text class="mkfei" x="35" y="37" text-anchor="end">妃</text><g class="mkpig" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g></svg></span>
+    <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><text class="mkfei" x="20" y="20.5" text-anchor="middle" dominant-baseline="central">妃</text><g class="mkcut"><path fill="currentColor" transform="translate(-1.2 -1) scale(0.92)" d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><path stroke="currentColor" stroke-width="6.6" stroke-linecap="round" d="M21 21.6 34 26.5"/></g><g class="mkpig" stroke="currentColor" stroke-width="2.07" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-1.2 -1) scale(0.92)"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g><path stroke-width="3.2" d="M21 21.6 34 26.5"/><path class="mkband" stroke-width="1.15" stroke-linecap="butt" d="M26.75 22.05 25.6 25.15"/><path class="mksmk" stroke-width="1.6" d="M35.6 25.3c1.7-1.4.3-2.8 1.8-4.2"/></g><circle class="mkember" cx="34" cy="26.5" r="1.75"/></svg></span>
     <span class="brand"><b>มุ่ยเฟย</b><i>บัญชีรับ-จ่ายในบ้าน</i></span>
     <button class="bk tap" id="bkChip" onclick="openBackup()">สำรองข้อมูล</button>
   </div>
@@ -837,7 +888,7 @@ body.dark .first{background:#141726}
 </div>
 
 <div class="first hide" id="first">
-  <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><text class="mkfei" x="35" y="37" text-anchor="end">妃</text><g class="mkpig" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g></svg></span>
+  <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><text class="mkfei" x="20" y="20.5" text-anchor="middle" dominant-baseline="central">妃</text><g class="mkcut"><path fill="currentColor" transform="translate(-1.2 -1) scale(0.92)" d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><path stroke="currentColor" stroke-width="6.6" stroke-linecap="round" d="M21 21.6 34 26.5"/></g><g class="mkpig" stroke="currentColor" stroke-width="2.07" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-1.2 -1) scale(0.92)"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g><path stroke-width="3.2" d="M21 21.6 34 26.5"/><path class="mkband" stroke-width="1.15" stroke-linecap="butt" d="M26.75 22.05 25.6 25.15"/><path class="mksmk" stroke-width="1.6" d="M35.6 25.3c1.7-1.4.3-2.8 1.8-4.2"/></g><circle class="mkember" cx="34" cy="26.5" r="1.75"/></svg></span>
   <h1>ตอนนี้มีเงินอยู่เท่าไหร่</h1>
   <p>ใส่ครั้งเดียว แล้วมุ่ยเฟยจะบวกลบให้เองจากที่จดต่อจากนี้</p>
   <div class="money filled"><span class="cur">฿</span>
@@ -1131,14 +1182,14 @@ function streakDays(){
 }
 
 /* ================= กราฟ ================= */
-var chRange='day14',chShow='both',chSel=-1;
+var chRange='day7',chShow='both',chSel=-1;   /* Ver.15: 7 วัน ไม่ใช่ 14 — คอลัมน์กว้างขึ้นเท่าตัว ตัวเลขบนหัวแท่งจึงวางแนวนอนได้ */
 function buildChart(){
   var out=[],n,i,d,k,g={};
   D.entries.forEach(function(e){
     if(!g[e.date])g[e.date]={'in':0,out:0};
     g[e.date][e.type]+=e.amount;});
-  if(chRange==='day14'){
-    n=14;
+  if(chRange==='day7'){
+    n=7;
     for(i=n-1;i>=0;i--){d=new Date();d.setDate(d.getDate()-i);k=dkey(d);
       out.push({lab:d.getDate()+'',full:thDate(k),'in':(g[k]?g[k]['in']:0),out:(g[k]?g[k].out:0)});}
   }else if(chRange==='wk8'){
@@ -1160,7 +1211,7 @@ function buildChart(){
 }
 function renderChart(){
   var data=buildChart();
-  var rc=[['day14','รายวัน'],['wk8','รายสัปดาห์'],['mo6','รายเดือน']];
+  var rc=[['day7','รายวัน'],['wk8','รายสัปดาห์'],['mo6','รายเดือน']];
   var sc=[['both','รับ-จ่าย'],['in','เฉพาะรับ'],['out','เฉพาะจ่าย']];
   document.getElementById('chSel2').innerHTML=
     mselHtml('range',chRange,rc,'setRange')+mselHtml('show',chShow,sc,'setShow');
@@ -1183,23 +1234,43 @@ function renderChart(){
        วันไหนรับมากกว่าจ่าย เลขแดงจึงหายไปเฉยๆ
        ลองยัดสองเลขไว้ในป้ายเดียวแล้วป้ายยาวเกิน ไปชนป้ายของคอลัมน์ข้างๆ
        จึงแยกเป็นสองบรรทัดเฉียงขนานกัน ล่าง=จ่าย บน=รับ แต่ละบรรทัดมีเลขเดียวต่อคอลัมน์ */
+    /* Ver.15: ตัวเลขไม่ได้อยู่ในแถบตำแหน่งคงที่ด้านบนอีกแล้ว แต่ฝังอยู่ในตัวแท่ง
+       และเกาะขอบบนของแท่งด้วย bottom:100% จึงเลื่อนขึ้นลงตามความสูงจริงเสมอ */
     var nIn='',nOut='';
     if(chShow==='in')nIn=d['in']?fmtK(d['in']):'';
     else if(chShow==='out')nOut=d.out?fmtK(d.out):'';
     else{nIn=d['in']?fmtK(d['in']):'';nOut=d.out?fmtK(d.out):'';}
-    num='<span class="bnum i">'+nIn+'</span><span class="bnum o">'+nOut+'</span>';
     h+='<div class="bcol'+(chSel===i?' sel':'')+'" onclick="pickBar('+i+')">'
-     +'<div class="numwrap">'+num+'</div><div class="bpair">';
-    if(chShow!=='out')h+='<div class="bar i'+(d['in']?'':' z')+(chShow==='both'?' bmark':'')+'" data-h="'+bi+'"></div>';
-    if(chShow!=='in')h+='<div class="bar o'+(d.out?'':' z')+'" data-h="'+bo+'"></div>';
+     +'<div class="bpair'+(chShow==='both'?'':' one')+'">';
+    if(chShow!=='out')h+='<div class="bar i'+(d['in']?'':' z')+(chShow==='both'?' bmark':'')+'" data-h="'+bi+'"><span class="bnum i">'+nIn+'</span></div>';
+    if(chShow!=='in')h+='<div class="bar o'+(d.out?'':' z')+'" data-h="'+bo+'"><span class="bnum o">'+nOut+'</span></div>';
     h+='</div><div class="blab">'+esc(d.lab)+'</div></div>';});
   var bx=document.getElementById('bars');bx.innerHTML=h;
   window._chData=data;
   requestAnimationFrame(function(){
     var bs=bx.querySelectorAll('.bar');
-    for(var i=0;i<bs.length;i++)if(!bs[i].classList.contains('z'))bs[i].style.height=bs[i].getAttribute('data-h')+'%';});
-  document.getElementById('chSub').textContent=chRange==='day14'?'14 วันล่าสุด':(chRange==='wk8'?'8 สัปดาห์ล่าสุด':'6 เดือนล่าสุด');
+    for(var i=0;i<bs.length;i++)if(!bs[i].classList.contains('z'))bs[i].style.height=bs[i].getAttribute('data-h')+'%';
+    deColide(bx);});
+  document.getElementById('chSub').textContent=chRange==='day7'?'7 วันล่าสุด':(chRange==='wk8'?'8 สัปดาห์ล่าสุด':'6 เดือนล่าสุด');
   drawReadout();
+}
+/* Ver.15: ป้ายสองใบในคอลัมน์เดียวกันจะทับกันเฉพาะตอนแท่งสูงพอๆ กัน
+   (คนละที่กันอยู่แล้วถ้าแท่งสูงต่างกัน) จึงยกเฉพาะใบที่อยู่บนกว่าให้ห่างกันอย่างน้อย 11px
+   ไม่ดันใบล่างลง เพราะมันจะไปทับตัวแท่งจนอ่านไม่ออก */
+function deColide(bx){
+  var cols=bx.querySelectorAll('.bcol'),GAP=11;
+  for(var i=0;i<cols.length;i++){
+    var bi=cols[i].querySelector('.bar.i'),bo=cols[i].querySelector('.bar.o');
+    if(!bi||!bo)continue;
+    var ni=bi.querySelector('.bnum'),no=bo.querySelector('.bnum');
+    if(!ni||!no)continue;
+    ni.style.marginBottom='';no.style.marginBottom='';
+    if(!ni.textContent||!no.textContent)continue;
+    var d=bi.offsetHeight-bo.offsetHeight;
+    if(Math.abs(d)>=GAP)continue;
+    var lift=GAP-Math.abs(d);
+    (d>=0?ni:no).style.marginBottom=(3+lift)+'px';
+  }
 }
 function drawReadout(){
   var el=document.getElementById('readout'),d=chSel>=0?window._chData[chSel]:null;
@@ -1942,7 +2013,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.14 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.15 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
