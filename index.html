@@ -10,7 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.18 — พื้นไล่เฉดชุดเดิม + การ์ดไม่มีเส้นขอบ + หน้าสรุปรายวัน/รายเดือน
+   Muifei  Ver.19 — หน้าเคลื่อนไหว (ตารางเดินยอด ลอกจากแอปร้านหอม)
+   (Ver.18 เดิม: พื้นไล่เฉดชุดเดิม + การ์ดไม่มีเส้นขอบ)
    (Ver.17 เดิม: ฟอนต์ LINE Seed + โลโก้หมูคาบซิการ์ + กราฟ 7 วัน + พื้นโทน Sofascore)
    (Ver.14 เดิม: โลโก้หมู-เฟย + การ์ดเงินแบบบัตร + กราฟรับ-จ่ายวิ่งไล่ + เมนู + ไล่โผล่
    กติกาที่ยกมาจากงาน Onion ที่ผ่านการแก้มาหลายรอบแล้ว
@@ -902,7 +903,7 @@ body.dark{
 <style id="skin18">
 /* ============================================================
    Ver.18 — พื้นหลังไล่เฉดชุดเดิมกลับมา · การ์ดไม่มีเส้นขอบ กลับไปใช้เงาจริง
-   · ดรอปดาวน์ยาวเต็มแถวเหลือแค่ความกว้างของคำ · หน้าสรุปรายวัน/รายเดือน
+   · ดรอปดาวน์ยาวเต็มแถวเหลือแค่ความกว้างของคำ
    ลบทั้งบล็อกนี้แล้วหน้าตาจะกลับไปเป็น Ver.17 (ยกเว้นหน้าสรุปกับแถบล่าง ซึ่งแก้ที่มาร์กอัป)
    ============================================================ */
 
@@ -954,60 +955,70 @@ body.dark{
 .selrow .mselb{width:auto;min-width:98px}
 .selrow .mselm{left:0;right:auto;width:max-content;min-width:100%;max-width:230px}
 
-/* ---------- (4) หน้าสรุป ---------- */
-#page-sum .mnav .mt{display:flex;align-items:center;gap:7px;height:38px;padding:0 14px;
-  border-radius:12px;background:var(--glass);box-shadow:var(--sh1)}
-.sgcar{font-size:11px;color:var(--ink3)}
-.sgcal{padding:6px 8px 10px}
-.sghd{padding:14px 16px 12px}
-.sgstats{display:flex;gap:8px}
-.sgst{flex:1;min-width:0}
-.sgk{font-size:11px;color:var(--ink3);margin-bottom:1px}
-.sgv{font-size:17px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
-.sgv.i{color:var(--in)}
-.sgv.o{color:var(--out)}
-.sgfoot{margin-top:11px;padding-top:9px;border-top:1px solid var(--line);
-  font-size:11.5px;color:var(--ink3)}
-.sgfoot b{color:var(--ink2);font-weight:600}
+/* หมายเหตุ: CSS ของหน้า "สรุป" ที่เคยอยู่ตรงนี้ถูกถอดออกใน Ver.19
+   หน้านั้นถูกแทนด้วยหน้า "เคลื่อนไหว" ซึ่งมี CSS อยู่ใน skin19 ด้านล่าง */
+</style>
+<style id="skin19">
+/* ============================================================
+   Ver.19 — หน้า "เคลื่อนไหว" ลอกจากหน้าเคลื่อนไหวของแอปร้านหอม (Onion Ver.295)
+   ตารางเดินยอด: ยอดยกมา → แถวเรียงเก่าไปใหม่ → รวมท้ายตาราง หัวคอลัมน์ตรึง แถวสลับสี
+   ============================================================ */
 
-.sgc{background:var(--glass);border-radius:var(--r-tile);box-shadow:var(--sh2);
-  margin-bottom:10px;overflow:hidden}
-.sgtop{display:block;width:100%;text-align:left;padding:12px 14px 10px}
-.sgtop:active{background:var(--card2)}
-.sgrow1{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-.sgnm{font-size:13.5px;font-weight:600;color:var(--ink);
+/* ---------- การ์ดตัวกรอง ---------- */
+.mvf{padding:12px}
+.mvdates{display:flex;gap:8px;margin-bottom:9px}
+.mvdb{flex:1;min-width:0;height:38px;border-radius:12px;background:var(--glass);
+  border:1px solid var(--line2);box-shadow:var(--sh1);color:var(--ink2);
+  font-size:12.5px;display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:transform .12s var(--ez)}
+.mvdb b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.mvdb:active{transform:scale(.97)}
+.mvdb.on{border-color:var(--accent);color:var(--fill)}
+.mvq{margin-bottom:9px;gap:7px}
+#mvCal .cal{margin-bottom:9px}
+
+/* ---------- ยอดยกมา + หัวคอลัมน์ (ตรึงไว้ตอนเลื่อน แบบ rep-filter-sticky ของ Onion) ---------- */
+.mvsticky{position:sticky;top:0;z-index:6;margin-top:10px}
+.mvcarry{display:flex;align-items:center;justify-content:flex-end;gap:7px;
+  background:var(--card2);border-radius:12px 12px 0 0;padding:7px 11px}
+.mvck{font-size:11.5px;color:var(--ink3)}
+.mvcv{font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.mvth{display:flex;align-items:center;gap:7px;padding:7px 11px;background:var(--tint);
+  border-bottom:1.5px solid var(--line2);font-size:10.5px;font-weight:600;color:var(--ink3)}
+.mvth .mvc-v.i{color:var(--in)}
+.mvth .mvc-v.o{color:var(--out)}
+
+/* ---------- ตัวตาราง ---------- */
+.mvtbl{background:var(--glass);border-radius:0 0 var(--r-tile) var(--r-tile);
+  overflow:hidden;box-shadow:var(--sh2)}
+.mvr{display:flex;align-items:center;gap:7px;padding:8px 11px;
+  border-top:1px solid var(--line);width:100%;text-align:left;background:transparent}
+.mvr.alt{background:var(--card2)}
+.mvr[data-id]:active{background:var(--tint)}
+.mvr.armed{background:var(--tint);box-shadow:inset 3px 0 0 var(--fill)}
+.mvr.tot{background:var(--card2);border-top:2px solid var(--line2);padding:10px 11px}
+.mvc-d{flex:0 0 58px;min-width:0;font-size:11.5px;color:var(--ink2);line-height:1.25}
+.mvc-d b{display:block;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.mvc-d i{display:block;font-style:normal;font-size:9.5px;color:var(--ink3);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sgbig{font-size:19px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;
-  font-variant-numeric:tabular-nums}
-.sgbig.i{color:var(--in)}
-.sgbig.o{color:var(--out)}
-/* แถบสองเส้น เทียบกับวัน/เดือนที่ยอดสูงสุดในช่วงที่ดูอยู่ กวาดตาแล้วเห็นทันทีว่าอันไหนหนัก
-   บน = จ่าย ล่าง = รับ (จ่ายอยู่บนเพราะเป็นตัวที่เขาตั้งใจดู) */
-.sgbars{display:block;margin:9px 0 8px}
-.sgt{display:block;height:5px;border-radius:3px;background:var(--line);
-  overflow:hidden;margin-bottom:4px}
-.sgt:last-child{margin-bottom:0}
-.sgb{display:block;height:100%;border-radius:3px}
-.sgb.o{background:var(--out)}
-.sgb.i{background:var(--in)}
-.sgrow2{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink3)}
-.sgsub{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sgsub .i{color:var(--in)}
-.sgnet{white-space:nowrap;font-variant-numeric:tabular-nums}
-.sgnet b{font-weight:600}
-.sgnet b.i{color:var(--in)}
-.sgnet b.o{color:var(--out)}
-.sgar{flex:0 0 16px;text-align:center;font-size:10px;color:var(--ink3);
-  display:inline-block;transition:transform .2s var(--ez)}
-.sgc.open .sgar{transform:rotate(180deg)}
-.sgdet{border-top:1px solid var(--line)}
-.sgd{display:flex;align-items:center;gap:10px;padding:9px 14px;font-size:12.5px}
-.sgd+.sgd{border-top:1px solid var(--line)}
-.sgdn{flex:1;min-width:0;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sgdv{flex:0 0 76px;text-align:right;font-weight:500;font-variant-numeric:tabular-nums}
-.sgdv.i{color:var(--in)}
-.sgdv.o{color:var(--out)}
-.sgbig,.sgv,.sgdv,.sgnet,.sgnm{font-family:'LINE Seed Sans TH','IBM Plex Sans Thai',-apple-system,"Segoe UI",sans-serif}
+.mvc-n{flex:1;min-width:0;font-size:11.5px;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mvr.tot .mvc-n{color:var(--ink2);font-weight:600}
+.mvc-v{flex:0 0 50px;text-align:right;font-size:11.5px;font-weight:500;
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.mvc-v.i{color:var(--in)}
+.mvc-v.o{color:var(--out)}
+/* ช่องที่ไม่มียอดใส่ขีด — ให้เป็นสีเทา ไม่ใช่เขียว/แดง ไม่งั้นขีดเปล่าอ่านเหมือนมีความหมาย */
+.mvc-v.z{color:var(--ink3);font-weight:400}
+.mvc-v.b{flex:0 0 56px;color:var(--ink);font-weight:600}
+/* จอแคบ (≤360px) ช่องชื่อรายการเหลือน้อยมาก บีบคอลัมน์ตัวเลขลงหนึ่งขั้น */
+@media (max-width:360px){
+  .mvc-d{flex:0 0 54px}
+  .mvc-v{flex:0 0 45px;font-size:11px}
+  .mvc-v.b{flex:0 0 52px}
+  .mvth{font-size:10px}
+}
+.mvcv,.mvc-d b,.mvc-v{font-family:'LINE Seed Sans TH','IBM Plex Sans Thai',-apple-system,"Segoe UI",sans-serif}
 </style>
 </head>
 <body>
@@ -1065,16 +1076,28 @@ body.dark{
   <div id="fullList"></div>
 </main>
 
-<main class="page off" id="page-sum">
-  <div class="mnav">
-    <button class="mb tap" onclick="sgShift(-1)" aria-label="ก่อนหน้า">‹</button>
-    <button class="mt tap" id="sgTitle" onclick="sgCalTog()">—</button>
-    <button class="mb tap" onclick="sgShift(1)" aria-label="ถัดไป">›</button>
+<main class="page off" id="page-mv">
+  <div class="card mvf">
+    <div class="mvdates">
+      <button class="mvdb" id="mvFromB" onclick="mvOpenCal('from')">จาก</button>
+      <button class="mvdb" id="mvToB" onclick="mvOpenCal('to')">ถึง</button>
+    </div>
+    <div id="mvCal"></div>
+    <div class="chiprow mvq">
+      <button class="chip sm" onclick="mvQuick('m')">เดือนนี้</button>
+      <button class="chip sm" onclick="mvQuick('d30')">30 วัน</button>
+      <button class="chip sm" onclick="mvQuick('all')">ทั้งหมด</button>
+    </div>
+    <div class="selrow" id="mvSel" style="margin-bottom:0"></div>
   </div>
-  <div id="sgCalBox"></div>
-  <div class="selrow" id="sgSel"></div>
-  <div id="sgHead"></div>
-  <div id="sgBody"></div>
+  <div class="mvsticky">
+    <div class="mvcarry" id="mvCarry"></div>
+    <div class="mvth" id="mvHead">
+      <span class="mvc-d">วันที่</span><span class="mvc-n">รายการ</span>
+      <span class="mvc-v i">รับ</span><span class="mvc-v o">จ่าย</span><span class="mvc-v b">คงเหลือ</span>
+    </div>
+  </div>
+  <div id="mvBody"></div>
 </main>
 
 <main class="page off" id="page-set">
@@ -1085,7 +1108,7 @@ body.dark{
   <button class="gn" id="tab-home" onclick="goTab('home')"><svg viewBox="0 0 24 24"><path d="M4 11.4 12 4.6l8 6.8"/><path d="M6.4 10.2V19a1 1 0 0 0 1 1h9.2a1 1 0 0 0 1-1v-8.8"/></svg><i>หน้าแรก</i></button>
   <button class="gn" id="tab-list" onclick="goTab('list')"><svg viewBox="0 0 24 24"><rect x="4" y="4.6" width="16" height="15" rx="3"/><path d="M8.2 9.4h7.6M8.2 13h7.6M8.2 16.4h4.4"/></svg><i>รายการ</i></button>
   <button class="gplus" id="fab" onclick="toggleDial()" aria-label="จดรายการ"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
-  <button class="gn" id="tab-sum" onclick="goTab('sum')"><svg viewBox="0 0 24 24"><rect x="3.6" y="4.6" width="16.8" height="15" rx="3"/><path d="M3.6 9.2h16.8M9 9.2v10.4"/><path d="M12.4 12.6h4.6M12.4 16h3"/></svg><i>สรุป</i></button>
+  <button class="gn" id="tab-mv" onclick="goTab('mv')"><svg viewBox="0 0 24 24"><rect x="3.6" y="4.6" width="16.8" height="15" rx="3"/><path d="M3.6 9.2h16.8M9 9.2v10.4"/><path d="M12.4 12.6h4.6M12.4 16h3"/></svg><i>เคลื่อนไหว</i></button>
   <button class="gn" id="tab-set" onclick="goTab('set')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M12 3.6v2.2M12 18.2v2.2M4.6 12h2.2M17.2 12h2.2M6.8 6.8l1.6 1.6M15.6 15.6l1.6 1.6M17.2 6.8l-1.6 1.6M8.4 15.6l-1.6 1.6"/></svg><i>ตั้งค่า</i></button>
 </nav>
 
@@ -1660,7 +1683,7 @@ var curType='';      /* Ver.12: '' | 'in' | 'out' — ฟิลเตอร์�
 function goTab(t){
   curTab=t;closeDial();
   document.body.setAttribute('data-tab',t);   /* Ver.10: วอลเปเปอร์คนละชุดต่อหน้า */
-  ['home','list','sum','set'].forEach(function(x){
+  ['home','list','mv','set'].forEach(function(x){
     document.getElementById('page-'+x).classList.toggle('off',x!==t);
     document.getElementById('tab-'+x).classList.toggle('on',x===t);});
   window.scrollTo(0,0);render();
@@ -1671,7 +1694,7 @@ function render(){
      ตัวฟังก์ชัน renderTrend/trendData ยังอยู่เฉยๆ เผื่ออยากได้กลับ — ใส่การ์ดคืนแล้วเรียกตรงนี้ */
   if(curTab==='home'){renderHome();renderChart();renderSummary();}
   if(curTab==='list')renderList();
-  if(curTab==='sum')renderSum();
+  if(curTab==='mv')renderMv();
   if(curTab==='set')renderSet();
 }
 function renderHome(){
@@ -1749,140 +1772,118 @@ function shiftMonth(d){
   if(m<1){m=12;y--;}if(m>12){m=1;y++;}
   curMonth=y+'-'+String(m).padStart(2,'0');curFilter='';renderList();buzz(8);
 }
-/* ================= หน้าสรุป: รายวัน / รายเดือน (Ver.18) =================
-   โจทย์ของเขาคือ "แต่ละวันจ่ายไปเท่าไหร่ แบบรวมของวันนั้น" ตัวเลขใหญ่บนการ์ดจึงเป็น
-   ยอดจ่ายรวมของวันนั้นเสมอ (สีแดง) ส่วนยอดรับกับสุทธิเป็นบรรทัดรอง
-   - รายวัน = ไล่ทีละวันในเดือนที่เลือก · รายเดือน = ไล่ทีละเดือนในปีที่เลือก
-   - แถบสองเส้นใต้หัวการ์ดเทียบกับ "วันที่มากที่สุดในช่วงนี้" จึงกวาดตาเห็นทันทีว่าวันไหนหนัก
-   - แตะหัวการ์ด = กางดูรายการของวันนั้น (รายเดือนกางเป็นยอดรวมรายวัน)
-   - แตะชื่อเดือนบนสุด = กางปฏิทินไปเลือกวันที่ต้องการดูตรงๆ (ใช้ calGrid ตัวเดิม)
-   วันที่ไม่มีรายการจะไม่ขึ้นการ์ด — ไม่งั้นเดือนหนึ่งมีการ์ดเปล่า 20 ใบ */
-var sgMode='day',sgType='',sgYM=monthOf(today()),sgYear=new Date().getFullYear(),sgOpen={},sgCal=false;
-function sgSetMode(m){sgMode=m;sgOpen={};sgCal=false;renderSum();buzz(8);}
-function sgSetType(t){sgType=(t==='all'?'':t);renderSum();buzz(8);}
-function sgShift(d){
-  if(sgMode==='day')sgYM=shiftYM(sgYM,d);else sgYear+=d;
-  sgOpen={};renderSum();buzz(8);
+/* ================= หน้าเคลื่อนไหว (Ver.19) =================
+   ลอกโครงมาจากหน้า "เคลื่อนไหว" ของแอปร้านหอม (Onion Ver.295, ฟังก์ชัน renderTimeline)
+   ของเขาเป็นตารางเดินยอด: ยอดยกมา → แถวรายการเรียงเก่าไปใหม่ → คอลัมน์ วันที่/รายการ/รับ/จ่าย/คงเหลือ
+   → แถวรวมท้ายตาราง หัวคอลัมน์ตรึงไว้ แถวสลับสีอ่อน-เข้ม แตะแถวเพื่อเปิดแก้ไข
+   ที่ต่างจากของเขา 3 อย่าง เพราะแอปนี้ไม่เหมือนกัน:
+   1. แอปนี้มี "เงินตั้งต้น" อยู่จริง ยอดยกมาจึงบวกเงินตั้งต้นเข้าไปด้วยตอนไม่ได้กรองชนิด
+      คงเหลือแถวสุดท้ายจึงตรงกับเลขใหญ่บนหน้าแรกเป๊ะๆ (ตรวจแล้วในเทสต์)
+   2. เพิ่มโหมด "รวมรายวัน" เป็นค่าเริ่มต้น = หนึ่งวันหนึ่งแถว ตามที่เขาเขียนในโน้ต
+      (1/1/2025 · รับ 500 · จ่าย 200 · คงเหลือ 300) ส่วน "แยกรายตัว" คือแบบเดียวกับ Onion เป๊ะ
+   3. เลือกช่วงวันด้วยปฏิทินกางในที่ (calGrid) ไม่ใช่ input type=date แบบเขา
+      เพราะแอปนี้ตกลงไว้ตั้งแต่ Ver.4 ว่าไม่เอาปฏิทินแบบ popup
+   หมายเหตุ: ถ้ากรองเฉพาะรับหรือเฉพาะจ่าย คอลัมน์คงเหลือจะเป็นยอดสะสมของเฉพาะที่กรองไว้
+   ไม่ใช่เงินในกระเป๋าจริง — Onion ก็คิดแบบเดียวกัน (carry คิดจากหมวดที่ติ๊กไว้เท่านั้น) */
+var mvMode='day',mvType='',mvFrom='',mvTo='',mvCalWhich='',mvCalYM='';
+function mvInit(){
+  if(mvFrom&&mvTo)return;
+  var t=today(),y=+t.slice(0,4),m=+t.slice(5,7);
+  mvFrom=t.slice(0,7)+'-01';
+  mvTo=t.slice(0,7)+'-'+String(new Date(y,m,0).getDate()).padStart(2,'0');
 }
-function sgCalTog(){if(sgMode!=='day')return;sgCal=!sgCal;renderSum();buzz(8);}
-function sgCalShift(d){sgYM=shiftYM(sgYM,d);sgOpen={};renderSum();}
-function sgPick(k){
-  sgYM=monthOf(k);sgCal=false;sgOpen={};sgOpen[k]=true;renderSum();buzz(8);
-  var el=document.querySelector('[data-sgk="'+k+'"]');
-  if(el)el.scrollIntoView({block:'center'});
-  else toast(thDate(k)+' ยังไม่มีรายการ','info');
+function mvSetMode(m){mvMode=m;renderMv();buzz(8);}
+function mvSetType(t){mvType=(t==='all'?'':t);renderMv();buzz(8);}
+function mvQuick(r){
+  var t=today(),d;
+  if(r==='m'){mvInit0();}
+  else if(r==='d30'){d=new Date();d.setDate(d.getDate()-29);mvFrom=dkey(d);mvTo=t;}
+  else{ /* ทั้งหมด: ตั้งแต่รายการแรกสุดที่มี */
+    var ks=D.entries.map(function(e){return e.date;}).sort();
+    mvFrom=ks.length?ks[0]:t;mvTo=t;}
+  mvCalWhich='';renderMv();buzz(8);
 }
-function sgTog(k){sgOpen[k]=!sgOpen[k];renderSum();buzz(8);}
-function sgGroups(){
-  var g={},keys=[],i,k;
-  if(sgMode==='day'){
-    D.entries.forEach(function(e){
-      if(monthOf(e.date)!==sgYM)return;
-      if(!g[e.date])g[e.date]={'in':0,out:0,n:0,list:[]};
-      g[e.date][e.type]+=e.amount;g[e.date].n++;g[e.date].list.push(e);});
-    var days=new Date(+sgYM.slice(0,4),+sgYM.slice(5,7),0).getDate();
-    for(i=days;i>=1;i--){k=sgYM+'-'+String(i).padStart(2,'0');if(g[k])keys.push(k);}
+function mvInit0(){
+  var t=today(),y=+t.slice(0,4),m=+t.slice(5,7);
+  mvFrom=t.slice(0,7)+'-01';
+  mvTo=t.slice(0,7)+'-'+String(new Date(y,m,0).getDate()).padStart(2,'0');
+}
+function mvOpenCal(w){
+  mvCalWhich=(mvCalWhich===w?'':w);
+  mvCalYM=monthOf(w==='from'?mvFrom:mvTo);
+  renderMv();buzz(8);
+}
+function mvCalShift(d){mvCalYM=shiftYM(mvCalYM,d);renderMv();}
+function mvPickDate(k){
+  if(mvCalWhich==='from'){mvFrom=k;if(k>mvTo)mvTo=k;}
+  else{mvTo=k;if(k<mvFrom)mvFrom=k;}
+  mvCalWhich='';renderMv();buzz(8);
+}
+function mvRows(){
+  /* คืน {carry, rows[], tIn, tOut} — rows เรียงเก่าไปใหม่ พร้อมยอดคงเหลือสะสมทีละแถว */
+  var noFilter=!mvType,carry=noFilter?D.opening:0,list=[],tIn=0,tOut=0;
+  D.entries.forEach(function(e){
+    if(mvType&&e.type!==mvType)return;
+    if(e.date<mvFrom){carry+=e.type==='in'?e.amount:-e.amount;return;}
+    if(e.date>mvTo)return;
+    list.push(e);});
+  list.sort(function(x,y){return x.date<y.date?-1:(x.date>y.date?1:(x.id<y.id?-1:1));});
+  var running=carry,rows=[];
+  if(mvMode==='day'){
+    var g={},keys=[];
+    list.forEach(function(e){
+      if(!g[e.date]){g[e.date]={'in':0,out:0,n:0};keys.push(e.date);}
+      g[e.date][e.type]+=e.amount;g[e.date].n++;});
+    keys.forEach(function(k){
+      var d=g[k];running+=d['in']-d.out;tIn+=d['in'];tOut+=d.out;
+      rows.push({date:k,lab:d.n+' รายการ',cat:'',in:d['in'],out:d.out,bal:running,id:''});});
   }else{
-    D.entries.forEach(function(e){
-      if(+e.date.slice(0,4)!==sgYear)return;
-      var mk=monthOf(e.date);
-      if(!g[mk])g[mk]={'in':0,out:0,n:0,list:[]};
-      g[mk][e.type]+=e.amount;g[mk].n++;g[mk].list.push(e);});
-    for(i=12;i>=1;i--){k=sgYear+'-'+String(i).padStart(2,'0');if(g[k])keys.push(k);}
+    list.forEach(function(e){
+      running+=e.type==='in'?e.amount:-e.amount;
+      if(e.type==='in')tIn+=e.amount;else tOut+=e.amount;
+      rows.push({date:e.date,lab:e.name,cat:e.cat,
+        in:e.type==='in'?e.amount:0,out:e.type==='out'?e.amount:0,bal:running,id:e.id});});
   }
-  if(sgType)keys=keys.filter(function(x){return g[x][sgType]>0;});
-  return {g:g,keys:keys};
+  return {carry:carry,rows:rows,tIn:tIn,tOut:tOut};
 }
-function renderSum(){
-  var y=+sgYM.slice(0,4),m=+sgYM.slice(5,7),unit=sgMode==='day'?'วัน':'เดือน';
-  document.getElementById('sgTitle').innerHTML=sgMode==='day'
-    ? MTH[m-1]+' '+(y+543)+'<span class="sgcar">'+(sgCal?'▴':'▾')+'</span>'
-    : 'ปี '+(sgYear+543);
-  document.getElementById('sgCalBox').innerHTML=(sgMode==='day'&&sgCal)
-    ? '<div class="card sgcal">'+calGrid(sgYM,'','sgPick','sgCalShift')+'</div>' : '';
-  document.getElementById('sgSel').innerHTML=
-     mselHtml('sgm',sgMode,[['day','รายวัน'],['month','รายเดือน']],'sgSetMode')
-    +mselHtml('sgt',sgType||'all',[['all','ทั้งหมด'],['in','เฉพาะรับ'],['out','เฉพาะจ่าย']],'sgSetType');
+function mvShort(k){var dt=parseKey(k);
+  return String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+String((dt.getFullYear()+543)%100);}
+function renderMv(){
+  mvInit();
+  document.getElementById('mvFromB').innerHTML='จาก <b>'+mvShort(mvFrom)+'</b>';
+  document.getElementById('mvToB').innerHTML='ถึง <b>'+mvShort(mvTo)+'</b>';
+  document.getElementById('mvFromB').classList.toggle('on',mvCalWhich==='from');
+  document.getElementById('mvToB').classList.toggle('on',mvCalWhich==='to');
+  document.getElementById('mvCal').innerHTML=mvCalWhich
+    ? calGrid(mvCalYM,mvCalWhich==='from'?mvFrom:mvTo,'mvPickDate','mvCalShift') : '';
+  document.getElementById('mvSel').innerHTML=
+     mselHtml('mvm',mvMode,[['day','รวมรายวัน'],['item','แยกรายตัว']],'mvSetMode')
+    +mselHtml('mvt',mvType||'all',[['all','ทั้งหมด'],['in','เฉพาะรับ'],['out','เฉพาะจ่าย']],'mvSetType');
 
-  var G=sgGroups(),g=G.g,keys=G.keys,tin=0,tout=0,tn=0,mx=1;
-  keys.forEach(function(k){tin+=g[k]['in'];tout+=g[k].out;tn+=g[k].n;
-    mx=Math.max(mx,g[k]['in'],g[k].out);});
-
-  var stats,foot,net=tin-tout;
-  if(!sgType){
-    stats='<div class="sgst"><div class="sgk">รับรวม</div><div class="sgv i">'+fmt(tin)+'</div></div>'
-        +'<div class="sgst"><div class="sgk">จ่ายรวม</div><div class="sgv o">'+fmt(tout)+'</div></div>'
-        +'<div class="sgst"><div class="sgk">สุทธิ</div><div class="sgv '+(net>=0?'i':'o')+'">'
-        +(net>=0?'+':'−')+fmt(Math.abs(net))+'</div></div>';
-    foot='จ่ายเฉลี่ย'+unit+'ละ <b>'+fmt(keys.length?Math.round(tout/keys.length):0)+'</b>'
-        +' · จาก '+keys.length+' '+unit+'ที่มีรายการ · '+tn+' รายการ';
-  }else{
-    var tv=sgType==='in'?tin:tout;
-    stats='<div class="sgst"><div class="sgk">'+(sgType==='in'?'รับรวม':'จ่ายรวม')+'</div>'
-        +'<div class="sgv '+(sgType==='in'?'i':'o')+'">'+fmt(tv)+'</div></div>'
-        +'<div class="sgst"><div class="sgk">เฉลี่ยต่อ'+unit+'</div><div class="sgv">'
-        +fmt(keys.length?Math.round(tv/keys.length):0)+'</div></div>'
-        +'<div class="sgst"><div class="sgk">'+unit+'ที่มีรายการ</div><div class="sgv">'+keys.length+'</div></div>';
-    foot=tn+' รายการ';
-  }
-  document.getElementById('sgHead').innerHTML=keys.length
-    ? '<div class="card sghd"><div class="sgstats">'+stats+'</div><div class="sgfoot">'+foot+'</div></div>' : '';
-
-  if(!keys.length){
-    document.getElementById('sgBody').innerHTML='<div class="card"><div class="empty">'
-     +(sgMode==='day'?'เดือนนี้':'ปีนี้')+'ยังไม่มีรายการ'+(sgType?'ตามที่กรองไว้':'')+'</div></div>';
+  var R=mvRows(),rows=R.rows,fin=R.carry+R.tIn-R.tOut;
+  document.getElementById('mvCarry').innerHTML=
+    '<span class="mvck">ยอดยกมา</span><span class="mvcv" style="color:'
+    +(R.carry>=0?'var(--in)':'var(--out)')+'">'+fmt(R.carry)+'</span>';
+  if(!rows.length){
+    document.getElementById('mvHead').style.display='none';
+    document.getElementById('mvBody').innerHTML='<div class="card"><div class="empty">ช่วงนี้ไม่มีรายการ</div></div>';
     return;
   }
-  var h='';
-  keys.forEach(function(k){
-    var d=g[k],op=!!sgOpen[k],dn=d['in']-d.out;
-    var lab=sgMode==='day'?thDate(k):MTH[+k.slice(5,7)-1]+' '+(+k.slice(0,4)+543);
-    var big=sgType==='in'?('+'+fmt(d['in'])):('−'+fmt(d.out));
-    var bigc=sgType==='in'?'i':'o';
-    var sub=sgType?(d.n+' รายการ')
-      :((d['in']?'<span class="i">รับ +'+fmt(d['in'])+'</span> · ':'')+d.n+' รายการ');
-    h+='<div class="sgc'+(op?' open':'')+'" data-sgk="'+k+'">'
-     +'<button class="sgtop" onclick="sgTog(\''+k+'\')">'
-     +'<span class="sgrow1"><span class="sgnm">'+esc(lab)+'</span>'
-     +'<span class="sgbig '+bigc+'">'+big+'</span></span>';
-    if(!sgType)h+='<span class="sgbars">'
-     +'<i class="sgt"><i class="sgb o" style="width:'+(d.out/mx*100).toFixed(1)+'%"></i></i>'
-     +'<i class="sgt"><i class="sgb i" style="width:'+(d['in']/mx*100).toFixed(1)+'%"></i></i></span>';
-    h+='<span class="sgrow2"><span class="sgsub">'+sub+'</span>'
-     +(sgType?'':'<span class="sgnet">สุทธิ <b class="'+(dn>=0?'i':'o')+'">'
-       +(dn>=0?'+':'−')+fmt(Math.abs(dn))+'</b></span>')
-     +'<span class="sgar">▾</span></span></button>';
-    if(op)h+='<div class="sgdet">'+sgDetail(d)+'</div>';
-    h+='</div>';
-  });
-  document.getElementById('sgBody').innerHTML=h;
-}
-function sgDetail(d){
-  var h='';
-  if(sgMode==='day'){
-    var list=sortEntries(d.list);
-    if(sgType)list=list.filter(function(e){return e.type===sgType;});
-    list.forEach(function(e){
-      var col=catColor(e.cat,e.type);
-      h+='<button class="line" data-id="'+esc(e.id)+'">'
-       +'<span class="ico" style="background:'+col+'1F;color:'+col+'">'+esc((e.cat||'?').trim().charAt(0))+'</span>'
-       +'<span class="nm"><span class="t1">'+esc(e.name)+'</span><span class="t2">'+esc(e.cat)+'</span></span>'
-       +'<span class="amt '+(e.type==='in'?'i':'o')+'">'+(e.type==='in'?'+':'−')+fmt(e.amount)+'</span></button>';});
-    return h||'<div class="empty" style="padding:12px">ไม่มีรายการ</div>';
-  }
-  /* โหมดรายเดือน: กางออกเป็นยอดรวมของแต่ละวันในเดือนนั้น ไม่ใช่รายการทีละใบ
-     (เดือนหนึ่งมีได้เป็นร้อยรายการ กางออกมาแล้วหาอะไรไม่เจอ) */
-  var by={};
-  d.list.forEach(function(e){if(!by[e.date])by[e.date]={'in':0,out:0};by[e.date][e.type]+=e.amount;});
-  var ks=Object.keys(by).sort().reverse();
-  ks.forEach(function(dk){
-    var r=by[dk];
-    if(sgType&&!r[sgType])return;
-    h+='<div class="sgd"><span class="sgdn">'+esc(thDate(dk))+'</span>'
-     +(sgType!=='in'?'<span class="sgdv o">'+(r.out?'−'+fmt(r.out):'—')+'</span>':'')
-     +(sgType!=='out'?'<span class="sgdv i">'+(r['in']?'+'+fmt(r['in']):'—')+'</span>':'')
+  document.getElementById('mvHead').style.display='';
+  var h='<div class="mvtbl">';
+  rows.forEach(function(r,i){
+    h+='<div class="mvr'+(i%2?' alt':'')+'"'+(r.id?' data-id="'+esc(r.id)+'"':'')+'>'
+     +'<span class="mvc-d"><b>'+mvShort(r.date)+'</b>'+(r.cat?'<i>'+esc(r.cat)+'</i>':'')+'</span>'
+     +'<span class="mvc-n">'+esc(r.lab)+'</span>'
+     +'<span class="mvc-v i'+(r['in']?'':' z')+'">'+(r['in']?fmt(r['in']):'—')+'</span>'
+     +'<span class="mvc-v o'+(r.out?'':' z')+'">'+(r.out?fmt(r.out):'—')+'</span>'
+     +'<span class="mvc-v b" style="color:'+(r.bal>=0?'var(--ink)':'var(--out)')+'">'+fmt(r.bal)+'</span>'
      +'</div>';});
-  return h||'<div class="empty" style="padding:12px">ไม่มีรายการ</div>';
+  h+='<div class="mvr tot"><span class="mvc-d"></span><span class="mvc-n">รวมทั้งหมด</span>'
+   +'<span class="mvc-v i">'+fmt(R.tIn)+'</span>'
+   +'<span class="mvc-v o">'+fmt(R.tOut)+'</span>'
+   +'<span class="mvc-v b" style="color:'+(fin>=0?'var(--in)':'var(--out)')+'">'+fmt(fin)+'</span></div>';
+  document.getElementById('mvBody').innerHTML=h+'</div>';
 }
 
 function dayHtml(list,showTot){
@@ -1913,7 +1914,7 @@ function renderBk(){
 var armKey=null,armEl=null,armT=null;
 function disarm(){if(armEl)armEl.classList.remove('armed');armEl=null;armKey=null;clearTimeout(armT);}
 document.addEventListener('click',function(ev){
-  var row=ev.target.closest?ev.target.closest('.line'):null;
+  var row=ev.target.closest?ev.target.closest('.line,.mvr[data-id]'):null;
   if(!row){disarm();return;}
   var id=row.getAttribute('data-id');
   if(armKey===id){disarm();openForm(id);return;}
@@ -2411,7 +2412,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.18 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.19 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
