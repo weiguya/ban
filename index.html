@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.19 — หน้าเคลื่อนไหว (ตารางเดินยอด ลอกจากแอปร้านหอม)
+   Muifei  Ver.20 — หน้าเคลื่อนไหว + ปฏิทินเป็นป๊อปอัปลอย (ลอกจากแอปร้านหอม)
    (Ver.18 เดิม: พื้นไล่เฉดชุดเดิม + การ์ดไม่มีเส้นขอบ)
    (Ver.17 เดิม: ฟอนต์ LINE Seed + โลโก้หมูคาบซิการ์ + กราฟ 7 วัน + พื้นโทน Sofascore)
    (Ver.14 เดิม: โลโก้หมู-เฟย + การ์ดเงินแบบบัตร + กราฟรับ-จ่ายวิ่งไล่ + เมนู + ไล่โผล่
@@ -965,7 +965,7 @@ body.dark{
    ============================================================ */
 
 /* ---------- การ์ดตัวกรอง ---------- */
-.mvf{padding:12px}
+.mvf{padding:12px;overflow:visible;position:relative;z-index:20}
 .mvdates{display:flex;gap:8px;margin-bottom:9px}
 .mvdb{flex:1;min-width:0;height:38px;border-radius:12px;background:var(--glass);
   border:1px solid var(--line2);box-shadow:var(--sh1);color:var(--ink2);
@@ -975,7 +975,31 @@ body.dark{
 .mvdb:active{transform:scale(.97)}
 .mvdb.on{border-color:var(--accent);color:var(--fill)}
 .mvq{margin-bottom:9px;gap:7px}
-#mvCal .cal{margin-bottom:9px}
+/* ---------- ปฏิทินย่อ (เฉพาะหน้านี้) ----------
+   วัดของเดิม: .cal-d เป็น aspect-ratio:1 พอการ์ดกว้าง ช่องก็สูงตาม = 47x47
+   ปฏิทินเลยสูง 370px และการ์ดตัวกรองทั้งใบ 525px กินเกินครึ่งจอ
+   ตรงนี้เลิกผูกความสูงกับความกว้าง ล็อกสูง 28px ต่อช่อง + ย่อหัวและระยะขอบ
+   แก้เฉพาะ #mvCal ไม่แตะปฏิทินในฟอร์มบันทึกรายการ ซึ่งขนาดเดิมพอดีอยู่แล้ว */
+/* ป๊อปอัปลอย ไม่ดันของข้างล่าง — แบบเดียวกับปฏิทินของแอปร้านหอม
+   ของเดิมเป็น element ในสายการไหลปกติ พอกางออกมันดันชิป ดรอปดาวน์ และตารางทั้งหมดลงไป 250px
+   คราวนี้ absolute ออกนอกสายการไหล ลอยทับเนื้อหาแทน ตำแหน่งเกาะใต้ปุ่ม จาก/ถึง
+   .mvf ต้องไม่ overflow:hidden ไม่งั้นโดนตัด และต้อง z-index สูงกว่า .mvsticky (6) */
+.mvdw{position:relative;z-index:30}
+/* ขนาดวัดมาจากรูปปฏิทินของแอปร้านหอมที่เขาส่งมา (ภาพ 1080px กว้าง = 412 css)
+   ระยะห่างระหว่างคอลัมน์ของเขา 104.7px = 39.9 css · ระหว่างแถว 99px = 37.8 css
+   ของเดิมผมทำไว้ 48.4 x 32.4 css คือกว้างเกินไป 21% และเตี้ยเกินไป
+   ตรงนี้เลยล็อกกรอบกว้าง 302px (7 x 40 + ขอบ) ช่องสูง 36 + ห่าง 2 = ระยะแถว 38 */
+#mvCal{position:absolute;top:100%;left:0;width:min(302px,100%);margin-top:6px;z-index:30}
+#mvCal.to{left:auto;right:0}
+#mvCal:empty{display:none}
+#mvCal .cal{margin:0;padding:11px;background:var(--card);box-shadow:var(--sh3);
+  border:1px solid var(--line2)}
+#mvCal .cal-h{margin-bottom:6px}
+#mvCal .cal-h button{width:28px;height:28px;border-radius:9px;font-size:14px}
+#mvCal .cal-h .cm{font-size:13.5px}
+#mvCal .cal-g{gap:2px}
+#mvCal .cal-g .wd{font-size:10px;padding:0 0 2px}
+#mvCal .cal-d{aspect-ratio:auto;height:36px;border-radius:9px;font-size:13.5px}
 
 /* ---------- ยอดยกมา + หัวคอลัมน์ (ตรึงไว้ตอนเลื่อน แบบ rep-filter-sticky ของ Onion) ---------- */
 .mvsticky{position:sticky;top:0;z-index:6;margin-top:10px}
@@ -1078,11 +1102,13 @@ body.dark{
 
 <main class="page off" id="page-mv">
   <div class="card mvf">
-    <div class="mvdates">
-      <button class="mvdb" id="mvFromB" onclick="mvOpenCal('from')">จาก</button>
-      <button class="mvdb" id="mvToB" onclick="mvOpenCal('to')">ถึง</button>
+    <div class="mvdw">
+      <div class="mvdates">
+        <button class="mvdb" id="mvFromB" onclick="mvOpenCal('from')">จาก</button>
+        <button class="mvdb" id="mvToB" onclick="mvOpenCal('to')">ถึง</button>
+      </div>
+      <div id="mvCal"></div>
     </div>
-    <div id="mvCal"></div>
     <div class="chiprow mvq">
       <button class="chip sm" onclick="mvQuick('m')">เดือนนี้</button>
       <button class="chip sm" onclick="mvQuick('d30')">30 วัน</button>
@@ -1586,6 +1612,19 @@ function mselCloseAll(){
   for(var i=0;i<a.length;i++)a[i].classList.remove('open');
 }
 document.addEventListener('click',function(){mselCloseAll();});
+/* Ver.20: ปฏิทินหน้าเคลื่อนไหวเป็นป๊อปอัปลอย ต้องปิดเมื่อแตะที่ว่างข้างนอก
+   สองเรื่องที่ต้องระวัง เจอมาแล้วทั้งคู่:
+   1. ต้องดักที่ capture phase (พารามิเตอร์ true) ไม่ใช่ bubble — เพราะ renderMv() เขียนทับ
+      innerHTML ของปุ่ม จาก/ถึง ถ้ารอ bubble ตัว ev.target (เช่น <b> ที่อยู่ในปุ่ม) จะหลุดจาก DOM
+      ไปแล้ว closest() คืน null ปฏิทินเลยปิดตัวเองทันทีที่เพิ่งกดเปิด
+   2. ปิดด้วย setTimeout ไม่ใช่ปิดตรงนั้นเลย เพื่อให้ onclick ของสิ่งที่กดทำงานจบก่อน
+      ไม่งั้นกดดรอปดาวน์ตอนปฏิทินเปิดอยู่ จะเสียคลิกแรกไปเปล่าๆ */
+document.addEventListener('click',function(ev){
+  if(!mvCalWhich)return;
+  var t=ev.target;
+  if(t.closest&&(t.closest('#mvCal')||t.closest('.mvdates')))return;
+  setTimeout(function(){mvCalWhich='';if(curTab==='mv')renderMv();},0);
+},true);
 
 function setRange(r){chRange=r;chSel=-1;renderChart();buzz(8);}
 function setShow(s){chShow=s;renderChart();buzz(8);}
@@ -1854,7 +1893,9 @@ function renderMv(){
   document.getElementById('mvToB').innerHTML='ถึง <b>'+mvShort(mvTo)+'</b>';
   document.getElementById('mvFromB').classList.toggle('on',mvCalWhich==='from');
   document.getElementById('mvToB').classList.toggle('on',mvCalWhich==='to');
-  document.getElementById('mvCal').innerHTML=mvCalWhich
+  var calEl=document.getElementById('mvCal');
+  calEl.className=(mvCalWhich==='to'?'to':'');   /* กดช่อง "ถึง" ป๊อปอัปเกาะขอบขวา ไม่ใช่ซ้าย */
+  calEl.innerHTML=mvCalWhich
     ? calGrid(mvCalYM,mvCalWhich==='from'?mvFrom:mvTo,'mvPickDate','mvCalShift') : '';
   document.getElementById('mvSel').innerHTML=
      mselHtml('mvm',mvMode,[['day','รวมรายวัน'],['item','แยกรายตัว']],'mvSetMode')
@@ -2412,7 +2453,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.19 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.20 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
