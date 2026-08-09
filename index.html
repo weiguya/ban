@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>มุ่ยเฟย</title>
+<title>Muifei</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   มุ่ยเฟย  Ver.15 — โลโก้หมูสูบซิการ์ + กราฟ 7 วัน + พื้นโทน Sofascore
+   Muifei  Ver.17 — ฟอนต์ LINE Seed + โลโก้หมูคาบซิการ์ + กราฟ 7 วัน + พื้นโทน Sofascore
    (Ver.14 เดิม: โลโก้หมู-เฟย + การ์ดเงินแบบบัตร + กราฟรับ-จ่ายวิ่งไล่ + เมนู + ไล่โผล่
    กติกาที่ยกมาจากงาน Onion ที่ผ่านการแก้มาหลายรอบแล้ว
    1. ไล่เฉดสีห้ามอยู่บนของที่กดได้  ปุ่ม/แท็บ/แถบ = สีทึบสีเดียว
@@ -86,8 +86,6 @@ button{background:none;border:0;padding:0;cursor:pointer}
    ถ้าเครื่องไหนไม่มีฟอนต์จีน ตัวอักษรจะไม่ขึ้น แต่หมูยังอยู่ครบ โลโก้จึงไม่พัง */
 .mark{overflow:hidden;position:relative}
 .mkicon{width:82%;height:82%;color:var(--on-fill);display:block}
-.mkfei{font-family:"Noto Serif SC","Noto Sans SC","Songti SC","SimSun",serif;
-  font-size:13px;fill:var(--on-fill);opacity:.6}
 .first .mkicon{width:78%;height:78%}
 .brand{min-width:0}
 .brand b{display:block;font-family:"Kanit",sans-serif;font-size:20px;font-weight:600;line-height:1.2;letter-spacing:-.015em}
@@ -773,7 +771,6 @@ body.dark, body.dark .wall{background:#141B24}
    หัวหมูกับซิการ์ถูก "เจาะ" ด้วยสีพื้นไทล์ก่อน ตัวอักษรจึงไม่วิ่งทับหน้าหมูจนรก */
 .mkicon{width:94%;height:94%}
 .first .mkicon{width:90%;height:90%}
-.mkfei{font-size:33px;opacity:.22;fill:var(--on-fill)}
 .mkcut{color:var(--fill)}
 .mkband{stroke:var(--fill)}
 .mkember{fill:#FFC46B}
@@ -798,6 +795,7 @@ body.dark, body.dark .wall{background:#141B24}
 /* ---------- (3) ตัวเลขบนแท่ง: ชิดหัวแท่งกว่าเดิม ----------
    ของ Ver.15 เว้น 3px แล้วมันลอย จึงเหลือ 1px และลดระยะกันชนจาก 11 เหลือ 10px */
 .bnum{margin-bottom:1px}
+.bnum.sm{font-size:8px;letter-spacing:-.01em}
 /* จอแคบ (≤345px) ช่องเหลือ 37px ป้าย 4 ตัวอักษรที่สแปลย์ออกด้านข้างจะยื่นไปชนป้ายของวันข้างๆ
    ตรงนั้นจึงเลิกสแปลย์ ให้แต่ละป้ายอยู่กลางแท่งตัวเอง แล้วปล่อยให้ deColide() จัดแนวตั้งแทน */
 @media (max-width:345px){
@@ -826,6 +824,80 @@ body.dark, body.dark .wall{background:#141B24}
 #filterChips .mselm{top:36px;left:auto;right:0;min-width:190px}
 #filterChips .mseli{display:flex;align-items:center;gap:7px}
 </style>
+<style id="skin17">
+/* ============================================================
+   Ver.17 — ฟอนต์ LINE Seed ทั้งแอป · แบรนด์เป็นอังกฤษ · เงาการ์ดเหลือเส้นขอบบางๆ
+   · ดรอปดาวน์พื้นขาวจัดกึ่งกลาง · โดนัทตัวเลขตรงคอลัมน์ · ตัดชิป ATM
+   ============================================================ */
+
+/* ---------- (8) ฟอนต์: LINE Seed Sans TH ----------
+   ไฟล์จาก lazywasabi/thai-web-fonts (ทาง jsDelivr) ซึ่งเป็นชุดที่คนไทยใช้กันแพร่หลาย
+   น้ำหนักที่มีจริงคือ 100/400/700/800/900 — **ไม่มี 500 กับ 600** ที่แอปนี้ใช้เยอะ
+   จึงประกาศ 500 ให้ชี้ไฟล์ Regular และ 600 ให้ชี้ไฟล์ Bold ไว้เอง
+   ถ้าไม่ประกาศ เบราว์เซอร์จะเดาเอง (500→400, 600→700) ซึ่งได้ผลเดียวกันแต่ไม่แน่นอนข้ามเครื่อง */
+@font-face{font-family:'LINE Seed Sans TH';font-weight:100;font-style:normal;font-display:swap;
+  src:url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/LINESeedSansTH/LINESeedSansTH-Thin.woff2') format('woff2')}
+@font-face{font-family:'LINE Seed Sans TH';font-weight:400;font-style:normal;font-display:swap;
+  src:url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/LINESeedSansTH/LINESeedSansTH-Regular.woff2') format('woff2')}
+@font-face{font-family:'LINE Seed Sans TH';font-weight:500;font-style:normal;font-display:swap;
+  src:url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/LINESeedSansTH/LINESeedSansTH-Regular.woff2') format('woff2')}
+@font-face{font-family:'LINE Seed Sans TH';font-weight:600;font-style:normal;font-display:swap;
+  src:url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/LINESeedSansTH/LINESeedSansTH-Bold.woff2') format('woff2')}
+@font-face{font-family:'LINE Seed Sans TH';font-weight:700;font-style:normal;font-display:swap;
+  src:url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/LINESeedSansTH/LINESeedSansTH-Bold.woff2') format('woff2')}
+@font-face{font-family:'LINE Seed Sans TH';font-weight:800;font-style:normal;font-display:swap;
+  src:url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/LINESeedSansTH/LINESeedSansTH-ExtraBold.woff2') format('woff2')}
+/* ตัวหนังสือทั้งแอปเคยมีสองฟอนต์: IBM Plex Sans Thai เป็นตัวเนื้อ กับ Kanit เฉพาะตัวเลข/หัวข้อ
+   ทั้งสองถูกแทนด้วย LINE Seed หมด รายชื่อด้านล่างคือทุกจุดที่ฐานฮาร์ดโค้ด Kanit ไว้ (27 จุด)
+   ไล่ทีละตัวแทนที่จะใช้ !important เพราะจะได้รู้ว่ามันไปโดนอะไรบ้างจริงๆ */
+body,button,input,select,textarea,
+.num,.mark span,.brand b,.tv,.hero .amt,.bnum,.readout .rv,.headline .big,.donut .m2,
+.cpc,.cam,.dayhd .dn,.ico,.amt,.mnav .mt,.ftot .v,.money .cur,.money input,.heard,
+.brow .bi,.brow .bv,.bask-f .v,.prev-nm,.prev-amt,.cal-h .cm,.cal-d,.qp input,.first h1,
+.trfoot .now{font-family:'LINE Seed Sans TH','IBM Plex Sans Thai',-apple-system,"Segoe UI",sans-serif}
+
+/* ---------- (3) เงาใต้กรอบ: เลือกวิธี "ลดจนไม่เหลือเงา" ----------
+   ไม่ได้ตัดทิ้งเฉยๆ เพราะพื้น #EDF0F5 ต่างจากการ์ดขาวแค่ 1.14 เท่า การ์ดจะหายไปกับพื้น
+   เปลี่ยนเป็น spread 1px blur 0 แทน = ได้เส้นขอบบางๆ รอบการ์ด ไม่มีเงาทิ้งลงข้างล่างเลย
+   ของที่ "ลอย" อยู่จริง (ชีต ปุ่มวงกลม แถบล่าง) ยังมีเงาอยู่แต่เบาลง เพราะมันต้องอ่านว่าอยู่เหนือหน้า */
+:root{
+  --sh1:0 0 0 1px rgba(23,26,34,.05);
+  --sh2:0 0 0 1px rgba(23,26,34,.07);
+  --sh3:0 6px 18px -10px rgba(23,26,34,.30);
+}
+body.dark{
+  --sh1:0 0 0 1px rgba(255,255,255,.06);
+  --sh2:0 0 0 1px rgba(255,255,255,.08);
+  --sh3:0 6px 18px -10px rgba(0,0,0,.75);
+}
+.gnav{box-shadow:0 -1px 0 rgba(23,26,34,.06)}
+.gplus{box-shadow:0 3px 10px -4px rgba(27,127,192,.5)}
+.mark{box-shadow:none}
+.dial .db{box-shadow:0 4px 12px -6px rgba(23,26,34,.5)}
+
+/* โลโก้: แถบคาดซิการ์เดิมใช้สีพื้นไทล์ พอซิการ์หนาขึ้นมันอ่านเป็น "รอยขาด" ไม่ใช่แถบคาด
+   เปลี่ยนเป็นสีน้ำตาลจริง คู่กับจุดไฟส้ม ซิการ์จึงอ่านออกทันทีแม้ที่ 36px */
+.mkband{stroke:#8A5A28}
+
+/* ---------- (7) ตัดชิป ATM บนการ์ดเงิน ---------- */
+.hero::after{display:none}
+
+/* ---------- (9) ดรอปดาวน์: พื้นขาว ตัวอักษรกึ่งกลาง ----------
+   ของเดิมพื้นเป็น --card2 (#F6F8FA) ซึ่งเกือบเท่าสีพื้นหน้า ปุ่มจึงจมหายไปกับแบคกราวน์
+   ลูกศรถูกถอดออกจากโฟลว์ไปเกาะขวา ตัวหนังสือจึงกึ่งกลางของปุ่มจริงๆ ไม่ใช่กึ่งกลางของที่ว่างที่เหลือ */
+.mselb{background:var(--glass);border-color:var(--line2);position:relative;
+  justify-content:center;padding:0 28px}
+.mselb svg{position:absolute;right:10px;top:50%;margin-top:-6px}
+.mseli{text-align:center}
+#filterChips .mseli{justify-content:center}
+
+/* ---------- (5) โดนัท: ยอดกับเปอร์เซ็นต์เป็นคอลัมน์ชิดขวา ---------- */
+.crow{gap:7px}
+.cnm{flex:1 1 auto}
+.cam{flex:0 0 62px;text-align:right;font-size:12.5px;color:var(--ink);font-variant-numeric:tabular-nums}
+.cpc{flex:0 0 34px;text-align:right;font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.donutwrap{gap:13px}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -833,8 +905,8 @@ body.dark, body.dark .wall{background:#141B24}
 
 <header class="top">
   <div class="trow">
-    <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><text class="mkfei" x="20" y="20.5" text-anchor="middle" dominant-baseline="central">妃</text><g class="mkcut"><path fill="currentColor" transform="translate(-4.2 -3.5) scale(1.06)" d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><path stroke="currentColor" stroke-width="6.8" stroke-linecap="butt" d="M23 23.6 36.5 27.8"/></g><g class="mkpig" stroke="currentColor" stroke-width="2.07" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-4.2 -3.5) scale(1.06)"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g><path stroke-width="3.4" d="M23 23.6 36.5 27.8"/><path class="mkband" stroke-width="1.2" stroke-linecap="butt" d="M28.24 23.38 27.16 26.82"/></g><circle class="mkember" cx="36.5" cy="27.8" r="1.85"/></svg></span>
-    <span class="brand"><b>มุ่ยเฟย</b><i>บัญชีรับ-จ่ายในบ้าน</i></span>
+    <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g class="mkcut"><path fill="currentColor" transform="translate(-4.2 -3.5) scale(1.06)" d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><path stroke="currentColor" stroke-width="9" stroke-linecap="butt" d="M22.5 23.4 36.2 27.9"/></g><g class="mkpig" stroke="currentColor" stroke-width="2.07" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-4.2 -3.5) scale(1.06)"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g><path stroke-width="5" d="M22.5 23.4 36.2 27.9"/><path class="mkband" stroke-width="2.4" stroke-linecap="butt" d="M27.66 22.47 26.1 27.22"/></g><circle class="mkember" cx="36.2" cy="27.9" r="2.5"/></svg></span>
+    <span class="brand"><b>Muifei</b><i>บัญชีรับ-จ่ายในบ้าน</i></span>
     <button class="bk tap" id="bkChip" onclick="openBackup()">สำรองข้อมูล</button>
   </div>
 </header>
@@ -935,9 +1007,9 @@ body.dark, body.dark .wall{background:#141B24}
 </div>
 
 <div class="first hide" id="first">
-  <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><text class="mkfei" x="20" y="20.5" text-anchor="middle" dominant-baseline="central">妃</text><g class="mkcut"><path fill="currentColor" transform="translate(-4.2 -3.5) scale(1.06)" d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><path stroke="currentColor" stroke-width="6.8" stroke-linecap="butt" d="M23 23.6 36.5 27.8"/></g><g class="mkpig" stroke="currentColor" stroke-width="2.07" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-4.2 -3.5) scale(1.06)"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g><path stroke-width="3.4" d="M23 23.6 36.5 27.8"/><path class="mkband" stroke-width="1.2" stroke-linecap="butt" d="M28.24 23.38 27.16 26.82"/></g><circle class="mkember" cx="36.5" cy="27.8" r="1.85"/></svg></span>
+  <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g class="mkcut"><path fill="currentColor" transform="translate(-4.2 -3.5) scale(1.06)" d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><path stroke="currentColor" stroke-width="9" stroke-linecap="butt" d="M22.5 23.4 36.2 27.9"/></g><g class="mkpig" stroke="currentColor" stroke-width="2.07" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-4.2 -3.5) scale(1.06)"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g><path stroke-width="5" d="M22.5 23.4 36.2 27.9"/><path class="mkband" stroke-width="2.4" stroke-linecap="butt" d="M27.66 22.47 26.1 27.22"/></g><circle class="mkember" cx="36.2" cy="27.9" r="2.5"/></svg></span>
   <h1>ตอนนี้มีเงินอยู่เท่าไหร่</h1>
-  <p>ใส่ครั้งเดียว แล้วมุ่ยเฟยจะบวกลบให้เองจากที่จดต่อจากนี้</p>
+  <p>ใส่ครั้งเดียว แล้ว Muifei จะบวกลบให้เองจากที่จดต่อจากนี้</p>
   <div class="money filled"><span class="cur">฿</span>
     <input type="number" inputmode="decimal" id="firstBal" placeholder="0" style="text-align:center;font-size:24px">
   </div>
@@ -1308,23 +1380,38 @@ function renderChart(){
    (คนละที่กันอยู่แล้วถ้าแท่งสูงต่างกัน) จึงยกเฉพาะใบที่อยู่บนกว่าให้ห่างกันอย่างน้อย 11px
    ไม่ดันใบล่างลง เพราะมันจะไปทับตัวแท่งจนอ่านไม่ออก */
 function deColide(bx){
-  var cols=bx.querySelectorAll('.bcol'),GAP=10;
+  /* Ver.17: ของเดิมพอสองแท่งสูงพอๆ กันจะ "ยก" ป้ายบนขึ้น 10px ป้ายนั้นจึงลอยห่างหัวแท่ง
+     = อาการ "บางแท่งยังไม่ชิด" ตอนนี้ลองแยกกันตามแนวนอนก่อน (ดันป้ายรับไปชิดซ้าย
+     ป้ายจ่ายไปชิดขวาของคอลัมน์) ป้ายทั้งคู่จึงยังเกาะหัวแท่งอยู่ 1px เท่ากันหมด
+     ยกแนวตั้งเป็นทางสำรอง ใช้เฉพาะตอนคอลัมน์แคบจนสองป้ายเรียงข้างกันไม่พอจริงๆ */
+  var cols=bx.querySelectorAll('.bcol');
   for(var i=0;i<cols.length;i++){
-    var bi=cols[i].querySelector('.bar.i'),bo=cols[i].querySelector('.bar.o');
+    var col=cols[i];
+    var bi=col.querySelector('.bar.i'),bo=col.querySelector('.bar.o');
     if(!bi||!bo)continue;
     var ni=bi.querySelector('.bnum'),no=bo.querySelector('.bnum');
     if(!ni||!no)continue;
-    ni.style.marginBottom='';no.style.marginBottom='';
+    ni.style.marginBottom='';no.style.marginBottom='';ni.style.transform='';no.style.transform='';
     if(!ni.textContent||!no.textContent)continue;
-    /* Ver.16: ห้ามอ่าน offsetHeight ตรงนี้ — ฟังก์ชันนี้ถูกเรียกใน rAF เดียวกับที่เพิ่งสั่งความสูง
-       แท่งยังวิ่งทรานซิชันอยู่ ค่าที่ได้จึงเป็น 0 ทั้งคู่ ผลคือ "ต่างกัน 0" แล้วยกป้ายเขียวขึ้น 10px
-       ทุกคอลัมน์ตลอดเวลา = อาการ "ตัวเลขห่างเกิน โดดไป" ของ Ver.15
-       คำนวณจาก data-h กับความสูงของ .bpair แทน ได้ค่าจริงทันทีโดยไม่ต้องรอ */
     var ph=bi.parentNode.clientHeight||1;
     var d=(parseFloat(bi.getAttribute('data-h')||0)-parseFloat(bo.getAttribute('data-h')||0))/100*ph;
-    if(Math.abs(d)>=GAP)continue;
-    var lift=GAP-Math.abs(d);
-    (d>=0?ni:no).style.marginBottom=(1+lift)+'px';
+    if(Math.abs(d)>=10)continue;               /* คนละระดับอยู่แล้ว ไม่ต้องยุ่ง */
+    var cr=col.getBoundingClientRect(),cw=cr.width,GAPX=5;
+    ni.classList.remove('sm');no.classList.remove('sm');
+    var ri=ni.getBoundingClientRect(),ro=no.getBoundingClientRect();
+    /* เลข 4 ตัวอักษรสองใบในช่อง 43px เรียงข้างกันได้ก็จริง แต่ช่องไฟเหลือไม่ถึง 1px
+       อ่านติดกันเป็นเลขเดียว ("1.4k1.4k") ย่อลงหนึ่งขั้นก่อน ได้ช่องไฟกลับมา ~5px */
+    if(ri.width+ro.width+GAPX>cw){
+      ni.classList.add('sm');no.classList.add('sm');
+      ri=ni.getBoundingClientRect();ro=no.getBoundingClientRect();}
+    if(ri.width+ro.width+GAPX<=cw){
+      var cc=cr.left+cw/2;
+      ni.style.transform='translateX(calc(-50% + '+((cc-GAPX/2-ri.width/2)-(ri.left+ri.width/2)).toFixed(2)+'px))';
+      no.style.transform='translateX(calc(-50% + '+((cc+GAPX/2+ro.width/2)-(ro.left+ro.width/2)).toFixed(2)+'px))';
+    }else{
+      ni.classList.remove('sm');no.classList.remove('sm');
+      (d>=0?ni:no).style.marginBottom=(1+(10-Math.abs(d)))+'px';
+    }
   }
 }
 function drawReadout(){
@@ -1374,29 +1461,19 @@ function setTrRange(r){trRange=r;renderTrend();buzz(8);}
    บทเรียนที่ยกมาจากที่นั่น: ต้องจำกัดจำนวนจุด ไม่งั้นข้อมูลหนึ่งปีจะกลายเป็นเส้นหยักถี่ยิบอ่านไม่ออก
    90 วันจึงรวมเป็นรายสัปดาห์ และ 1 ปีรวมเป็นรายเดือน */
 function trendData(){
-  var by={},out=[],i;
+  /* Ver.17: เขาสั่งว่า "กราฟเส้นรายวันไง ต้องมีทุกวันสิ" — เดิม 90 วันยุบเป็นรายสัปดาห์
+     และ 1 ปียุบเป็นรายเดือน (กติกาคุมความหนาแน่นที่ยกมาจากแอปร้านหอม) ตอนนี้เป็นรายวันหมดทุกช่วง
+     ถ้า 1 ปีแล้วเส้นหยักถี่จนอ่านไม่ออก ให้กลับไปยุบเป็นรายเดือนเฉพาะ m12 ที่บรรทัด N ด้านล่าง */
+  var by={},out=[],i,N=(trRange==='d30'?30:trRange==='d90'?90:365);
   D.entries.forEach(function(e){
     if(!by[e.date])by[e.date]={'in':0,out:0};
     by[e.date][e.type]+=e.amount;});
-  if(trRange==='d30'){
-    for(i=29;i>=0;i--){var c=new Date();c.setDate(c.getDate()-i);var k=dkey(c);
-      out.push({lab:thShort(k),'in':(by[k]?by[k]['in']:0),out:(by[k]?by[k].out:0)});}
-  }else if(trRange==='d90'){
-    for(i=12;i>=0;i--){
-      var ws=weekStart(new Date());ws.setDate(ws.getDate()-i*7);
-      var si=0,so=0,x=new Date(ws);
-      for(var j=0;j<7;j++){var kk=dkey(x);if(by[kk]){si+=by[kk]['in'];so+=by[kk].out;}x.setDate(x.getDate()+1);}
-      out.push({lab:thShort(dkey(ws)),'in':si,out:so});}
-  }else{
-    for(i=11;i>=0;i--){
-      var dt=new Date();dt.setDate(1);dt.setMonth(dt.getMonth()-i);
-      var s=sumMonth(dkey(dt).slice(0,7));
-      out.push({lab:MTHS[dt.getMonth()],'in':s['in'],out:s.out});}
-  }
+  for(i=N-1;i>=0;i--){var c=new Date();c.setDate(c.getDate()-i);var k=dkey(c);
+    out.push({lab:thShort(k),'in':(by[k]?by[k]['in']:0),out:(by[k]?by[k].out:0)});}
   return out;
 }
 function renderTrend(){
-  var rc=[['d30','30 วัน'],['d90','90 วัน · รายสัปดาห์'],['m12','1 ปี · รายเดือน']];
+  var rc=[['d30','30 วัน'],['d90','90 วัน'],['m12','1 ปี']];
   document.getElementById('trSel').innerHTML=mselHtml('tr',trRange,rc,'setTrRange');
   var pts=trendData(),body=document.getElementById('trBody');
   document.getElementById('trSub').textContent='';
@@ -1406,6 +1483,7 @@ function renderTrend(){
   mx*=1.08;
   function X(i){return pts.length<2?0:(i/(pts.length-1))*W;}
   function Y(v){return PB+(1-v/mx)*(H-PB*2);}
+  var SW=pts.length>120?1.1:(pts.length>45?1.5:2);   /* Ver.17: จุดยิ่งเยอะเส้นต้องยิ่งบาง */
   var pi='',po='',rev='';
   for(i=0;i<pts.length;i++){
     pi+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(pts[i]['in']).toFixed(1);
@@ -1416,10 +1494,10 @@ function renderTrend(){
   pts.forEach(function(q){net+=q['in']-q.out;});
   body.innerHTML='<div class="trwrap"><svg class="trsvg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'
    +'<path d="'+band+'" fill="var(--in)" opacity=".10"></path>'
-   +'<path d="'+po+'" fill="none" stroke="var(--out)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"></path>'
-   +'<path d="'+pi+'" fill="none" stroke="var(--in)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"></path>'
-   +'<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(last.out).toFixed(1)+'" r="3" fill="var(--out)"></circle>'
-   +'<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(last['in']).toFixed(1)+'" r="3" fill="var(--in)"></circle>'
+   +'<path d="'+po+'" fill="none" stroke="var(--out)" stroke-width="'+SW+'" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"></path>'
+   +'<path d="'+pi+'" fill="none" stroke="var(--in)" stroke-width="'+SW+'" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"></path>'
+   +'<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(last.out).toFixed(1)+'" r="'+(SW>1.4?3:2.4)+'" fill="var(--out)"></circle>'
+   +'<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(last['in']).toFixed(1)+'" r="'+(SW>1.4?3:2.4)+'" fill="var(--in)"></circle>'
    +'</svg></div>'
    +'<div class="trax"><span>'+pts[0].lab+'</span><span>'+last.lab+'</span></div>'
    +'<div class="trfoot"><span class="legend"><span><i style="background:var(--in)"></i>รับ</span>'
@@ -1444,8 +1522,11 @@ function renderSummary(){
       +'stroke-dasharray="'+len+' '+(C-len)+'" stroke-dashoffset="'+(-off)+'"></circle>';
     off+=C*frac;});
   var rows=ks.slice(0,5).map(function(k){
+    /* Ver.17: เดิมยอดกับเปอร์เซ็นต์อยู่ในสแปนเดียว ความยาวเลขต่างกันขอบขวาจึงไม่ตรงกันสักแถว
+       แยกเป็นสองคอลัมน์กว้างคงที่ ชิดขวาทั้งคู่ ขอบขวาจึงตรงกันแน่นอนไม่ว่าเลขจะกี่หลัก */
     return '<div class="crow"><span class="dot" style="background:'+catColor(k,'out')+'"></span>'
-     +'<span class="cnm">'+esc(k)+'</span><span class="cpc">'+fmt(by[k])+' · '+Math.round(by[k]/tot*100)+'%</span></div>';}).join('');
+     +'<span class="cnm">'+esc(k)+'</span><span class="cam">'+fmt(by[k])+'</span>'
+     +'<span class="cpc">'+Math.round(by[k]/tot*100)+'%</span></div>';}).join('');
   document.getElementById('sumBody').innerHTML=
    /* Ver.10: ตัดประโยค "จ่ายมากที่สุดคือ..." ออก — ตัวเลขและอันดับอยู่ในโดนัท
       กับรายการข้างล่างอยู่แล้ว และยอดรวมก็อยู่กลางโดนัท */
@@ -2073,7 +2154,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.16 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.17 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
@@ -2221,7 +2302,7 @@ function drawLearned(){
     var v=D.learned[k];
     return '<div class="setrow"><span class="dot" style="background:'+catColor(v.cat,v.type||'out')+';width:12px;height:12px;flex:0 0 12px"></span>'
      +'<span class="cn">'+esc(k)+'</span><span class="go">'+esc(v.cat)+'</span></div>';}).join('')
-   :'<div class="hintline">ยังไม่มี เมื่อไหร่ที่คุณแก้หมวดที่แอปเดาผิด มุ่ยเฟยจะจำคำนั้นไว้</div>';
+   :'<div class="hintline">ยังไม่มี เมื่อไหร่ที่คุณแก้หมวดที่แอปเดาผิด Muifei จะจำคำนั้นไว้</div>';
   paint('คำที่แอปจำได้','<div class="grp">'+rows+'</div>'
    +(ks.length?'<button class="btn btn-danger" onclick="clearLearned()">ล้างคำที่จำไว้ทั้งหมด</button>':''));
 }
@@ -2261,7 +2342,7 @@ function finishFirst(skip){
   var v=skip?0:parseFloat(document.getElementById('firstBal').value);
   D.opening=isNaN(v)?0:v;D.setup=true;save();
   document.getElementById('first').classList.add('hide');
-  render();toast('เริ่มใช้มุ่ยเฟยได้เลย','ok');
+  render();toast('เริ่มใช้ Muifei ได้เลย','ok');
 }
 
 /* ================= เริ่มทำงาน ================= */
