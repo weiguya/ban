@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   มุ่ยเฟย  Ver.13 — พื้นสีเรียบ + การ์ดเงินโทนอ่อน + เลขบนแท่งเอียง + กราฟเส้นเงินคงเหลือ
+   มุ่ยเฟย  Ver.14 — โลโก้หมู-เฟย + การ์ดเงินแบบบัตร + กราฟรับ-จ่ายวิ่งไล่ + เมนู + ไล่โผล่
    กติกาที่ยกมาจากงาน Onion ที่ผ่านการแก้มาหลายรอบแล้ว
    1. ไล่เฉดสีห้ามอยู่บนของที่กดได้  ปุ่ม/แท็บ/แถบ = สีทึบสีเดียว
       ไล่เฉดใช้ได้ที่เดียวคือ "ภาพ" บนการ์ดยอดเงิน  (Onion Ver.287)
@@ -81,6 +81,13 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .mark{width:36px;height:36px;flex:0 0 36px;border-radius:11px;display:flex;align-items:center;justify-content:center;
   background:var(--fill)}
 .mark span{font-family:"Kanit",sans-serif;font-size:18px;font-weight:600;color:var(--on-fill);line-height:1;margin-top:1px}
+/* Ver.14: โลโก้ — หมูลายเส้น (ปีหมู) ทับบนอักษรจีน 妃 (เฟย) ที่จางอยู่ข้างหลัง
+   ถ้าเครื่องไหนไม่มีฟอนต์จีน ตัวอักษรจะไม่ขึ้น แต่หมูยังอยู่ครบ โลโก้จึงไม่พัง */
+.mark{overflow:hidden;position:relative}
+.mkicon{width:82%;height:82%;color:var(--on-fill);display:block}
+.mkfei{font-family:"Noto Serif SC","Noto Sans SC","Songti SC","SimSun",serif;
+  font-size:13px;fill:var(--on-fill);opacity:.6}
+.first .mkicon{width:78%;height:78%}
 .brand{min-width:0}
 .brand b{display:block;font-family:"Kanit",sans-serif;font-size:20px;font-weight:600;line-height:1.2;letter-spacing:-.015em}
 .brand i{display:block;font-style:normal;font-size:11px;color:var(--ink3);margin-top:-1px}
@@ -503,9 +510,11 @@ body[data-tab="home"] .w1,
 body[data-tab="list"] .w2,
 body[data-tab="set"]  .w3{opacity:1}
 
-/* Ver.13: สีพื้นเรียบ ไม่ไล่เฉด ค่าที่วัดจากจุดที่เขาวงในสกรีนช็อตหน้าตั้งค่า = #E7F6FB
+/* Ver.14: ยังเป็นสีเรียบสีเดิม แต่หรี่ลงมาทางเทาอมฟ้า
+   ของเดิม #E8F6FA ต่างจากการ์ดขาวแค่ 1.11 เท่า — กลืนกัน
+   ตอนนี้ #DCE7EC = 1.26 เท่า (ยังมีสีอยู่ sat 30% ไม่ใช่เทาตาย) การ์ดจึงลอยออกมาชัด
    เลเยอร์ .w1/.w2/.w3 เลิกใช้แล้ว (เก็บมาร์กอัปไว้เฉยๆ) */
-.wall{background:#E8F6FA}
+.wall{background:#DCE7EC}
 .wall i{display:none}
 body.dark .wall{background:#141B24}
 
@@ -541,23 +550,29 @@ body.dark .wall{background:#141B24}
    จึงให้เป็นใบเดียวในแอปที่มีสีเต็ม — สีฟ้าของแอปเอง ไล่เฉดในสีเดียว (hue 203-204)
    ตัวหนังสือขาวผ่านคอนทราสต์จริง: มุมบนซ้าย 6.47:1 · มุมล่างซ้าย ~4.5:1 */
 .hero{overflow:hidden;padding:18px 18px 19px;border-radius:22px;
-  /* Ver.13: อ่อนลงมาก ตัวหนังสือกลับไปเป็นสีเข้มบนพื้นฟ้าอ่อน
-     วัดจริง: #123C58 บน #B4DCF4 = 7.9:1 ยังเป็นการ์ดใบเดียวที่มีสี จึงยังแยกออกว่าคือการ์ดเงิน */
-  background:linear-gradient(150deg,#B4DCF4 0%,#CBE8FA 55%,#DCF0FD 100%);
-  box-shadow:0 1px 2px rgba(40,90,130,.10), 0 8px 18px -12px rgba(40,90,130,.34)}
-.hero::after{display:block;content:"";position:absolute;right:-46px;top:-58px;
-  width:186px;height:186px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.55), rgba(255,255,255,0) 72%)}
+  /* Ver.14: กลับไปขาวเหมือนการ์ดอื่น แล้วใส่ลูกเล่นแบบ "บัตร" แทนการใช้สี
+     เลือกภาษาบัตร ATM เพราะมันสื่อ "เงิน" ได้ทันทีด้วยของชิ้นเดียว (ชิป)
+     ไม่ต้องเติมสีทั้งใบ และไม่ไปชนกฎเรื่องสีที่ตั้งไว้ */
+  background:var(--glass);
+  box-shadow:var(--sh2)}
+/* ชิปแบบบัตร ATM วาดด้วย CSS ล้วน ทั้งตัวชิปและเส้นวงจรอยู่ใน pseudo เดียว
+   สำคัญ: .hero::after ของ CSS เดิมตั้ง inset:0 ไว้ ถ้าไม่รีเซ็ต left/bottom
+   กล่องจะยืดจากขอบซ้ายมาถึง right:18px แล้วชิปจะไปโผล่ทับป้ายด้านซ้าย */
+.hero::after{display:block;content:"";position:absolute;inset:auto 18px auto auto;top:17px;
+  width:29px;height:22px;border-radius:5px;pointer-events:none;z-index:1;
+  background:
+    linear-gradient(to bottom,transparent 9px,rgba(120,90,30,.30) 9px,rgba(120,90,30,.30) 10px,transparent 10px),
+    linear-gradient(to right,transparent 11px,rgba(120,90,30,.30) 11px,rgba(120,90,30,.30) 12px,transparent 12px),
+    linear-gradient(140deg,#E7CE8E,#CBA85F 55%,#E0C482);
+  box-shadow:inset 0 0 0 1px rgba(120,90,30,.20)}
+body.dark .hero::after{opacity:.85}
 .hero>*{position:relative;z-index:1}
-.hero .lb{color:#2C5C7A;font-size:12.5px;display:inline-flex;align-items:center;gap:6px}
-.hero .lb::before{content:"";width:5px;height:5px;border-radius:50%;background:#5D93B5}
-.hero .amt{color:#123C58;font-size:41px;letter-spacing:-.03em;margin-top:5px}
-.hero .amt .bt{color:#6EA0C0;opacity:1;font-size:20px}
-.hero .foot{color:#2C5C7A;margin-top:8px;font-size:12px}
-body.dark .hero{background:linear-gradient(150deg,#1B3A52 0%,#22506E 55%,#2A6084 100%)}
-body.dark .hero .lb,body.dark .hero .foot{color:#B6D6EA}
-body.dark .hero .amt{color:#EAF5FC}
-body.dark .hero .amt .bt{color:#7FAAC6}
+.hero .lb{color:var(--ink2);font-size:12.5px;display:inline-flex;align-items:center;gap:6px;
+  letter-spacing:.02em}
+.hero .lb::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--fill)}
+.hero .amt{color:var(--ink);font-size:41px;letter-spacing:-.03em;margin-top:5px}
+.hero .amt .bt{color:var(--ink3);opacity:1;font-size:20px}
+.hero .foot{color:var(--ink2);margin-top:8px;font-size:12px}
 
 /* ---------- ชิป ปุ่ม ช่องกรอก ---------- */
 .chip{background:var(--card2);border:1px solid var(--line);color:var(--ink2)}
@@ -610,19 +625,24 @@ input:focus{background:var(--glass);border-color:var(--accent)}
 /* ---------- ตัวเลขบนหัวแท่ง: เอียงขึ้นซ้าย ----------
    จุดหมุนอยู่มุมขวาล่างของตัวเลข และมุมนั้นถูกตรึงไว้กลางคอลัมน์
    ตัวเลขจึงพาดขึ้นไปทางซ้ายแทนที่จะกางออกด้านข้างไปชนคอลัมน์ข้างๆ */
-.bars{height:132px}
-.bpair{height:78px}
-.numwrap{height:30px;position:relative;display:block;width:100%;overflow:visible}
-.bnum{position:absolute;bottom:1px;right:50%;font-size:8.5px;
+.bars{height:138px}
+.bpair{height:74px}
+.numwrap{height:40px;position:relative;display:block;width:100%;overflow:visible}
+.bnum{position:absolute;right:50%;font-size:8.5px;
   transform:rotate(-55deg);transform-origin:100% 100%}
-.bnum.i{color:var(--in);font-weight:500}
+.bnum.o{bottom:1px;color:var(--ink3)}
+.bnum.i{bottom:15px;color:var(--in);font-weight:500}
 
 /* ---------- กราฟเส้นเงินคงเหลือ ---------- */
-#trSel{max-width:158px}
+#trSel{max-width:186px}
 .trwrap{position:relative;margin-top:2px}
 .trsvg{display:block;width:100%;height:118px;overflow:visible}
 .trfoot{display:flex;align-items:baseline;gap:8px;margin-top:8px;padding-top:8px;
   border-top:1px solid var(--line);font-size:11.5px;color:var(--ink2)}
+/* .legend ตัวหลักถูกดัดให้ลูกตัวสุดท้ายชิดขวา (ไว้ใช้กับกราฟแท่ง)
+   ในการ์ดนี้มันทำให้ "จ่าย" กระเด็นไปติดกับตัวเลขขวาสุด ต้องปลดเฉพาะที่นี่ */
+.trfoot .legend{gap:12px;width:auto;flex-wrap:nowrap}
+.trfoot .legend>span:last-child{margin-left:0;flex-basis:auto;text-align:left}
 .trfoot .now{font-family:"Kanit",sans-serif;font-size:16px;letter-spacing:-.02em}
 .trfoot .rr{margin-left:auto;font-size:11px;color:var(--ink3)}
 .trax{display:flex;justify-content:space-between;font-size:10px;color:var(--ink3);margin-top:4px}
@@ -671,6 +691,21 @@ body.dark .gn.on{color:var(--accent)}
 .dial>.db{justify-self:center}
 .dial1{bottom:calc(83px + var(--sb))}
 .dial2{bottom:calc(145px + var(--sb))}
+.dial3{bottom:calc(207px + var(--sb))}
+/* Ver.14: ให้ไล่โผล่ทีละใบจากล่างขึ้นบน แทนที่จะเด้งพร้อมกันทั้งชุด
+   ตอนปิดไล่กลับทางลง ใบบนสุดหุบก่อน ปุ่มจึงดูเหมือนหุบกลับเข้าไปในปุ่ม + */
+.dial{transition:transform .22s var(--ez), opacity .18s var(--ez);
+  transform:translateY(16px) scale(.9)}
+/* เปิด: ไล่จากใบล่างขึ้นบน (.on ชนะเพราะ specificity สูงกว่า) */
+.dial1.on{transition-delay:0ms}
+.dial2.on{transition-delay:60ms}
+.dial3.on{transition-delay:120ms}
+/* ปิด: ไล่กลับทางลง ใบบนสุดหุบก่อน เหมือนหดกลับเข้าปุ่ม + */
+.dial3{transition-delay:0ms}
+.dial2{transition-delay:60ms}
+.dial1{transition-delay:120ms}
+.dial .dl{transition:opacity .16s var(--ez);opacity:0}
+.dial.on .dl{opacity:1;transition-delay:inherit}
 .dial .db{width:48px;height:48px;border-radius:16px}
 .dial .dl{background:var(--glass);border:1px solid var(--line);
   backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -700,7 +735,7 @@ body.dark .first{background:#141726}
 
 <header class="top">
   <div class="trow">
-    <span class="mark" aria-hidden="true"><span>ม</span></span>
+    <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><text class="mkfei" x="35" y="37" text-anchor="end">妃</text><g class="mkpig" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g></svg></span>
     <span class="brand"><b>มุ่ยเฟย</b><i>บัญชีรับ-จ่ายในบ้าน</i></span>
     <button class="bk tap" id="bkChip" onclick="openBackup()">สำรองข้อมูล</button>
   </div>
@@ -731,7 +766,7 @@ body.dark .first{background:#141726}
   </section>
 
   <section class="card">
-    <div class="ct"><h2>เงินคงเหลือย้อนหลัง</h2><span class="sub" id="trSub"></span></div>
+    <div class="ct"><h2>แนวโน้มรับ-จ่าย</h2><span class="sub" id="trSub"></span></div>
     <div class="selrow" id="trSel"></div>
     <div id="trBody"></div>
   </section>
@@ -768,6 +803,9 @@ body.dark .first{background:#141726}
 </nav>
 
 <div class="dialscrim" id="dialScrim" onclick="closeDial()"></div>
+<div class="dial dial3" id="dial3"><span class="dl">พูดเพื่อจด</span>
+  <button class="db" style="background:var(--fill)" onclick="dialSay()" aria-label="พูดเพื่อจด">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3.4" width="6" height="10.4" rx="3"/><path d="M5.4 11.2a6.6 6.6 0 0 0 13.2 0"/><path d="M12 17.8v2.8"/></svg></button></div>
 <div class="dial dial2" id="dial2"><span class="dl">รับเข้า</span>
   <button class="db" style="background:var(--in)" onclick="dialGo('in')" aria-label="รับเข้า">
     <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></div>
@@ -799,7 +837,7 @@ body.dark .first{background:#141726}
 </div>
 
 <div class="first hide" id="first">
-  <span class="mark" aria-hidden="true"><span>ม</span></span>
+  <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><text class="mkfei" x="35" y="37" text-anchor="end">妃</text><g class="mkpig" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g></svg></span>
   <h1>ตอนนี้มีเงินอยู่เท่าไหร่</h1>
   <p>ใส่ครั้งเดียว แล้วมุ่ยเฟยจะบวกลบให้เองจากที่จดต่อจากนี้</p>
   <div class="money filled"><span class="cur">฿</span>
@@ -1141,15 +1179,17 @@ function renderChart(){
     else if(chShow==='out'){bo=d.out?Math.max(4,Math.round(d.out/mxO*100)):0;bi=0;}
     else{bo=d.out?Math.max(4,Math.round(d.out/mxB*100)):0;
          bi=d['in']?Math.max(4,Math.round(d['in']/mxB*100)):0;}
-    /* Ver.13: ไม่มีเครื่องหมาย + แล้ว ใช้สีบอกฝั่งแทน (เขียว=รับ เทา=จ่าย)
-       และเอียงตัวเลขไว้ เพราะแนวนอนพอเลข 3-4 หลักติดกันสองคอลัมน์จะชนกันทันที */
-    var isIn=false;
-    if(chShow==='in'){num=d['in']?fmtK(d['in']):'';isIn=true;}
-    else if(chShow==='out')num=d.out?fmtK(d.out):'';
-    else if(d['in']>d.out){num=fmtK(d['in']);isIn=true;}
-    else num=d.out?fmtK(d.out):'';
+    /* Ver.14: โหมดคู่ต้องเห็นเลขทั้งสองฝั่ง ของเดิมโชว์เฉพาะฝั่งที่มากกว่า
+       วันไหนรับมากกว่าจ่าย เลขแดงจึงหายไปเฉยๆ
+       ลองยัดสองเลขไว้ในป้ายเดียวแล้วป้ายยาวเกิน ไปชนป้ายของคอลัมน์ข้างๆ
+       จึงแยกเป็นสองบรรทัดเฉียงขนานกัน ล่าง=จ่าย บน=รับ แต่ละบรรทัดมีเลขเดียวต่อคอลัมน์ */
+    var nIn='',nOut='';
+    if(chShow==='in')nIn=d['in']?fmtK(d['in']):'';
+    else if(chShow==='out')nOut=d.out?fmtK(d.out):'';
+    else{nIn=d['in']?fmtK(d['in']):'';nOut=d.out?fmtK(d.out):'';}
+    num='<span class="bnum i">'+nIn+'</span><span class="bnum o">'+nOut+'</span>';
     h+='<div class="bcol'+(chSel===i?' sel':'')+'" onclick="pickBar('+i+')">'
-     +'<div class="numwrap"><span class="bnum'+(isIn?' i':'')+'">'+num+'</span></div><div class="bpair">';
+     +'<div class="numwrap">'+num+'</div><div class="bpair">';
     if(chShow!=='out')h+='<div class="bar i'+(d['in']?'':' z')+(chShow==='both'?' bmark':'')+'" data-h="'+bi+'"></div>';
     if(chShow!=='in')h+='<div class="bar o'+(d.out?'':' z')+'" data-h="'+bo+'"></div>';
     h+='</div><div class="blab">'+esc(d.lab)+'</div></div>';});
@@ -1203,55 +1243,63 @@ function pickBar(i){chSel=(chSel===i?-1:i);renderChart();buzz(8);}
    เดินยอดจากเงินตั้งต้นมาเรื่อยๆ จึงตรงกับเลขใหญ่บนการ์ดเงินเสมอที่จุดขวาสุด */
 var trRange='d30';
 function setTrRange(r){trRange=r;renderTrend();buzz(8);}
+/* Ver.14: เปลี่ยนจากเส้นยอดคงเหลือ เป็นสองเส้นวิ่งไล่กันแบบหน้าแนวโน้มของแอปร้านหอม
+   เขียว = รับ, แดง = จ่าย, ระบายพื้นที่ระหว่างสองเส้นไว้จางๆ
+   บทเรียนที่ยกมาจากที่นั่น: ต้องจำกัดจำนวนจุด ไม่งั้นข้อมูลหนึ่งปีจะกลายเป็นเส้นหยักถี่ยิบอ่านไม่ออก
+   90 วันจึงรวมเป็นรายสัปดาห์ และ 1 ปีรวมเป็นรายเดือน */
 function trendData(){
-  var days=trRange==='d30'?30:(trRange==='d90'?90:365);
-  var by={};
-  D.entries.forEach(function(e){by[e.date]=(by[e.date]||0)+(e.type==='in'?e.amount:-e.amount);});
-  var st=new Date();st.setDate(st.getDate()-(days-1));
-  var stK=dkey(st),run=D.opening;
-  Object.keys(by).forEach(function(k){if(k<stK)run+=by[k];});
-  var out=[],c=new Date(st);
-  for(var i=0;i<days;i++){var k=dkey(c);run+=(by[k]||0);out.push({k:k,v:run});c.setDate(c.getDate()+1);}
+  var by={},out=[],i;
+  D.entries.forEach(function(e){
+    if(!by[e.date])by[e.date]={'in':0,out:0};
+    by[e.date][e.type]+=e.amount;});
+  if(trRange==='d30'){
+    for(i=29;i>=0;i--){var c=new Date();c.setDate(c.getDate()-i);var k=dkey(c);
+      out.push({lab:thShort(k),'in':(by[k]?by[k]['in']:0),out:(by[k]?by[k].out:0)});}
+  }else if(trRange==='d90'){
+    for(i=12;i>=0;i--){
+      var ws=weekStart(new Date());ws.setDate(ws.getDate()-i*7);
+      var si=0,so=0,x=new Date(ws);
+      for(var j=0;j<7;j++){var kk=dkey(x);if(by[kk]){si+=by[kk]['in'];so+=by[kk].out;}x.setDate(x.getDate()+1);}
+      out.push({lab:thShort(dkey(ws)),'in':si,out:so});}
+  }else{
+    for(i=11;i>=0;i--){
+      var dt=new Date();dt.setDate(1);dt.setMonth(dt.getMonth()-i);
+      var s=sumMonth(dkey(dt).slice(0,7));
+      out.push({lab:MTHS[dt.getMonth()],'in':s['in'],out:s.out});}
+  }
   return out;
 }
 function renderTrend(){
-  var rc=[['d30','30 วัน'],['d90','90 วัน'],['d365','1 ปี']];
+  var rc=[['d30','30 วัน'],['d90','90 วัน · รายสัปดาห์'],['m12','1 ปี · รายเดือน']];
   document.getElementById('trSel').innerHTML=mselHtml('tr',trRange,rc,'setTrRange');
   var pts=trendData(),body=document.getElementById('trBody');
-  document.getElementById('trSub').textContent='';   /* ดรอปดาวน์บอกช่วงเวลาอยู่แล้ว ไม่ต้องซ้ำที่หัวการ์ด */
+  document.getElementById('trSub').textContent='';
   if(D.entries.length<2){body.innerHTML='<div class="empty" style="padding:14px 4px">ยังมีรายการน้อยเกินไป จดสัก 2-3 วันแล้วเส้นจะขึ้น</div>';return;}
-  var W=300,H=104,PB=6;
-  var vs=pts.map(function(p){return p.v;});
-  var mn=Math.min.apply(null,vs),mx=Math.max.apply(null,vs);
-  if(mx===mn){mx=mn+1;}
-  var pad=(mx-mn)*0.12;mx+=pad;mn-=pad;
+  var W=300,H=104,PB=8,i;
+  var mx=1;pts.forEach(function(q){mx=Math.max(mx,q['in'],q.out);});
+  mx*=1.08;
   function X(i){return pts.length<2?0:(i/(pts.length-1))*W;}
-  function Y(v){return PB+(1-(v-mn)/(mx-mn))*(H-PB*2);}
-  var dd='',i;
-  for(i=0;i<pts.length;i++)dd+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(pts[i].v).toFixed(1);
-  var up=pts[pts.length-1].v>=pts[0].v;
-  var col=up?'var(--in)':'var(--out)';
-  var area=dd+'L'+W+' '+H+'L0 '+H+'Z';
-  /* เส้นศูนย์ ให้เห็นชัดว่าช่วงไหนติดลบ */
-  var zero=(mn<0&&mx>0)?'<line x1="0" y1="'+Y(0).toFixed(1)+'" x2="'+W+'" y2="'+Y(0).toFixed(1)
-    +'" stroke="var(--line2)" stroke-width="1" stroke-dasharray="3 3"></line>':'';
-  var iMx=vs.indexOf(Math.max.apply(null,vs)),iMn=vs.indexOf(Math.min.apply(null,vs));
+  function Y(v){return PB+(1-v/mx)*(H-PB*2);}
+  var pi='',po='',rev='';
+  for(i=0;i<pts.length;i++){
+    pi+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(pts[i]['in']).toFixed(1);
+    po+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(pts[i].out).toFixed(1);}
+  for(i=pts.length-1;i>=0;i--)rev+='L'+X(i).toFixed(1)+' '+Y(pts[i].out).toFixed(1);
+  var band=pi+rev+'Z';
+  var last=pts[pts.length-1],net=0;
+  pts.forEach(function(q){net+=q['in']-q.out;});
   body.innerHTML='<div class="trwrap"><svg class="trsvg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'
-   +'<defs><linearGradient id="trg" x1="0" y1="0" x2="0" y2="1">'
-   +'<stop offset="0%" stop-color="'+(up?'#0E8A5F':'#C7453A')+'" stop-opacity=".18"></stop>'
-   +'<stop offset="100%" stop-color="'+(up?'#0E8A5F':'#C7453A')+'" stop-opacity="0"></stop></linearGradient></defs>'
-   +zero
-   +'<path d="'+area+'" fill="url(#trg)"></path>'
-   +'<path d="'+dd+'" fill="none" stroke="'+col+'" stroke-width="2" vector-effect="non-scaling-stroke" '
-   +'stroke-linejoin="round" stroke-linecap="round"></path>'
-   +'<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(pts[pts.length-1].v).toFixed(1)+'" r="3" fill="'+col+'"'
-   +' vector-effect="non-scaling-stroke"></circle>'
+   +'<path d="'+band+'" fill="var(--in)" opacity=".10"></path>'
+   +'<path d="'+po+'" fill="none" stroke="var(--out)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"></path>'
+   +'<path d="'+pi+'" fill="none" stroke="var(--in)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"></path>'
+   +'<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(last.out).toFixed(1)+'" r="3" fill="var(--out)"></circle>'
+   +'<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(last['in']).toFixed(1)+'" r="3" fill="var(--in)"></circle>'
    +'</svg></div>'
-   +'<div class="trax"><span>'+thShort(pts[0].k)+'</span><span>'+thShort(pts[pts.length-1].k)+'</span></div>'
-   +'<div class="trfoot"><span>ตอนนี้</span><span class="now" style="color:'+col+'">'+fmt(pts[pts.length-1].v)+'</span>'
-   +'<span class="rr">สูงสุด '+sgnK(vs[iMx])+' · ต่ำสุด '+sgnK(vs[iMn])+'</span></div>';
+   +'<div class="trax"><span>'+pts[0].lab+'</span><span>'+last.lab+'</span></div>'
+   +'<div class="trfoot"><span class="legend"><span><i style="background:var(--in)"></i>รับ</span>'
+   +'<span><i style="background:var(--out)"></i>จ่าย</span></span>'
+   +'<span class="rr">ช่วงนี้'+(net>=0?'เหลือ ':'ติดลบ ')+'<b style="color:'+(net>=0?'var(--in)':'var(--out)')+'">'+fmt(Math.abs(net))+'</b></span></div>';
 }
-function sgnK(v){return (v<0?'−':'')+fmtK(v);}   /* fmtK ใช้ Math.abs ตัวเลขติดลบจึงต้องเติมเครื่องหมายเอง */
 function thShort(k){var dt=parseKey(k);return dt.getDate()+' '+MTHS[dt.getMonth()];}
 
 /* ================= สรุปเดือน ================= */
@@ -1414,16 +1462,18 @@ function openDial(){
   dialOpen=true;buzz(10);
   document.getElementById('fab').classList.add('rot');
   document.getElementById('dialScrim').classList.add('on');
-  ['dial1','dial2'].forEach(function(id,i){
-    setTimeout(function(){document.getElementById(id).classList.add('on');},i*45);});
+  /* Ver.14: จังหวะไล่กันย้ายไปอยู่ใน CSS (transition-delay) แล้ว ตรงนี้จึงใส่พร้อมกันได้
+     ข้อดีคือตอนปิดก็ไล่กลับทางได้ด้วย ซึ่ง setTimeout เดิมทำไม่ได้ */
+  ['dial1','dial2','dial3'].forEach(function(id){document.getElementById(id).classList.add('on');});
 }
 function closeDial(){
   dialOpen=false;
   document.getElementById('fab').classList.remove('rot');
   document.getElementById('dialScrim').classList.remove('on');
-  ['dial1','dial2'].forEach(function(id){document.getElementById(id).classList.remove('on');});
+  ['dial1','dial2','dial3'].forEach(function(id){document.getElementById(id).classList.remove('on');});
 }
 function dialGo(what){closeDial();openForm(null,{name:'',amount:'',type:what,cat:''});}
+function dialSay(){closeDial();setTimeout(function(){openSay();},130);}
 
 /* ================= ระบบชีต =================
    ปิดได้ 4 ทาง: ปุ่ม ✕ / ลากแถบขีดลง / แตะพื้นที่มืด / ปุ่มย้อนกลับของเครื่อง
@@ -1892,7 +1942,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.13 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.14 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
