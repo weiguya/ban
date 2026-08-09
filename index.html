@@ -10,7 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.17 — ฟอนต์ LINE Seed + โลโก้หมูคาบซิการ์ + กราฟ 7 วัน + พื้นโทน Sofascore
+   Muifei  Ver.18 — พื้นไล่เฉดชุดเดิม + การ์ดไม่มีเส้นขอบ + หน้าสรุปรายวัน/รายเดือน
+   (Ver.17 เดิม: ฟอนต์ LINE Seed + โลโก้หมูคาบซิการ์ + กราฟ 7 วัน + พื้นโทน Sofascore)
    (Ver.14 เดิม: โลโก้หมู-เฟย + การ์ดเงินแบบบัตร + กราฟรับ-จ่ายวิ่งไล่ + เมนู + ไล่โผล่
    กติกาที่ยกมาจากงาน Onion ที่ผ่านการแก้มาหลายรอบแล้ว
    1. ไล่เฉดสีห้ามอยู่บนของที่กดได้  ปุ่ม/แท็บ/แถบ = สีทึบสีเดียว
@@ -898,6 +899,116 @@ body.dark{
 .cpc{flex:0 0 34px;text-align:right;font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
 .donutwrap{gap:13px}
 </style>
+<style id="skin18">
+/* ============================================================
+   Ver.18 — พื้นหลังไล่เฉดชุดเดิมกลับมา · การ์ดไม่มีเส้นขอบ กลับไปใช้เงาจริง
+   · ดรอปดาวน์ยาวเต็มแถวเหลือแค่ความกว้างของคำ · หน้าสรุปรายวัน/รายเดือน
+   ลบทั้งบล็อกนี้แล้วหน้าตาจะกลับไปเป็น Ver.17 (ยกเว้นหน้าสรุปกับแถบล่าง ซึ่งแก้ที่มาร์กอัป)
+   ============================================================ */
+
+/* ---------- (1) พื้นหลัง: ชุดไล่เฉดของ Ver.10 ----------
+   ค่าทุกตัววัดมาจากสกรีนช็อตที่เขาส่งมาโดยตรง: มุมบนซ้ายม่วงลาเวนเดอร์ #E9E7FD
+   บนขวาฟ้าคราม #E5EEFD กลางจอ #E9F1FC และล่างสุดฟ้าอมเขียว #DDF1FD
+   ทั้งสามจุดอยู่ในวงสีเดียวกัน (hue 200–255) จึงยังอ่านเป็นสีเดียวที่มีความลึก
+   ไม่ใช่เมชหลายสี — หมายเหตุ: applyTheme() เซ็ต --bg ลงบน :root แบบอินไลน์
+   การเขียนทับที่ตัวแปรจึงไม่ชนะ ต้องเขียนทับที่ body กับ .wall ตรงๆ */
+body{background:#E7EFFC}
+.wall{background:
+  radial-gradient(115% 58% at 0% 0%,    #EBE6FE 0%, rgba(235,230,254,0) 62%),
+  radial-gradient(100% 52% at 100% 0%,  #DFEBFD 0%, rgba(223,235,253,0) 60%),
+  radial-gradient(138% 66% at 50% 100%, #CCF2FE 0%, rgba(204,242,254,0) 76%),
+  #E7EFFC}
+body.dark{background:#131A28}
+body.dark .wall{background:#141B24}
+
+/* ---------- (2) การ์ด: เอาเส้นขอบออก กลับไปเป็นเงาอ่อนแบบในรูป ----------
+   Ver.17 ลดเงาจนเหลือ spread 1px blur 0 = เส้นขอบบางๆ รอบการ์ด ซึ่งจำเป็นตอนนั้น
+   เพราะพื้น #EDF0F5 ต่างจากการ์ดขาวแค่ 1.14 เท่า การ์ดจะจมหายไปกับพื้น
+   พอพื้นกลับมามีสีจริง (ต่างจากขาว 1.22–1.28 เท่า) การ์ดแยกตัวได้ด้วยเงาอย่างเดียวแล้ว
+   เงาใช้โทนน้ำเงินม่วง rgba(60,70,120) ให้เข้ากับพื้น ไม่ใช่เทาดำที่จะเป็นคราบ */
+:root{
+  --sh1:0 1px 2px rgba(60,70,120,.05);
+  --sh2:0 1px 2px rgba(60,70,120,.06), 0 7px 18px -11px rgba(60,70,120,.34);
+  --sh3:0 9px 24px -11px rgba(60,70,120,.40);
+}
+body.dark{
+  --sh1:0 1px 2px rgba(0,0,0,.22);
+  --sh2:0 1px 2px rgba(0,0,0,.25), 0 7px 18px -11px rgba(0,0,0,.6);
+  --sh3:0 9px 24px -11px rgba(0,0,0,.75);
+}
+.gnav{box-shadow:0 4px 16px -9px rgba(60,70,120,.34)}
+.mark{box-shadow:0 4px 12px -4px rgba(27,127,192,.55)}
+.dial .db{box-shadow:0 5px 14px -6px rgba(60,70,120,.5)}
+/* Ver.16 ถ่างระยะการ์ดเป็น 13px เพื่อชดเชยพื้นที่คอนทราสต์ต่ำ ตอนนี้ไม่ต้องชดเชยแล้ว
+   กลับไป 10px ตามชุดเดิม ได้เนื้อหาต่อหนึ่งหน้าจอมากขึ้น */
+.card,.daygrp{margin-bottom:10px}
+.bento{gap:10px;margin-bottom:10px}
+
+/* ---------- (3) ดรอปดาวน์: กว้างเท่าคำ ไม่ยาวเต็มแถว ----------
+   ของเดิม .msel เป็น flex:1 ปุ่มเดียวจึงยืดเต็มความกว้างการ์ด (อันที่เขาวงไว้ในรูป)
+   ตอนนี้กว้างตามเนื้อหา ตัวหนังสือยังอยู่กึ่งกลางปุ่มเหมือน Ver.17
+   เมนูที่กางลงมาต้องกว้างได้เกินตัวปุ่ม จึงใช้ width:max-content แทน left:0;right:0
+   (ไม่แตะ #filterChips ซึ่งตั้งใจให้กินที่ที่เหลือของแถวชิป) */
+.selrow{justify-content:flex-start;flex-wrap:wrap}
+.selrow .msel{flex:0 0 auto}
+.selrow .mselb{width:auto;min-width:98px}
+.selrow .mselm{left:0;right:auto;width:max-content;min-width:100%;max-width:230px}
+
+/* ---------- (4) หน้าสรุป ---------- */
+#page-sum .mnav .mt{display:flex;align-items:center;gap:7px;height:38px;padding:0 14px;
+  border-radius:12px;background:var(--glass);box-shadow:var(--sh1)}
+.sgcar{font-size:11px;color:var(--ink3)}
+.sgcal{padding:6px 8px 10px}
+.sghd{padding:14px 16px 12px}
+.sgstats{display:flex;gap:8px}
+.sgst{flex:1;min-width:0}
+.sgk{font-size:11px;color:var(--ink3);margin-bottom:1px}
+.sgv{font-size:17px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.sgv.i{color:var(--in)}
+.sgv.o{color:var(--out)}
+.sgfoot{margin-top:11px;padding-top:9px;border-top:1px solid var(--line);
+  font-size:11.5px;color:var(--ink3)}
+.sgfoot b{color:var(--ink2);font-weight:600}
+
+.sgc{background:var(--glass);border-radius:var(--r-tile);box-shadow:var(--sh2);
+  margin-bottom:10px;overflow:hidden}
+.sgtop{display:block;width:100%;text-align:left;padding:12px 14px 10px}
+.sgtop:active{background:var(--card2)}
+.sgrow1{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.sgnm{font-size:13.5px;font-weight:600;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sgbig{font-size:19px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.sgbig.i{color:var(--in)}
+.sgbig.o{color:var(--out)}
+/* แถบสองเส้น เทียบกับวัน/เดือนที่ยอดสูงสุดในช่วงที่ดูอยู่ กวาดตาแล้วเห็นทันทีว่าอันไหนหนัก
+   บน = จ่าย ล่าง = รับ (จ่ายอยู่บนเพราะเป็นตัวที่เขาตั้งใจดู) */
+.sgbars{display:block;margin:9px 0 8px}
+.sgt{display:block;height:5px;border-radius:3px;background:var(--line);
+  overflow:hidden;margin-bottom:4px}
+.sgt:last-child{margin-bottom:0}
+.sgb{display:block;height:100%;border-radius:3px}
+.sgb.o{background:var(--out)}
+.sgb.i{background:var(--in)}
+.sgrow2{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink3)}
+.sgsub{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sgsub .i{color:var(--in)}
+.sgnet{white-space:nowrap;font-variant-numeric:tabular-nums}
+.sgnet b{font-weight:600}
+.sgnet b.i{color:var(--in)}
+.sgnet b.o{color:var(--out)}
+.sgar{flex:0 0 16px;text-align:center;font-size:10px;color:var(--ink3);
+  display:inline-block;transition:transform .2s var(--ez)}
+.sgc.open .sgar{transform:rotate(180deg)}
+.sgdet{border-top:1px solid var(--line)}
+.sgd{display:flex;align-items:center;gap:10px;padding:9px 14px;font-size:12.5px}
+.sgd+.sgd{border-top:1px solid var(--line)}
+.sgdn{flex:1;min-width:0;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sgdv{flex:0 0 76px;text-align:right;font-weight:500;font-variant-numeric:tabular-nums}
+.sgdv.i{color:var(--in)}
+.sgdv.o{color:var(--out)}
+.sgbig,.sgv,.sgdv,.sgnet,.sgnm{font-family:'LINE Seed Sans TH','IBM Plex Sans Thai',-apple-system,"Segoe UI",sans-serif}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -935,12 +1046,6 @@ body.dark{
     <div id="sumBody"></div>
   </section>
 
-  <section class="card">
-    <div class="ct"><h2>แนวโน้มรับ-จ่าย</h2><span class="sub" id="trSub"></span></div>
-    <div class="selrow" id="trSel"></div>
-    <div id="trBody"></div>
-  </section>
-
   <div class="sechd"><h2>รายการล่าสุด</h2><span class="sub" id="recentR"></span></div>
   <div id="homeList"></div>
   <button class="linkbtn" onclick="goTab('list')">ดูทั้งหมด</button>
@@ -960,6 +1065,18 @@ body.dark{
   <div id="fullList"></div>
 </main>
 
+<main class="page off" id="page-sum">
+  <div class="mnav">
+    <button class="mb tap" onclick="sgShift(-1)" aria-label="ก่อนหน้า">‹</button>
+    <button class="mt tap" id="sgTitle" onclick="sgCalTog()">—</button>
+    <button class="mb tap" onclick="sgShift(1)" aria-label="ถัดไป">›</button>
+  </div>
+  <div id="sgCalBox"></div>
+  <div class="selrow" id="sgSel"></div>
+  <div id="sgHead"></div>
+  <div id="sgBody"></div>
+</main>
+
 <main class="page off" id="page-set">
   <div id="setBody"></div>
 </main>
@@ -968,7 +1085,7 @@ body.dark{
   <button class="gn" id="tab-home" onclick="goTab('home')"><svg viewBox="0 0 24 24"><path d="M4 11.4 12 4.6l8 6.8"/><path d="M6.4 10.2V19a1 1 0 0 0 1 1h9.2a1 1 0 0 0 1-1v-8.8"/></svg><i>หน้าแรก</i></button>
   <button class="gn" id="tab-list" onclick="goTab('list')"><svg viewBox="0 0 24 24"><rect x="4" y="4.6" width="16" height="15" rx="3"/><path d="M8.2 9.4h7.6M8.2 13h7.6M8.2 16.4h4.4"/></svg><i>รายการ</i></button>
   <button class="gplus" id="fab" onclick="toggleDial()" aria-label="จดรายการ"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
-  <button class="gn" id="sayBtn" onclick="openSay()"><svg viewBox="0 0 24 24"><rect x="9" y="3.4" width="6" height="10.4" rx="3"/><path d="M5.4 11.2a6.6 6.6 0 0 0 13.2 0"/><path d="M12 17.8v2.8"/></svg><i>พูดเพื่อจด</i></button>
+  <button class="gn" id="tab-sum" onclick="goTab('sum')"><svg viewBox="0 0 24 24"><rect x="3.6" y="4.6" width="16.8" height="15" rx="3"/><path d="M3.6 9.2h16.8M9 9.2v10.4"/><path d="M12.4 12.6h4.6M12.4 16h3"/></svg><i>สรุป</i></button>
   <button class="gn" id="tab-set" onclick="goTab('set')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M12 3.6v2.2M12 18.2v2.2M4.6 12h2.2M17.2 12h2.2M6.8 6.8l1.6 1.6M15.6 15.6l1.6 1.6M17.2 6.8l-1.6 1.6M8.4 15.6l-1.6 1.6"/></svg><i>ตั้งค่า</i></button>
 </nav>
 
@@ -1474,6 +1591,7 @@ function trendData(){
 }
 function renderTrend(){
   var rc=[['d30','30 วัน'],['d90','90 วัน'],['m12','1 ปี']];
+  if(!document.getElementById('trSel'))return;   /* Ver.18: การ์ดถูกถอดออกแล้ว */
   document.getElementById('trSel').innerHTML=mselHtml('tr',trRange,rc,'setTrRange');
   var pts=trendData(),body=document.getElementById('trBody');
   document.getElementById('trSub').textContent='';
@@ -1542,15 +1660,18 @@ var curType='';      /* Ver.12: '' | 'in' | 'out' — ฟิลเตอร์�
 function goTab(t){
   curTab=t;closeDial();
   document.body.setAttribute('data-tab',t);   /* Ver.10: วอลเปเปอร์คนละชุดต่อหน้า */
-  ['home','list','set'].forEach(function(x){
+  ['home','list','sum','set'].forEach(function(x){
     document.getElementById('page-'+x).classList.toggle('off',x!==t);
     document.getElementById('tab-'+x).classList.toggle('on',x===t);});
   window.scrollTo(0,0);render();
 }
 function render(){
   renderBk();
-  if(curTab==='home'){renderHome();renderChart();renderSummary();renderTrend();}
+  /* Ver.18: กราฟเส้นแนวโน้มถูกตัดออกจากหน้าแรกตามที่สั่ง (ตัวการ์ดหายไปจากมาร์กอัปแล้ว)
+     ตัวฟังก์ชัน renderTrend/trendData ยังอยู่เฉยๆ เผื่ออยากได้กลับ — ใส่การ์ดคืนแล้วเรียกตรงนี้ */
+  if(curTab==='home'){renderHome();renderChart();renderSummary();}
   if(curTab==='list')renderList();
+  if(curTab==='sum')renderSum();
   if(curTab==='set')renderSet();
 }
 function renderHome(){
@@ -1570,7 +1691,7 @@ function renderHome(){
   var list=sortEntries(D.entries).slice(0,6);
   document.getElementById('recentR').textContent=n?('ทั้งหมด '+n+' รายการ'):'';
   document.getElementById('homeList').innerHTML=list.length?dayHtml(list,false)
-   :'<div class="card"><div class="empty">ยังไม่มีรายการ<br>กด <b>พูดเพื่อจด</b> แล้วพูดว่า <b>ค่าข้าว 50 บาท</b><br>หรือกดปุ่ม <b>+</b> มุมขวา</div></div>';
+   :'<div class="card"><div class="empty">ยังไม่มีรายการ<br>กดปุ่ม <b>+</b> แล้วเลือก <b>พูดเพื่อจด</b><br>พูดว่า <b>ค่าข้าว 50 บาท</b></div></div>';
 }
 function countUp(el,from,to){
   if(from===to){el.innerHTML='<span class="bt">฿</span>'+fmt(to);return;}
@@ -1628,6 +1749,142 @@ function shiftMonth(d){
   if(m<1){m=12;y--;}if(m>12){m=1;y++;}
   curMonth=y+'-'+String(m).padStart(2,'0');curFilter='';renderList();buzz(8);
 }
+/* ================= หน้าสรุป: รายวัน / รายเดือน (Ver.18) =================
+   โจทย์ของเขาคือ "แต่ละวันจ่ายไปเท่าไหร่ แบบรวมของวันนั้น" ตัวเลขใหญ่บนการ์ดจึงเป็น
+   ยอดจ่ายรวมของวันนั้นเสมอ (สีแดง) ส่วนยอดรับกับสุทธิเป็นบรรทัดรอง
+   - รายวัน = ไล่ทีละวันในเดือนที่เลือก · รายเดือน = ไล่ทีละเดือนในปีที่เลือก
+   - แถบสองเส้นใต้หัวการ์ดเทียบกับ "วันที่มากที่สุดในช่วงนี้" จึงกวาดตาเห็นทันทีว่าวันไหนหนัก
+   - แตะหัวการ์ด = กางดูรายการของวันนั้น (รายเดือนกางเป็นยอดรวมรายวัน)
+   - แตะชื่อเดือนบนสุด = กางปฏิทินไปเลือกวันที่ต้องการดูตรงๆ (ใช้ calGrid ตัวเดิม)
+   วันที่ไม่มีรายการจะไม่ขึ้นการ์ด — ไม่งั้นเดือนหนึ่งมีการ์ดเปล่า 20 ใบ */
+var sgMode='day',sgType='',sgYM=monthOf(today()),sgYear=new Date().getFullYear(),sgOpen={},sgCal=false;
+function sgSetMode(m){sgMode=m;sgOpen={};sgCal=false;renderSum();buzz(8);}
+function sgSetType(t){sgType=(t==='all'?'':t);renderSum();buzz(8);}
+function sgShift(d){
+  if(sgMode==='day')sgYM=shiftYM(sgYM,d);else sgYear+=d;
+  sgOpen={};renderSum();buzz(8);
+}
+function sgCalTog(){if(sgMode!=='day')return;sgCal=!sgCal;renderSum();buzz(8);}
+function sgCalShift(d){sgYM=shiftYM(sgYM,d);sgOpen={};renderSum();}
+function sgPick(k){
+  sgYM=monthOf(k);sgCal=false;sgOpen={};sgOpen[k]=true;renderSum();buzz(8);
+  var el=document.querySelector('[data-sgk="'+k+'"]');
+  if(el)el.scrollIntoView({block:'center'});
+  else toast(thDate(k)+' ยังไม่มีรายการ','info');
+}
+function sgTog(k){sgOpen[k]=!sgOpen[k];renderSum();buzz(8);}
+function sgGroups(){
+  var g={},keys=[],i,k;
+  if(sgMode==='day'){
+    D.entries.forEach(function(e){
+      if(monthOf(e.date)!==sgYM)return;
+      if(!g[e.date])g[e.date]={'in':0,out:0,n:0,list:[]};
+      g[e.date][e.type]+=e.amount;g[e.date].n++;g[e.date].list.push(e);});
+    var days=new Date(+sgYM.slice(0,4),+sgYM.slice(5,7),0).getDate();
+    for(i=days;i>=1;i--){k=sgYM+'-'+String(i).padStart(2,'0');if(g[k])keys.push(k);}
+  }else{
+    D.entries.forEach(function(e){
+      if(+e.date.slice(0,4)!==sgYear)return;
+      var mk=monthOf(e.date);
+      if(!g[mk])g[mk]={'in':0,out:0,n:0,list:[]};
+      g[mk][e.type]+=e.amount;g[mk].n++;g[mk].list.push(e);});
+    for(i=12;i>=1;i--){k=sgYear+'-'+String(i).padStart(2,'0');if(g[k])keys.push(k);}
+  }
+  if(sgType)keys=keys.filter(function(x){return g[x][sgType]>0;});
+  return {g:g,keys:keys};
+}
+function renderSum(){
+  var y=+sgYM.slice(0,4),m=+sgYM.slice(5,7),unit=sgMode==='day'?'วัน':'เดือน';
+  document.getElementById('sgTitle').innerHTML=sgMode==='day'
+    ? MTH[m-1]+' '+(y+543)+'<span class="sgcar">'+(sgCal?'▴':'▾')+'</span>'
+    : 'ปี '+(sgYear+543);
+  document.getElementById('sgCalBox').innerHTML=(sgMode==='day'&&sgCal)
+    ? '<div class="card sgcal">'+calGrid(sgYM,'','sgPick','sgCalShift')+'</div>' : '';
+  document.getElementById('sgSel').innerHTML=
+     mselHtml('sgm',sgMode,[['day','รายวัน'],['month','รายเดือน']],'sgSetMode')
+    +mselHtml('sgt',sgType||'all',[['all','ทั้งหมด'],['in','เฉพาะรับ'],['out','เฉพาะจ่าย']],'sgSetType');
+
+  var G=sgGroups(),g=G.g,keys=G.keys,tin=0,tout=0,tn=0,mx=1;
+  keys.forEach(function(k){tin+=g[k]['in'];tout+=g[k].out;tn+=g[k].n;
+    mx=Math.max(mx,g[k]['in'],g[k].out);});
+
+  var stats,foot,net=tin-tout;
+  if(!sgType){
+    stats='<div class="sgst"><div class="sgk">รับรวม</div><div class="sgv i">'+fmt(tin)+'</div></div>'
+        +'<div class="sgst"><div class="sgk">จ่ายรวม</div><div class="sgv o">'+fmt(tout)+'</div></div>'
+        +'<div class="sgst"><div class="sgk">สุทธิ</div><div class="sgv '+(net>=0?'i':'o')+'">'
+        +(net>=0?'+':'−')+fmt(Math.abs(net))+'</div></div>';
+    foot='จ่ายเฉลี่ย'+unit+'ละ <b>'+fmt(keys.length?Math.round(tout/keys.length):0)+'</b>'
+        +' · จาก '+keys.length+' '+unit+'ที่มีรายการ · '+tn+' รายการ';
+  }else{
+    var tv=sgType==='in'?tin:tout;
+    stats='<div class="sgst"><div class="sgk">'+(sgType==='in'?'รับรวม':'จ่ายรวม')+'</div>'
+        +'<div class="sgv '+(sgType==='in'?'i':'o')+'">'+fmt(tv)+'</div></div>'
+        +'<div class="sgst"><div class="sgk">เฉลี่ยต่อ'+unit+'</div><div class="sgv">'
+        +fmt(keys.length?Math.round(tv/keys.length):0)+'</div></div>'
+        +'<div class="sgst"><div class="sgk">'+unit+'ที่มีรายการ</div><div class="sgv">'+keys.length+'</div></div>';
+    foot=tn+' รายการ';
+  }
+  document.getElementById('sgHead').innerHTML=keys.length
+    ? '<div class="card sghd"><div class="sgstats">'+stats+'</div><div class="sgfoot">'+foot+'</div></div>' : '';
+
+  if(!keys.length){
+    document.getElementById('sgBody').innerHTML='<div class="card"><div class="empty">'
+     +(sgMode==='day'?'เดือนนี้':'ปีนี้')+'ยังไม่มีรายการ'+(sgType?'ตามที่กรองไว้':'')+'</div></div>';
+    return;
+  }
+  var h='';
+  keys.forEach(function(k){
+    var d=g[k],op=!!sgOpen[k],dn=d['in']-d.out;
+    var lab=sgMode==='day'?thDate(k):MTH[+k.slice(5,7)-1]+' '+(+k.slice(0,4)+543);
+    var big=sgType==='in'?('+'+fmt(d['in'])):('−'+fmt(d.out));
+    var bigc=sgType==='in'?'i':'o';
+    var sub=sgType?(d.n+' รายการ')
+      :((d['in']?'<span class="i">รับ +'+fmt(d['in'])+'</span> · ':'')+d.n+' รายการ');
+    h+='<div class="sgc'+(op?' open':'')+'" data-sgk="'+k+'">'
+     +'<button class="sgtop" onclick="sgTog(\''+k+'\')">'
+     +'<span class="sgrow1"><span class="sgnm">'+esc(lab)+'</span>'
+     +'<span class="sgbig '+bigc+'">'+big+'</span></span>';
+    if(!sgType)h+='<span class="sgbars">'
+     +'<i class="sgt"><i class="sgb o" style="width:'+(d.out/mx*100).toFixed(1)+'%"></i></i>'
+     +'<i class="sgt"><i class="sgb i" style="width:'+(d['in']/mx*100).toFixed(1)+'%"></i></i></span>';
+    h+='<span class="sgrow2"><span class="sgsub">'+sub+'</span>'
+     +(sgType?'':'<span class="sgnet">สุทธิ <b class="'+(dn>=0?'i':'o')+'">'
+       +(dn>=0?'+':'−')+fmt(Math.abs(dn))+'</b></span>')
+     +'<span class="sgar">▾</span></span></button>';
+    if(op)h+='<div class="sgdet">'+sgDetail(d)+'</div>';
+    h+='</div>';
+  });
+  document.getElementById('sgBody').innerHTML=h;
+}
+function sgDetail(d){
+  var h='';
+  if(sgMode==='day'){
+    var list=sortEntries(d.list);
+    if(sgType)list=list.filter(function(e){return e.type===sgType;});
+    list.forEach(function(e){
+      var col=catColor(e.cat,e.type);
+      h+='<button class="line" data-id="'+esc(e.id)+'">'
+       +'<span class="ico" style="background:'+col+'1F;color:'+col+'">'+esc((e.cat||'?').trim().charAt(0))+'</span>'
+       +'<span class="nm"><span class="t1">'+esc(e.name)+'</span><span class="t2">'+esc(e.cat)+'</span></span>'
+       +'<span class="amt '+(e.type==='in'?'i':'o')+'">'+(e.type==='in'?'+':'−')+fmt(e.amount)+'</span></button>';});
+    return h||'<div class="empty" style="padding:12px">ไม่มีรายการ</div>';
+  }
+  /* โหมดรายเดือน: กางออกเป็นยอดรวมของแต่ละวันในเดือนนั้น ไม่ใช่รายการทีละใบ
+     (เดือนหนึ่งมีได้เป็นร้อยรายการ กางออกมาแล้วหาอะไรไม่เจอ) */
+  var by={};
+  d.list.forEach(function(e){if(!by[e.date])by[e.date]={'in':0,out:0};by[e.date][e.type]+=e.amount;});
+  var ks=Object.keys(by).sort().reverse();
+  ks.forEach(function(dk){
+    var r=by[dk];
+    if(sgType&&!r[sgType])return;
+    h+='<div class="sgd"><span class="sgdn">'+esc(thDate(dk))+'</span>'
+     +(sgType!=='in'?'<span class="sgdv o">'+(r.out?'−'+fmt(r.out):'—')+'</span>':'')
+     +(sgType!=='out'?'<span class="sgdv i">'+(r['in']?'+'+fmt(r['in']):'—')+'</span>':'')
+     +'</div>';});
+  return h||'<div class="empty" style="padding:12px">ไม่มีรายการ</div>';
+}
+
 function dayHtml(list,showTot){
   var b=byDay(list),h='';
   b.keys.forEach(function(k){
@@ -2154,7 +2411,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.17 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.18 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
