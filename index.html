@@ -776,8 +776,55 @@ body.dark, body.dark .wall{background:#141B24}
 .mkfei{font-size:33px;opacity:.22;fill:var(--on-fill)}
 .mkcut{color:var(--fill)}
 .mkband{stroke:var(--fill)}
-.mksmk{opacity:.75}
 .mkember{fill:#FFC46B}
+</style>
+
+<style id="skin16">
+/* ============================================================
+   Ver.16 — พื้นลอก Sofascore ตรงๆ · ปุ่ม + กระชับ · หมวดหมู่เป็นดรอปดาวน์ · เลขชิดหัวแท่ง
+   ============================================================ */
+
+/* ---------- (4) พื้นหลัง: ลอกค่าจาก Sofascore ตรงๆ ตามที่สั่งย้ำ ----------
+   #EDF0F5 คือค่าที่วัดจากสกรีนช็อตของเขาจริงๆ (ต่างจากการ์ดขาว 1.14 เท่า)
+   ที่ Sofascore ยังแยกการ์ดออกจากพื้นได้ทั้งที่คอนทราสต์ต่ำ เพราะเขาเว้นช่องระหว่างการ์ดกว้าง
+   จึงถ่างระยะการ์ดจาก 10 เป็น 13px และเพิ่มน้ำหนักเงาชั้นล่างนิดหน่อยชดเชยให้ */
+body{background:#EDF0F5}
+.wall{background:#EDF0F5}
+body.dark, body.dark .wall{background:#141B24}
+:root{--sh2:0 1px 3px rgba(23,26,34,.07), 0 8px 20px -12px rgba(23,26,34,.42)}
+.card,.daygrp{margin-bottom:13px}
+.bento{gap:11px;margin-bottom:13px}
+
+/* ---------- (3) ตัวเลขบนแท่ง: ชิดหัวแท่งกว่าเดิม ----------
+   ของ Ver.15 เว้น 3px แล้วมันลอย จึงเหลือ 1px และลดระยะกันชนจาก 11 เหลือ 10px */
+.bnum{margin-bottom:1px}
+/* จอแคบ (≤345px) ช่องเหลือ 37px ป้าย 4 ตัวอักษรที่สแปลย์ออกด้านข้างจะยื่นไปชนป้ายของวันข้างๆ
+   ตรงนั้นจึงเลิกสแปลย์ ให้แต่ละป้ายอยู่กลางแท่งตัวเอง แล้วปล่อยให้ deColide() จัดแนวตั้งแทน */
+@media (max-width:345px){
+  .bnum,.bar.o .bnum{transform:translateX(-50%);font-size:8.4px}
+}
+.bars.tight .bnum,.bars.tight .bar.o .bnum{transform:translateX(-50%);font-size:8.4px}
+
+/* ---------- (1) ปุ่ม + : ปุ่มเล็กลงและถี่ขึ้น ----------
+   ของเดิม ปุ่ม 48px ระยะกึ่งกลางถึงกึ่งกลาง 62px = ช่องว่างระหว่างปุ่ม 14px
+   และกองสูงถึง 210px จากขอบล่าง จนบังการ์ดสองใบ
+   ตอนนี้ 40px ระยะ 48px = ช่องว่าง 8px กองสูง 136px ป้ายก็ลดลงตาม */
+.dial .db{width:40px;height:40px;border-radius:12px}
+.dial .db svg{width:18px;height:18px}
+.dial1{bottom:calc(80px + var(--sb))}
+.dial2{bottom:calc(128px + var(--sb))}
+.dial3{bottom:calc(176px + var(--sb))}
+.dial .dl{font-size:12px;padding:5px 11px}
+.dial>.dl{margin-right:7px}
+
+/* ---------- (2) หน้ารายการ: แถวฟิลเตอร์ ----------
+   ชิปชนิด 3 ตัวคงไว้ (สั้น เห็นครบอยู่แล้ว) ส่วนหมวดหมู่กลายเป็นดรอปดาวน์กินที่เหลือ
+   ต้อง overflow:visible ไม่งั้นเมนูที่กางลงมาจะโดน .chiprow ตัดหัว */
+#filterChips{overflow:visible;align-items:center;flex-wrap:nowrap}
+#filterChips .msel{flex:1 1 auto;min-width:0}
+#filterChips .mselb{height:32px}
+#filterChips .mselm{top:36px;left:auto;right:0;min-width:190px}
+#filterChips .mseli{display:flex;align-items:center;gap:7px}
 </style>
 </head>
 <body>
@@ -786,7 +833,7 @@ body.dark, body.dark .wall{background:#141B24}
 
 <header class="top">
   <div class="trow">
-    <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><text class="mkfei" x="20" y="20.5" text-anchor="middle" dominant-baseline="central">妃</text><g class="mkcut"><path fill="currentColor" transform="translate(-1.2 -1) scale(0.92)" d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><path stroke="currentColor" stroke-width="6.6" stroke-linecap="round" d="M21 21.6 34 26.5"/></g><g class="mkpig" stroke="currentColor" stroke-width="2.07" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-1.2 -1) scale(0.92)"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g><path stroke-width="3.2" d="M21 21.6 34 26.5"/><path class="mkband" stroke-width="1.15" stroke-linecap="butt" d="M26.75 22.05 25.6 25.15"/><path class="mksmk" stroke-width="1.6" d="M35.6 25.3c1.7-1.4.3-2.8 1.8-4.2"/></g><circle class="mkember" cx="34" cy="26.5" r="1.75"/></svg></span>
+    <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><text class="mkfei" x="20" y="20.5" text-anchor="middle" dominant-baseline="central">妃</text><g class="mkcut"><path fill="currentColor" transform="translate(-4.2 -3.5) scale(1.06)" d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><path stroke="currentColor" stroke-width="6.8" stroke-linecap="butt" d="M23 23.6 36.5 27.8"/></g><g class="mkpig" stroke="currentColor" stroke-width="2.07" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-4.2 -3.5) scale(1.06)"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g><path stroke-width="3.4" d="M23 23.6 36.5 27.8"/><path class="mkband" stroke-width="1.2" stroke-linecap="butt" d="M28.24 23.38 27.16 26.82"/></g><circle class="mkember" cx="36.5" cy="27.8" r="1.85"/></svg></span>
     <span class="brand"><b>มุ่ยเฟย</b><i>บัญชีรับ-จ่ายในบ้าน</i></span>
     <button class="bk tap" id="bkChip" onclick="openBackup()">สำรองข้อมูล</button>
   </div>
@@ -888,7 +935,7 @@ body.dark, body.dark .wall{background:#141B24}
 </div>
 
 <div class="first hide" id="first">
-  <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><text class="mkfei" x="20" y="20.5" text-anchor="middle" dominant-baseline="central">妃</text><g class="mkcut"><path fill="currentColor" transform="translate(-1.2 -1) scale(0.92)" d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><path stroke="currentColor" stroke-width="6.6" stroke-linecap="round" d="M21 21.6 34 26.5"/></g><g class="mkpig" stroke="currentColor" stroke-width="2.07" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-1.2 -1) scale(0.92)"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g><path stroke-width="3.2" d="M21 21.6 34 26.5"/><path class="mkband" stroke-width="1.15" stroke-linecap="butt" d="M26.75 22.05 25.6 25.15"/><path class="mksmk" stroke-width="1.6" d="M35.6 25.3c1.7-1.4.3-2.8 1.8-4.2"/></g><circle class="mkember" cx="34" cy="26.5" r="1.75"/></svg></span>
+  <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><text class="mkfei" x="20" y="20.5" text-anchor="middle" dominant-baseline="central">妃</text><g class="mkcut"><path fill="currentColor" transform="translate(-4.2 -3.5) scale(1.06)" d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><path stroke="currentColor" stroke-width="6.8" stroke-linecap="butt" d="M23 23.6 36.5 27.8"/></g><g class="mkpig" stroke="currentColor" stroke-width="2.07" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-4.2 -3.5) scale(1.06)"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g><path stroke-width="3.4" d="M23 23.6 36.5 27.8"/><path class="mkband" stroke-width="1.2" stroke-linecap="butt" d="M28.24 23.38 27.16 26.82"/></g><circle class="mkember" cx="36.5" cy="27.8" r="1.85"/></svg></span>
   <h1>ตอนนี้มีเงินอยู่เท่าไหร่</h1>
   <p>ใส่ครั้งเดียว แล้วมุ่ยเฟยจะบวกลบให้เองจากที่จดต่อจากนี้</p>
   <div class="money filled"><span class="cur">฿</span>
@@ -1246,6 +1293,9 @@ function renderChart(){
     if(chShow!=='in')h+='<div class="bar o'+(d.out?'':' z')+'" data-h="'+bo+'"><span class="bnum o">'+nOut+'</span></div>';
     h+='</div><div class="blab">'+esc(d.lab)+'</div></div>';});
   var bx=document.getElementById('bars');bx.innerHTML=h;
+  /* Ver.16: 8 คอลัมน์ขึ้นไป (รายสัปดาห์) ช่องแคบลงเหลือ ~37px การสแปลย์ป้ายออกด้านข้าง
+     จะทำให้ป้ายยื่นไปชนป้ายของคอลัมน์ข้างๆ ตรงนั้นเลิกสแปลย์ ใช้ deColide จัดแนวตั้งพอ */
+  bx.classList.toggle('tight',data.length>7);
   window._chData=data;
   requestAnimationFrame(function(){
     var bs=bx.querySelectorAll('.bar');
@@ -1258,7 +1308,7 @@ function renderChart(){
    (คนละที่กันอยู่แล้วถ้าแท่งสูงต่างกัน) จึงยกเฉพาะใบที่อยู่บนกว่าให้ห่างกันอย่างน้อย 11px
    ไม่ดันใบล่างลง เพราะมันจะไปทับตัวแท่งจนอ่านไม่ออก */
 function deColide(bx){
-  var cols=bx.querySelectorAll('.bcol'),GAP=11;
+  var cols=bx.querySelectorAll('.bcol'),GAP=10;
   for(var i=0;i<cols.length;i++){
     var bi=cols[i].querySelector('.bar.i'),bo=cols[i].querySelector('.bar.o');
     if(!bi||!bo)continue;
@@ -1266,10 +1316,15 @@ function deColide(bx){
     if(!ni||!no)continue;
     ni.style.marginBottom='';no.style.marginBottom='';
     if(!ni.textContent||!no.textContent)continue;
-    var d=bi.offsetHeight-bo.offsetHeight;
+    /* Ver.16: ห้ามอ่าน offsetHeight ตรงนี้ — ฟังก์ชันนี้ถูกเรียกใน rAF เดียวกับที่เพิ่งสั่งความสูง
+       แท่งยังวิ่งทรานซิชันอยู่ ค่าที่ได้จึงเป็น 0 ทั้งคู่ ผลคือ "ต่างกัน 0" แล้วยกป้ายเขียวขึ้น 10px
+       ทุกคอลัมน์ตลอดเวลา = อาการ "ตัวเลขห่างเกิน โดดไป" ของ Ver.15
+       คำนวณจาก data-h กับความสูงของ .bpair แทน ได้ค่าจริงทันทีโดยไม่ต้องรอ */
+    var ph=bi.parentNode.clientHeight||1;
+    var d=(parseFloat(bi.getAttribute('data-h')||0)-parseFloat(bo.getAttribute('data-h')||0))/100*ph;
     if(Math.abs(d)>=GAP)continue;
     var lift=GAP-Math.abs(d);
-    (d>=0?ni:no).style.marginBottom=(3+lift)+'px';
+    (d>=0?ni:no).style.marginBottom=(1+lift)+'px';
   }
 }
 function drawReadout(){
@@ -1465,17 +1520,22 @@ function renderList(){
   var chips='<button class="chip'+(curType?'':' on')+'" onclick="setTypeFilter(\'\')">ทั้งหมด</button>'
    +'<button class="chip'+(curType==='in'?' on ci':'')+'" onclick="setTypeFilter(\'in\')">รับ</button>'
    +'<button class="chip'+(curType==='out'?' on co':'')+'" onclick="setTypeFilter(\'out\')">จ่าย</button>'
-   +'<span class="chipsep"></span>'
-   +'<button class="chip'+(curFilter?'':' on')+'" onclick="setFilter(-1)">ทุกหมวด</button>';
+   +'<span class="chipsep"></span>';
+  /* Ver.16: หมวดหมู่เคยเป็นชิปยาวเลื่อนซ้ายขวา หมวดที่ 4 เป็นต้นไปจึงไม่มีใครเห็น
+     เปลี่ยนเป็นดรอปดาวน์ตัวเดียวกับที่ใช้บนกราฟ (mselHtml) เห็นครบทุกหมวดในคลิกเดียว
+     ส่งเป็น index ไม่ใช่ชื่อหมวด เพราะชื่อหมวดมีเครื่องหมายคำพูดได้ จะทำ onclick พัง */
+  var copts=[['-1','ทุกหมวด']];
   ks.forEach(function(c,i){
-    chips+='<button class="chip'+(curFilter===c?' on':'')+'" onclick="setFilter('+i+')">'
-     +'<span class="dot" style="background:'+catColor(c,types[c])+'"></span>'+esc(c)+' '+fmtK(by[c])+'</button>';});
+    copts.push([String(i),'<span class="dot" style="background:'+catColor(c,types[c])+'"></span>'
+      +esc(c)+' <b style="font-weight:500;color:var(--ink3)">'+fmtK(by[c])+'</b>']);});
+  chips+=mselHtml('cat',(curFilter?String(ks.indexOf(curFilter)):'-1'),copts,'setFilterS');
   document.getElementById('filterChips').innerHTML=chips;
   if(curFilter)list=list.filter(function(e){return e.cat===curFilter;});
   list=sortEntries(list);
   document.getElementById('fullList').innerHTML=list.length?dayHtml(list,true):'<div class="card"><div class="empty">เดือนนี้ยังไม่มีรายการ</div></div>';
 }
 function setFilter(i){curFilter=i<0?'':(window._chipKeys[i]||'');renderList();buzz(8);}
+function setFilterS(i){setFilter(+i);}
 function setTypeFilter(t){
   curType=(curType===t?'':t);   /* แตะซ้ำที่เดิม = เอาฟิลเตอร์ออก */
   curFilter='';
@@ -2013,7 +2073,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.15 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">มุ่ยเฟย Ver.16 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
