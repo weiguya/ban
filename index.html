@@ -10,7 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.21 — แถวรวมใต้โดนัท + ยอดรวมท้ายวันในหน้ารายการ + ปุ่มเลื่อนขึ้น/ลง
+   Muifei  Ver.22 — โลโก้หมูวงกลม + ยอดท้ายวันขนาดเท่าแถว + แสดงเพิ่มเติม + แถบเลื่อนเร็ว
+   (Ver.21 เดิม: แถวรวมใต้โดนัท + ยอดรวมท้ายวันในหน้ารายการ + ปุ่มเลื่อนขึ้น/ลง)
    (Ver.18 เดิม: พื้นไล่เฉดชุดเดิม + การ์ดไม่มีเส้นขอบ)
    (Ver.17 เดิม: ฟอนต์ LINE Seed + โลโก้หมูคาบซิการ์ + กราฟ 7 วัน + พื้นโทน Sofascore)
    (Ver.14 เดิม: โลโก้หมู-เฟย + การ์ดเงินแบบบัตร + กราฟรับ-จ่ายวิ่งไล่ + เมนู + ไล่โผล่
@@ -1095,6 +1096,58 @@ body.dark{
   stroke-linecap:round;stroke-linejoin:round}
 .sfv,.dfoot b{font-family:'LINE Seed Sans TH','IBM Plex Sans Thai',-apple-system,"Segoe UI",sans-serif}
 </style>
+<style id="skin21">
+/* ============================================================
+   Ver.22 — โลโก้หมูใหม่ในกรอบวงกลม (วาดจากรูปที่ส่งมา เอาแค่หัว+ท่อนบน)
+   · ยอดรวมท้ายวันในหน้ารายการ ขนาดเท่าตัวเลขในแถว
+   · ลูกศรลงล่าง โผล่เฉพาะตอนเลื่อนจริง และไม่มีในหน้าแรก
+   · หน้ารายการโชว์ทีละชุด + ปุ่มแสดงเพิ่มเติม + แถบเลื่อนเร็วริมขวา
+   ============================================================ */
+
+/* ---------- โลโก้ ----------
+   กรอบเดิมเป็นสี่เหลี่ยมมุมมน เปลี่ยนเป็นวงกลมตามรูปที่ส่งมา
+   .mksn = จมูกทึบสีเดียวกับพื้นกรอบ ซิการ์จึงมุดหลังจมูกได้เหมือนในรูป */
+.mark{border-radius:50%}
+.first .mark{border-radius:50%}
+.mksn{fill:var(--fill)}
+
+/* ---------- ยอดรวมท้ายวัน (หน้ารายการ) ----------
+   เดิมเลข 12.5px คู่กับเลขในแถวที่ 15px มันเล็กกว่าจนดูไม่เข้าชุดกัน
+   ตอนนี้เลขทุกตัวในการ์ดใบเดียวกันเป็น 15px/500 เท่ากับ .amt ทั้งหมด
+   ป้ายกำกับ (รับ/จ่าย/สุทธิ) 12.5px = ระดับเดียวกับหัววันที่ */
+.dfoot{padding:10px 14px 12px;font-size:12.5px}
+.dfoot b{font-size:15px;font-weight:500}
+.dfn b{font-size:15px}
+
+/* ---------- ปุ่มแสดงเพิ่มเติม ---------- */
+.moreb{display:flex;flex-direction:column;align-items:center;gap:1px;width:100%;
+  padding:12px 0 13px;margin:-1px 0 10px;border-radius:var(--r-tile);
+  background:var(--glass);box-shadow:var(--sh2);
+  color:var(--fill);font-size:13.5px;font-weight:600}
+.moreb i{font-style:normal;font-size:11px;font-weight:400;color:var(--ink3)}
+.moreb:active{transform:scale(.99)}
+
+/* ---------- แถบเลื่อนเร็ว ----------
+   รางใสกินพื้นที่ริมขวา หัวจับลากได้ตัวเดียว ปกติซ่อน โผล่ตอนเลื่อน
+   ป้ายวันที่เด้งออกมาเฉพาะตอนลาก จะได้รู้ว่ากำลังจะหยุดที่วันไหน */
+.fsc{position:fixed;right:0;top:0;bottom:0;width:46px;z-index:28;pointer-events:none;
+  opacity:0;visibility:hidden;transition:opacity .18s var(--ez),visibility .18s}
+.fsc.on{opacity:1;visibility:visible}
+.fsct{position:absolute;right:6px;top:0;width:36px;height:36px;border-radius:50%;
+  background:var(--glass);border:1px solid var(--line2);box-shadow:var(--sh3);
+  display:flex;align-items:center;justify-content:center;color:var(--fill);
+  pointer-events:auto;touch-action:none;
+  transition:background .14s var(--ez),color .14s var(--ez),transform .14s var(--ez)}
+.fsct svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.4;
+  stroke-linecap:round;stroke-linejoin:round}
+.fsc.drag .fsct{background:var(--fill);border-color:var(--fill);color:#fff;transform:scale(1.06)}
+.fscb{position:absolute;right:50px;padding:6px 12px;border-radius:var(--r-full);
+  background:var(--fill);color:#fff;font-size:12.5px;font-weight:600;white-space:nowrap;
+  box-shadow:var(--sh3);opacity:0;transform:translateX(8px);pointer-events:none;
+  transition:opacity .14s var(--ez),transform .14s var(--ez)}
+.fsc.drag .fscb{opacity:1;transform:none}
+.moreb,.fscb{font-family:'LINE Seed Sans TH','IBM Plex Sans Thai',-apple-system,"Segoe UI",sans-serif}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1102,7 +1155,7 @@ body.dark{
 
 <header class="top">
   <div class="trow">
-    <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g class="mkcut"><path fill="currentColor" transform="translate(-4.2 -3.5) scale(1.06)" d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><path stroke="currentColor" stroke-width="9" stroke-linecap="butt" d="M22.5 23.4 36.2 27.9"/></g><g class="mkpig" stroke="currentColor" stroke-width="2.07" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-4.2 -3.5) scale(1.06)"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g><path stroke-width="5" d="M22.5 23.4 36.2 27.9"/><path class="mkband" stroke-width="2.4" stroke-linecap="butt" d="M27.66 22.47 26.1 27.22"/></g><circle class="mkember" cx="36.2" cy="27.9" r="2.5"/></svg></span>
+    <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g class="mkcut"><path fill="currentColor" d="M20 8.2c6 0 10.6 4.2 10.6 9.6S26 27.4 20 27.4 9.4 23.2 9.4 17.8 14 8.2 20 8.2Z"/><path stroke="currentColor" stroke-width="7.6" stroke-linecap="butt" d="M20.4 25.8 8.4 31"/></g><g stroke="currentColor" stroke-linecap="round"><path stroke-width="5.2" d="M20.4 25.8 8.4 31"/><path class="mkband" stroke-width="2.4" stroke-linecap="butt" d="M12.1 28.1 13.6 31.6"/></g><circle class="mkember" cx="8.4" cy="31" r="2.6"/><g class="mkpig" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.4 38.2c.3-5 3.9-8.4 8-9"/><path d="M31.6 38.2c-.3-5-3.9-8.4-8-9"/><path d="M16.2 29.2 20 32.8l3.8-3.6"/><path d="M15.2 8.6 8.2 8l-.8 7.4 4.4-3.6Z"/><path d="M24.8 8.6 31.8 8l.8 7.4-4.4-3.6Z"/><path d="M20 8.2c6 0 10.6 4.2 10.6 9.6S26 27.4 20 27.4 9.4 23.2 9.4 17.8 14 8.2 20 8.2Z"/><rect class="mksn" x="14.8" y="19.8" width="10.4" height="6.6" rx="3.3"/><path d="M17.8 22.9v.05M22.2 22.9v.05"/></g><g fill="currentColor"><rect x="11.2" y="14.6" width="7.5" height="4.4" rx="1.5"/><rect x="21.3" y="14.6" width="7.5" height="4.4" rx="1.5"/><rect x="18.4" y="15.2" width="3.2" height="1.6" rx=".8"/></g></svg></span>
     <span class="brand"><b>Muifei</b><i>บัญชีรับ-จ่ายในบ้าน</i></span>
     <button class="bk tap" id="bkChip" onclick="openBackup()">สำรองข้อมูล</button>
   </div>
@@ -1192,6 +1245,7 @@ body.dark{
   <button class="gn" id="tab-set" onclick="goTab('set')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M12 3.6v2.2M12 18.2v2.2M4.6 12h2.2M17.2 12h2.2M6.8 6.8l1.6 1.6M15.6 15.6l1.6 1.6M17.2 6.8l-1.6 1.6M8.4 15.6l-1.6 1.6"/></svg><i>ตั้งค่า</i></button>
 </nav>
 
+<div class="fsc" id="fsc" aria-hidden="true"><div class="fscb" id="fscBub"></div><button class="fsct" id="fscT" aria-label="เลื่อนเร็ว"><svg viewBox="0 0 24 24"><polyline points="7 9.5 12 4.8 17 9.5"></polyline><polyline points="7 14.5 12 19.2 17 14.5"></polyline></svg></button></div>
 <div class="dialscrim" id="dialScrim" onclick="closeDial()"></div>
 <div class="dial dial3" id="dial3"><span class="dl">พูดเพื่อจด</span>
   <button class="db" style="background:var(--fill)" onclick="dialSay()" aria-label="พูดเพื่อจด">
@@ -1227,7 +1281,7 @@ body.dark{
 </div>
 
 <div class="first hide" id="first">
-  <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g class="mkcut"><path fill="currentColor" transform="translate(-4.2 -3.5) scale(1.06)" d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><path stroke="currentColor" stroke-width="9" stroke-linecap="butt" d="M22.5 23.4 36.2 27.9"/></g><g class="mkpig" stroke="currentColor" stroke-width="2.07" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-4.2 -3.5) scale(1.06)"><path d="M11.2 13.4 8.6 8.9l5.2 1.7"/><path d="M28.8 13.4 31.4 8.9l-5.2 1.7"/><path d="M20 10.2c5.9 0 10.4 4 10.4 9.6 0 5.6-4.5 9.8-10.4 9.8S9.6 25.4 9.6 19.8c0-5.6 4.5-9.6 10.4-9.6Z"/><rect x="15.4" y="19.6" width="9.2" height="6.4" rx="3.2"/><path d="M18.1 22.8v.05M21.9 22.8v.05"/><path d="M15.1 16.2v.05M24.9 16.2v.05"/></g><path stroke-width="5" d="M22.5 23.4 36.2 27.9"/><path class="mkband" stroke-width="2.4" stroke-linecap="butt" d="M27.66 22.47 26.1 27.22"/></g><circle class="mkember" cx="36.2" cy="27.9" r="2.5"/></svg></span>
+  <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g class="mkcut"><path fill="currentColor" d="M20 8.2c6 0 10.6 4.2 10.6 9.6S26 27.4 20 27.4 9.4 23.2 9.4 17.8 14 8.2 20 8.2Z"/><path stroke="currentColor" stroke-width="7.6" stroke-linecap="butt" d="M20.4 25.8 8.4 31"/></g><g stroke="currentColor" stroke-linecap="round"><path stroke-width="5.2" d="M20.4 25.8 8.4 31"/><path class="mkband" stroke-width="2.4" stroke-linecap="butt" d="M12.1 28.1 13.6 31.6"/></g><circle class="mkember" cx="8.4" cy="31" r="2.6"/><g class="mkpig" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.4 38.2c.3-5 3.9-8.4 8-9"/><path d="M31.6 38.2c-.3-5-3.9-8.4-8-9"/><path d="M16.2 29.2 20 32.8l3.8-3.6"/><path d="M15.2 8.6 8.2 8l-.8 7.4 4.4-3.6Z"/><path d="M24.8 8.6 31.8 8l.8 7.4-4.4-3.6Z"/><path d="M20 8.2c6 0 10.6 4.2 10.6 9.6S26 27.4 20 27.4 9.4 23.2 9.4 17.8 14 8.2 20 8.2Z"/><rect class="mksn" x="14.8" y="19.8" width="10.4" height="6.6" rx="3.3"/><path d="M17.8 22.9v.05M22.2 22.9v.05"/></g><g fill="currentColor"><rect x="11.2" y="14.6" width="7.5" height="4.4" rx="1.5"/><rect x="21.3" y="14.6" width="7.5" height="4.4" rx="1.5"/><rect x="18.4" y="15.2" width="3.2" height="1.6" rx=".8"/></g></svg></span>
   <h1>ตอนนี้มีเงินอยู่เท่าไหร่</h1>
   <p>ใส่ครั้งเดียว แล้ว Muifei จะบวกลบให้เองจากที่จดต่อจากนี้</p>
   <div class="money filled"><span class="cur">฿</span>
@@ -1780,6 +1834,7 @@ var curTab='home',curMonth=monthOf(today()),curFilter='',_lastBal=null;
 var curType='';      /* Ver.12: '' | 'in' | 'out' — ฟิลเตอร์ชนิดของหน้ารายการ */
 function goTab(t){
   curTab=t;closeDial();
+  if(t==='list')listShow=LIST_STEP;   /* Ver.22: เข้าหน้ารายการใหม่ เริ่มนับหนึ่งเสมอ */
   document.body.setAttribute('data-tab',t);   /* Ver.10: วอลเปเปอร์คนละชุดต่อหน้า */
   ['home','list','mv','set'].forEach(function(x){
     document.getElementById('page-'+x).classList.toggle('off',x!==t);
@@ -1794,7 +1849,7 @@ function render(){
   if(curTab==='list')renderList();
   if(curTab==='mv')renderMv();
   if(curTab==='set')renderSet();
-  setTimeout(_scrollBtns,0);   /* Ver.21: เช็คหลังวาดเสร็จ ความสูงหน้าถึงจะเป็นค่าจริง */
+  setTimeout(function(){_scrollBtns();_fsSync(false);},0);   /* Ver.21: เช็คหลังวาดเสร็จ ความสูงหน้าถึงจะเป็นค่าจริง */
 }
 function renderHome(){
   var b=balance(),el=document.getElementById('balNum');
@@ -1824,6 +1879,10 @@ function countUp(el,from,to){
     if(k<1)requestAnimationFrame(step);}
   requestAnimationFrame(step);
 }
+/* Ver.22: จำนวนรายการที่หน้ารายการโชว์ตอนเปิดหน้า และเพิ่มทีละเท่านี้ทุกครั้งที่กด
+   30 รายการ ≈ 3 หน้าจอ พอให้เลื่อนดูได้เพลินๆ โดยไม่ต้องวาดทั้งเดือนรวดเดียว
+   เปลี่ยนเลขนี้ที่เดียวจบ */
+var LIST_STEP=30,listShow=LIST_STEP;
 function renderList(){
   var y=+curMonth.slice(0,4),mo=+curMonth.slice(5,7);
   document.getElementById('mTitle').textContent=MTH[mo-1]+' '+(y+543);
@@ -1856,20 +1915,37 @@ function renderList(){
   document.getElementById('filterChips').innerHTML=chips;
   if(curFilter)list=list.filter(function(e){return e.cat===curFilter;});
   list=sortEntries(list);
-  document.getElementById('fullList').innerHTML=list.length?dayHtml(list,true):'<div class="card"><div class="empty">เดือนนี้ยังไม่มีรายการ</div></div>';
+  /* Ver.22: เดือนหนึ่งจดกันเป็นร้อยรายการ วาดทีเดียวหมดทั้งเดือนหน้าจะยาวมาก
+     โชว์ทีละ LIST_STEP รายการ แล้วค่อยกดเพิ่ม
+     จุดตัดต้องอยู่ที่ขอบวันเสมอ วันหนึ่งจึงไม่มีทางถูกผ่าครึ่ง
+     (ยอดรวมท้ายวันจะได้ตรงกับแถวที่เห็นอยู่จริงเสมอ) */
+  var total=list.length,cut=total,dk=null,i;
+  if(total>listShow){
+    cut=0;
+    for(i=0;i<total;i++){
+      if(list[i].date!==dk){if(i>=listShow){cut=i;break;}dk=list[i].date;}
+      cut=i+1;}
+  }
+  var rest=total-cut;
+  var h=total?dayHtml(list.slice(0,cut),true)
+             :'<div class="card"><div class="empty">เดือนนี้ยังไม่มีรายการ</div></div>';
+  if(rest>0)h+='<button class="moreb" onclick="listMore()">แสดงเพิ่มเติม'
+    +'<i>ยังเหลืออีก '+rest+' รายการ</i></button>';
+  document.getElementById('fullList').innerHTML=h;
 }
-function setFilter(i){curFilter=i<0?'':(window._chipKeys[i]||'');renderList();buzz(8);}
+function listMore(){listShow+=LIST_STEP;renderList();buzz(8);}
+function setFilter(i){curFilter=i<0?'':(window._chipKeys[i]||'');listShow=LIST_STEP;renderList();buzz(8);}
 function setFilterS(i){setFilter(+i);}
 function setTypeFilter(t){
   curType=(curType===t?'':t);   /* แตะซ้ำที่เดิม = เอาฟิลเตอร์ออก */
-  curFilter='';
+  curFilter='';listShow=LIST_STEP;
   if(curTab!=='list')goTab('list'); else renderList();
   buzz(8);
 }
 function shiftMonth(d){
   var y=+curMonth.slice(0,4),m=+curMonth.slice(5,7)+d;
   if(m<1){m=12;y--;}if(m>12){m=1;y++;}
-  curMonth=y+'-'+String(m).padStart(2,'0');curFilter='';renderList();buzz(8);
+  curMonth=y+'-'+String(m).padStart(2,'0');curFilter='';listShow=LIST_STEP;renderList();buzz(8);
 }
 /* ================= หน้าเคลื่อนไหว (Ver.19) =================
    ลอกโครงมาจากหน้า "เคลื่อนไหว" ของแอปร้านหอม (Onion Ver.295, ฟังก์ชัน renderTimeline)
@@ -1973,7 +2049,7 @@ function renderMv(){
   document.getElementById('mvHead').style.display='';
   var h='<div class="mvtbl">';
   rows.forEach(function(r,i){
-    h+='<div class="mvr'+(i%2?' alt':'')+'"'+(r.id?' data-id="'+esc(r.id)+'"':'')+'>'
+    h+='<div class="mvr'+(i%2?' alt':'')+'" data-fsl="'+esc(fsLab(r.date))+'"'+(r.id?' data-id="'+esc(r.id)+'"':'')+'>'
      +'<span class="mvc-d"><b>'+mvShort(r.date)+'</b>'+(r.cat?'<i>'+esc(r.cat)+'</i>':'')+'</span>'
      +'<span class="mvc-n">'+esc(r.lab)+'</span>'
      +'<span class="mvc-v i'+(r['in']?'':' z')+'">'+(r['in']?fmt(r['in']):'—')+'</span>'
@@ -1995,7 +2071,7 @@ function dayHtml(list,showTot){
     var rows=b.g[k],din=0,dout=0;
     rows.forEach(function(e){if(e.type==='in')din+=e.amount;else dout+=e.amount;});
     var net=din-dout;
-    h+='<div class="daygrp"><div class="dayhd"><span>'+esc(thDate(k))+'</span></div>';
+    h+='<div class="daygrp" data-fsl="'+esc(fsLab(k))+'"><div class="dayhd"><span>'+esc(thDate(k))+'</span></div>';
     rows.forEach(function(e){
       var col=catColor(e.cat,e.type);
       h+='<button class="line" data-id="'+esc(e.id)+'">'
@@ -2035,18 +2111,112 @@ function _scrollBtns(){
   var fromBottom=doc.scrollHeight-window.scrollY-window.innerHeight;
   var dn=document.getElementById('sbDown');
   var ups=document.querySelectorAll('.uptop');
-  var i,show=over>300;
+  var i,longPage=over>300&&curTab!=='home';
   /* ต้องเซ็ต 'flex' ตรงๆ ไม่ใช่ '' — เพราะ CSS ตั้งค่าเริ่มต้นของ .uptop เป็น display:none
-     คืนค่าเป็นสตริงว่างมันจะย้อนไปใช้กฎ CSS = none ปุ่มไม่โผล่สักที */
-  for(i=0;i<ups.length;i++)ups[i].style.display=show?'flex':'none';
+     คืนค่าเป็นสตริงว่างมันจะย้อนไปใช้กฎ CSS = none ปุ่มไม่โผล่สักที
+     ปุ่มนี้อยู่ท้ายหน้าอยู่แล้ว จึงไม่ต้องรอให้เลื่อนก่อน (โผล่/หายกลางคันจะดันหน้าขยับ) */
+  for(i=0;i<ups.length;i++)ups[i].style.display=longPage?'flex':'none';
   if(!dn)return;
   clearTimeout(_sbTimer);
-  if(!show||fromBottom<50){dn.classList.remove('on');return;}
+  /* Ver.22: กติกาของลูกศรลงล่าง แก้ตามที่เขาทัก
+     1. หน้าแรกไม่มีเลย — หน้าแรกสั้น ไม่ได้ยาวจนต้องมีปุ่มพาไปล่าง
+     2. เพิ่งเปิดแอปแล้วเจอลูกศรทันทีคือผิด เพราะยังไม่ได้เลื่อนอะไรเลย
+        ตอนนี้ต้องเลื่อนลงจริงเกิน 80px ก่อน ปุ่มถึงจะมีสิทธิ์โผล่
+     3. หน้าไหนมีแถบเลื่อนเร็วแล้วก็ไม่ต้องมีลูกศรอีก สองอันทำงานเดียวกัน */
+  if(!longPage||window.scrollY<80||fromBottom<50||_fsOn()){dn.classList.remove('on');return;}
   dn.classList.add('on');
   _sbTimer=setTimeout(function(){dn.classList.remove('on');},1000);
 }
-window.addEventListener('scroll',_scrollBtns,{passive:true});
-window.addEventListener('resize',_scrollBtns);
+
+/* ================= แถบเลื่อนเร็ว (Ver.22) =================
+   ลากหัวจับริมขวาแล้วหน้าวิ่งตามทันที ใช้ตอนรายการยาวๆ ที่ปัดนิ้วเอาไม่ไหว
+   ระยะที่ตั้งไว้ (แก้ได้ที่ค่าคงที่ข้างล่างนี้ที่เดียว):
+     FS_MIN 1000 = หน้าต้องยาวเกินจอไปอีกราวหนึ่งจอกว่าๆ ถึงจะมีแถบ
+                   หน้าสั้นกว่านั้นปัดนิ้วเอาเร็วกว่าอยู่แล้ว
+     FS_TOP/FS_BOT = เว้นหัวจอกับแถบล่างไว้ ไม่ให้หัวจับไปทับแถบเมนู
+   ป้ายวันที่โผล่เฉพาะตอนลาก อ่านจาก data-fsl ที่ติดไว้บนกลุ่มวันในหน้ารายการ
+   และบนแถวของหน้าเคลื่อนไหว จะได้รู้ว่ากำลังจะหยุดตรงวันไหน ไม่ใช่ลากมั่ว */
+var FS_MIN=1000,FS_TOP=96,FS_BOT=104,FS_H=36;
+var _fsDrag=false,_fsTimer=null,_fsMarks=null;
+function _fsOn(){
+  var over=document.documentElement.scrollHeight-window.innerHeight;
+  return over>FS_MIN&&(curTab==='list'||curTab==='mv');
+}
+function _fsRail(){
+  var t=FS_TOP,b=window.innerHeight-FS_BOT;
+  return {t:t,travel:Math.max(20,b-t-FS_H)};
+}
+function fsLab(k){var dt=parseKey(k);return dt.getDate()+' '+MTHS[dt.getMonth()];}
+function _fsScan(){
+  var out=[],ns=document.querySelectorAll('[data-fsl]'),i,r;
+  for(i=0;i<ns.length;i++){
+    r=ns[i].getBoundingClientRect();
+    out.push({y:r.top+window.scrollY,lab:ns[i].getAttribute('data-fsl')});}
+  return out;
+}
+function _fsLabAt(y){
+  if(!_fsMarks||!_fsMarks.length)return '';
+  var lab=_fsMarks[0].lab,i;
+  for(i=0;i<_fsMarks.length;i++){if(_fsMarks[i].y<=y+130)lab=_fsMarks[i].lab;else break;}
+  return lab;
+}
+function _fsSync(show){
+  var el=document.getElementById('fsc');if(!el)return;
+  if(!_fsOn()){el.classList.remove('on','drag');return;}
+  var max=document.documentElement.scrollHeight-window.innerHeight;
+  var p=max>0?Math.min(1,Math.max(0,window.scrollY/max)):0,R=_fsRail();
+  var y=R.t+p*R.travel;
+  document.getElementById('fscT').style.transform='translateY('+y+'px)';
+  var b=document.getElementById('fscBub');
+  b.style.top=(y+3)+'px';
+  if(_fsDrag)b.textContent=_fsLabAt(window.scrollY);
+  /* โผล่ตอนเลื่อนจริงเท่านั้น เหตุผลเดียวกับลูกศรลงล่าง แล้วจางหายเองใน 1.4 วิ */
+  if(!show||(window.scrollY<60&&!_fsDrag)){el.classList.remove('on');return;}
+  el.classList.add('on');
+  clearTimeout(_fsTimer);
+  if(!_fsDrag)_fsTimer=setTimeout(function(){el.classList.remove('on');},1400);
+}
+function _fsJump(cy){
+  var R=_fsRail(),max=document.documentElement.scrollHeight-window.innerHeight;
+  var p=(cy-R.t-FS_H/2)/R.travel;
+  window.scrollTo(0,Math.round(Math.min(1,Math.max(0,p))*max));
+}
+function _fsStart(ev){
+  if(!_fsOn())return;
+  _fsDrag=true;_fsMarks=_fsScan();
+  var el=document.getElementById('fsc');el.classList.add('drag');el.classList.add('on');
+  clearTimeout(_fsTimer);buzz(8);
+  _fsMove(ev);
+}
+function _fsMove(ev){
+  if(!_fsDrag)return;
+  var t=ev.touches&&ev.touches[0];
+  _fsJump(t?t.clientY:ev.clientY);
+  _fsSync(true);
+  if(ev.cancelable)ev.preventDefault();
+}
+function _fsEnd(){
+  if(!_fsDrag)return;
+  _fsDrag=false;
+  document.getElementById('fsc').classList.remove('drag');
+  buzz(8);_fsSync(true);
+}
+function _fsBind(){
+  var t=document.getElementById('fscT');if(!t)return;
+  /* touchstart/touchmove ต้อง passive:false ไม่งั้น preventDefault ไม่ทำงาน
+     แล้วหน้าจะเลื่อนตามนิ้วซ้อนกับที่เราสั่งเลื่อนเอง (บทเรียนเดิมจาก Ver.265 ของร้านหอม) */
+  t.addEventListener('touchstart',_fsStart,{passive:false});
+  t.addEventListener('touchmove',_fsMove,{passive:false});
+  t.addEventListener('touchend',_fsEnd);
+  t.addEventListener('touchcancel',_fsEnd);
+  t.addEventListener('mousedown',function(e){_fsStart(e);e.preventDefault();});
+  window.addEventListener('mousemove',_fsMove);
+  window.addEventListener('mouseup',_fsEnd);
+}
+_fsBind();
+
+window.addEventListener('scroll',function(){_scrollBtns();_fsSync(true);},{passive:true});
+window.addEventListener('resize',function(){_scrollBtns();_fsSync(false);});
 
 function renderBk(){
   var c=document.getElementById('bkChip');
@@ -2558,7 +2728,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.21 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.22 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
