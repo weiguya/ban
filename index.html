@@ -10,7 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.24 — โลโก้วาดใหม่ตามรูปต้นฉบับ + ชิปไม่ใส่ราคาให้แล้ว
+   Muifei  Ver.25 — แถบเลื่อนเร็วลากนิดเดียวไปไกลขึ้น (FS_GAIN)
+   (Ver.24 เดิม: โลโก้วาดใหม่ตามรูปต้นฉบับ + ชิปไม่ใส่ราคาให้แล้ว)
    (Ver.23 เดิม: โลโก้ใช้ภาพจริง + ลูกศรลงล่างกลับมา)
    (Ver.22 เดิม: โลโก้หมูวงกลม + ยอดท้ายวันขนาดเท่าแถว + แสดงเพิ่มเติม + แถบเลื่อนเร็ว)
    (Ver.21 เดิม: แถวรวมใต้โดนัท + ยอดรวมท้ายวันในหน้ารายการ + ปุ่มเลื่อนขึ้น/ลง)
@@ -2203,22 +2204,31 @@ function _fsSync(show){
   clearTimeout(_fsTimer);
   if(!_fsDrag)_fsTimer=setTimeout(function(){el.classList.remove('on');},1400);
 }
-function _fsJump(cy){
-  var R=_fsRail(),max=document.documentElement.scrollHeight-window.innerHeight;
-  var p=(cy-R.t-FS_H/2)/R.travel;
-  window.scrollTo(0,Math.round(Math.min(1,Math.max(0,p))*max));
-}
+/* Ver.25: เดิมลากแบบ 1:1 — หัวจับอยู่ตรงไหนคือหน้าอยู่ตรงนั้น
+   ลากเต็มราง (ราว 600px คือเกือบเต็มจอ) ถึงจะไปถึงท้ายเดือน นิ้วต้องลากไกลไป
+   ตอนนี้นับจาก "จุดที่จับ" แล้วคูณ FS_GAIN นิ้วขยับ 1 หน้าไหล 2.4 เท่าของเดิม
+   ลากราว 250px = ถึงท้ายเดือนแล้ว
+   ผลข้างเคียงที่ยอมรับ: ระหว่างลาก หัวจับจะวิ่งนำนิ้วไปก่อน เพราะหัวจับ
+   ยังบอกตำแหน่งจริงของหน้าอยู่ พอปล่อยนิ้วทุกอย่างก็ตรงกันเหมือนเดิม
+   อยากเร็ว/ช้ากว่านี้ แก้เลขตัวเดียวที่ FS_GAIN */
+var FS_GAIN=2.4,_fsY0=0,_fsS0=0;
 function _fsStart(ev){
   if(!_fsOn())return;
   _fsDrag=true;_fsMarks=_fsScan();
+  var t=ev.touches&&ev.touches[0];
+  _fsY0=t?t.clientY:ev.clientY;      /* จับตรงไหนก็ได้ ไม่กระตุกตอนแตะ */
+  _fsS0=window.scrollY;
   var el=document.getElementById('fsc');el.classList.add('drag');el.classList.add('on');
   clearTimeout(_fsTimer);buzz(8);
-  _fsMove(ev);
+  _fsSync(true);
+  if(ev.cancelable&&ev.type!=='mousedown')ev.preventDefault();
 }
 function _fsMove(ev){
   if(!_fsDrag)return;
-  var t=ev.touches&&ev.touches[0];
-  _fsJump(t?t.clientY:ev.clientY);
+  var t=ev.touches&&ev.touches[0],cy=t?t.clientY:ev.clientY;
+  var R=_fsRail(),max=document.documentElement.scrollHeight-window.innerHeight;
+  var y=_fsS0+(cy-_fsY0)*FS_GAIN*(max/R.travel);
+  window.scrollTo(0,Math.round(Math.min(max,Math.max(0,y))));
   _fsSync(true);
   if(ev.cancelable)ev.preventDefault();
 }
@@ -2757,7 +2767,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.24 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.25 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
