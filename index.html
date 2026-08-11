@@ -10,7 +10,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.22 — โลโก้หมูวงกลม + ยอดท้ายวันขนาดเท่าแถว + แสดงเพิ่มเติม + แถบเลื่อนเร็ว
+   Muifei  Ver.24 — โลโก้วาดใหม่ตามรูปต้นฉบับ + ชิปไม่ใส่ราคาให้แล้ว
+   (Ver.23 เดิม: โลโก้ใช้ภาพจริง + ลูกศรลงล่างกลับมา)
+   (Ver.22 เดิม: โลโก้หมูวงกลม + ยอดท้ายวันขนาดเท่าแถว + แสดงเพิ่มเติม + แถบเลื่อนเร็ว)
    (Ver.21 เดิม: แถวรวมใต้โดนัท + ยอดรวมท้ายวันในหน้ารายการ + ปุ่มเลื่อนขึ้น/ลง)
    (Ver.18 เดิม: พื้นไล่เฉดชุดเดิม + การ์ดไม่มีเส้นขอบ)
    (Ver.17 เดิม: ฟอนต์ LINE Seed + โลโก้หมูคาบซิการ์ + กราฟ 7 วัน + พื้นโทน Sofascore)
@@ -1148,6 +1150,30 @@ body.dark{
 .fsc.drag .fscb{opacity:1;transform:none}
 .moreb,.fscb{font-family:'LINE Seed Sans TH','IBM Plex Sans Thai',-apple-system,"Segoe UI",sans-serif}
 </style>
+<style id="skin22">
+/* ============================================================
+   Ver.23 — โลโก้ใช้ภาพที่เขาส่งมาจริงๆ ไม่วาดเลียนแบบแล้ว
+   ตัดวงแหวนที่วาดไว้ในภาพออก (กรอบกลมของแอปทำหน้าที่นั้นแทน)
+   แล้วเก็บเฉพาะเส้นสีขาวเป็น alpha ตัวภาพจึงเป็นหมึกขาวล้วน
+   พื้นข้างหลังคือสี --fill ของกรอบ เปลี่ยนสีกรอบเมื่อไหร่หมูก็ตามไปด้วย
+   กฎ .mkicon/.mkcut/.mksn ในชั้นก่อนๆ ไม่ได้ใช้แล้ว แต่ทิ้งไว้เฉยๆ
+   เผื่ออยากกลับไปใช้โลโก้แบบเวกเตอร์
+   · ลูกศรลงล่างกลับมาแล้วในหน้ารายการ/เคลื่อนไหว (ดู _scrollBtns)
+   ============================================================ */
+.mkimg{width:100%;height:100%;display:block;object-fit:contain}
+</style>
+<style id="skin23">
+/* ============================================================
+   Ver.24 — โลโก้วาดใหม่ โดยลอกโครงจากรูปที่เขาส่งมาจริงๆ
+   วิธีทำ: เอารูปมาซ้อนใต้ SVG แล้ววัดตำแหน่งจริงทีละจุด
+   (หัว cx20.1 cy21 rx11.2 ry12.4 · แว่นบน 15.8 ล่าง 21.3 ·
+    จมูก 15.5-24.3 · ซิการ์จากปาก 20,24.3 ไปปลายม้วน 11.2,29.2)
+   เส้นเป็นแบบเดียวกับไอคอนอื่นในแอป หนา 1.15 ปลายมน
+   ไม่ลอกลายสักที่แขน กับลายไขว้ในเลนส์ — ที่ 36px มันเละ
+   ของเดิมที่เป็นรูปฝังไว้ (Ver.23) เอาออกแล้ว เพราะเส้นจาง
+   ============================================================ */
+.mkicon{width:100%;height:100%;display:block}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1155,7 +1181,7 @@ body.dark{
 
 <header class="top">
   <div class="trow">
-    <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g class="mkcut"><path fill="currentColor" d="M20 8.2c6 0 10.6 4.2 10.6 9.6S26 27.4 20 27.4 9.4 23.2 9.4 17.8 14 8.2 20 8.2Z"/><path stroke="currentColor" stroke-width="7.6" stroke-linecap="butt" d="M20.4 25.8 8.4 31"/></g><g stroke="currentColor" stroke-linecap="round"><path stroke-width="5.2" d="M20.4 25.8 8.4 31"/><path class="mkband" stroke-width="2.4" stroke-linecap="butt" d="M12.1 28.1 13.6 31.6"/></g><circle class="mkember" cx="8.4" cy="31" r="2.6"/><g class="mkpig" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.4 38.2c.3-5 3.9-8.4 8-9"/><path d="M31.6 38.2c-.3-5-3.9-8.4-8-9"/><path d="M16.2 29.2 20 32.8l3.8-3.6"/><path d="M15.2 8.6 8.2 8l-.8 7.4 4.4-3.6Z"/><path d="M24.8 8.6 31.8 8l.8 7.4-4.4-3.6Z"/><path d="M20 8.2c6 0 10.6 4.2 10.6 9.6S26 27.4 20 27.4 9.4 23.2 9.4 17.8 14 8.2 20 8.2Z"/><rect class="mksn" x="14.8" y="19.8" width="10.4" height="6.6" rx="3.3"/><path d="M17.8 22.9v.05M22.2 22.9v.05"/></g><g fill="currentColor"><rect x="11.2" y="14.6" width="7.5" height="4.4" rx="1.5"/><rect x="21.3" y="14.6" width="7.5" height="4.4" rx="1.5"/><rect x="18.4" y="15.2" width="3.2" height="1.6" rx=".8"/></g></svg></span>
+    <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 40c.6-6.4 4.6-10.4 9.4-11.4"/><path d="M36.6 40c-.6-6.4-4.6-10.4-9.4-11.4"/><path d="M9.6 32.4 12.6 40M30.6 32.4 27.6 40"/><path d="M13.9 8.9 10 9.1 6.9 12.6l.7 4 3.3 1-1-4.4Z"/><path d="M26.3 8.9l3.9.2 3.1 3.5-.7 4-3.3 1 1-4.4Z"/><path d="M20.1 8.6c6.2 0 11.2 5.6 11.2 12.4S26.3 33.4 20.1 33.4 8.9 27.8 8.9 21 13.9 8.6 20.1 8.6Z"/><path d="M13.2 13.4 16.4 14.8M27 13.4 23.8 14.8"/><path stroke-width=".8" d="M22.6 10 24.3 13.6M21.9 10.9l1.7-.7M22.5 12.2l1.7-.7M23.1 13.5l1.7-.7"/><path d="M10.2 15.8h8.8v2.9c0 1.5-1.2 2.6-2.8 2.6h-3.4c-1.6 0-2.6-1.1-2.6-2.6Z"/><path d="M21.2 15.8h8.8v2.9c0 1.5-1 2.6-2.6 2.6h-3.4c-1.6 0-2.8-1.1-2.8-2.6Z"/><path d="M19 16.5h2.2"/><path d="M26.6 25.2c.5 3.2-1.4 6-4 6.8"/><path class="mksn" fill="currentColor" d="M19.9 18.2c2.7 0 4.4 1.4 4.4 3.2s-1.7 3.3-4.4 3.3-4.4-1.5-4.4-3.3 1.7-3.2 4.4-3.2Z"/><ellipse cx="18.3" cy="21" rx=".7" ry="1.6"/><ellipse cx="21.3" cy="21" rx=".7" ry="1.6"/><rect class="mksn" fill="currentColor" x="0" y="-1.25" width="10.6" height="2.5" rx="1" transform="translate(11.2 29.2) rotate(-28.8)"/><circle class="mksn" fill="currentColor" cx="11.9" cy="28.9" r="1.35"/><circle cx="11.9" cy="28.9" r=".45"/></g></svg></span>
     <span class="brand"><b>Muifei</b><i>บัญชีรับ-จ่ายในบ้าน</i></span>
     <button class="bk tap" id="bkChip" onclick="openBackup()">สำรองข้อมูล</button>
   </div>
@@ -1281,7 +1307,7 @@ body.dark{
 </div>
 
 <div class="first hide" id="first">
-  <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g class="mkcut"><path fill="currentColor" d="M20 8.2c6 0 10.6 4.2 10.6 9.6S26 27.4 20 27.4 9.4 23.2 9.4 17.8 14 8.2 20 8.2Z"/><path stroke="currentColor" stroke-width="7.6" stroke-linecap="butt" d="M20.4 25.8 8.4 31"/></g><g stroke="currentColor" stroke-linecap="round"><path stroke-width="5.2" d="M20.4 25.8 8.4 31"/><path class="mkband" stroke-width="2.4" stroke-linecap="butt" d="M12.1 28.1 13.6 31.6"/></g><circle class="mkember" cx="8.4" cy="31" r="2.6"/><g class="mkpig" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.4 38.2c.3-5 3.9-8.4 8-9"/><path d="M31.6 38.2c-.3-5-3.9-8.4-8-9"/><path d="M16.2 29.2 20 32.8l3.8-3.6"/><path d="M15.2 8.6 8.2 8l-.8 7.4 4.4-3.6Z"/><path d="M24.8 8.6 31.8 8l.8 7.4-4.4-3.6Z"/><path d="M20 8.2c6 0 10.6 4.2 10.6 9.6S26 27.4 20 27.4 9.4 23.2 9.4 17.8 14 8.2 20 8.2Z"/><rect class="mksn" x="14.8" y="19.8" width="10.4" height="6.6" rx="3.3"/><path d="M17.8 22.9v.05M22.2 22.9v.05"/></g><g fill="currentColor"><rect x="11.2" y="14.6" width="7.5" height="4.4" rx="1.5"/><rect x="21.3" y="14.6" width="7.5" height="4.4" rx="1.5"/><rect x="18.4" y="15.2" width="3.2" height="1.6" rx=".8"/></g></svg></span>
+  <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 40c.6-6.4 4.6-10.4 9.4-11.4"/><path d="M36.6 40c-.6-6.4-4.6-10.4-9.4-11.4"/><path d="M9.6 32.4 12.6 40M30.6 32.4 27.6 40"/><path d="M13.9 8.9 10 9.1 6.9 12.6l.7 4 3.3 1-1-4.4Z"/><path d="M26.3 8.9l3.9.2 3.1 3.5-.7 4-3.3 1 1-4.4Z"/><path d="M20.1 8.6c6.2 0 11.2 5.6 11.2 12.4S26.3 33.4 20.1 33.4 8.9 27.8 8.9 21 13.9 8.6 20.1 8.6Z"/><path d="M13.2 13.4 16.4 14.8M27 13.4 23.8 14.8"/><path stroke-width=".8" d="M22.6 10 24.3 13.6M21.9 10.9l1.7-.7M22.5 12.2l1.7-.7M23.1 13.5l1.7-.7"/><path d="M10.2 15.8h8.8v2.9c0 1.5-1.2 2.6-2.8 2.6h-3.4c-1.6 0-2.6-1.1-2.6-2.6Z"/><path d="M21.2 15.8h8.8v2.9c0 1.5-1 2.6-2.6 2.6h-3.4c-1.6 0-2.8-1.1-2.8-2.6Z"/><path d="M19 16.5h2.2"/><path d="M26.6 25.2c.5 3.2-1.4 6-4 6.8"/><path class="mksn" fill="currentColor" d="M19.9 18.2c2.7 0 4.4 1.4 4.4 3.2s-1.7 3.3-4.4 3.3-4.4-1.5-4.4-3.3 1.7-3.2 4.4-3.2Z"/><ellipse cx="18.3" cy="21" rx=".7" ry="1.6"/><ellipse cx="21.3" cy="21" rx=".7" ry="1.6"/><rect class="mksn" fill="currentColor" x="0" y="-1.25" width="10.6" height="2.5" rx="1" transform="translate(11.2 29.2) rotate(-28.8)"/><circle class="mksn" fill="currentColor" cx="11.9" cy="28.9" r="1.35"/><circle cx="11.9" cy="28.9" r=".45"/></g></svg></span>
   <h1>ตอนนี้มีเงินอยู่เท่าไหร่</h1>
   <p>ใส่ครั้งเดียว แล้ว Muifei จะบวกลบให้เองจากที่จดต่อจากนี้</p>
   <div class="money filled"><span class="cur">฿</span>
@@ -2122,8 +2148,9 @@ function _scrollBtns(){
      1. หน้าแรกไม่มีเลย — หน้าแรกสั้น ไม่ได้ยาวจนต้องมีปุ่มพาไปล่าง
      2. เพิ่งเปิดแอปแล้วเจอลูกศรทันทีคือผิด เพราะยังไม่ได้เลื่อนอะไรเลย
         ตอนนี้ต้องเลื่อนลงจริงเกิน 80px ก่อน ปุ่มถึงจะมีสิทธิ์โผล่
-     3. หน้าไหนมีแถบเลื่อนเร็วแล้วก็ไม่ต้องมีลูกศรอีก สองอันทำงานเดียวกัน */
-  if(!longPage||window.scrollY<80||fromBottom<50||_fsOn()){dn.classList.remove('on');return;}
+     Ver.23: เอาข้อ 3 ออกแล้ว (เดิมมีแถบเลื่อนเร็วแล้วจะซ่อนลูกศร) เขาอยากได้ลูกศรคืน
+     ในหน้ารายการ/เคลื่อนไหว ตอนนี้มีทั้งสองอย่างพร้อมกันได้ */
+  if(!longPage||window.scrollY<80||fromBottom<50){dn.classList.remove('on');return;}
   dn.classList.add('on');
   _sbTimer=setTimeout(function(){dn.classList.remove('on');},1000);
 }
@@ -2606,7 +2633,9 @@ function useFormPin(i){
   var p=window._formPins[i];if(!p)return;
   var at=-1;
   draft.rows.forEach(function(r,j){if(at<0&&!(r.n&&r.n.trim()))at=j;});
-  var row=newRow(p.n,(p.last>0?p.last:''),p.cat,draft.type);
+  /* Ver.24: แตะชิปแล้วเอาแค่ชื่อกับหมวด ไม่ใส่ราคาให้แล้ว
+     ราคาของเดิมเปลี่ยนบ่อย เติมมาให้แล้วต้องมาลบทิ้งเองทุกที เสียเวลากว่าพิมพ์ใหม่ */
+  var row=newRow(p.n,'',p.cat,draft.type);
   if(at>=0)draft.rows[at]=row;
   else if(draft.multi)draft.rows.push(row);
   else draft.rows[draft.rows.length-1]=row;
@@ -2660,7 +2689,7 @@ function delEntry(){
 }
 function pinThis(){
   var r=draft.rows[0];if(!r||!r.n)return;
-  addPin(r.n.trim(),r.cat,draft.type,parseFloat(r.a)||0);
+  addPin(r.n.trim(),r.cat,draft.type,0);   /* Ver.24: ไม่เก็บราคาตอนที่บันทึกแล้ว */
   toast('ปักหมุด '+r.n+' เป็นชิปแล้ว','ok');
 }
 /* Ver.12: ฝั่งรับไม่เคยมีชิปมาก่อน ใส่ชุดตั้งต้นให้ครั้งเดียว แก้/ลบได้ในตั้งค่า */
@@ -2728,7 +2757,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.22 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.24 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
@@ -2769,9 +2798,9 @@ function drawPinList(){
   var rows=D.pins.length?D.pins.map(function(p,i){
     return '<button class="setrow" onclick="editPin('+i+')">'
      +'<span class="dot" style="background:'+catColor(p.cat,p.type||'out')+';width:14px;height:14px;flex:0 0 14px"></span>'
-     +'<span class="cn">'+esc(p.n)+'<span style="color:var(--ink3);font-size:11.5px"> · '+esc(p.cat)+(p.last>0?' · '+fmt(p.last):'')+'</span></span>'
+     +'<span class="cn">'+esc(p.n)+'<span style="color:var(--ink3);font-size:11.5px"> · '+esc(p.cat)+'</span></span>'
      +'<span class="go">›</span></button>';}).join('')
-   :'<div class="hintline">ยังไม่มีชิป ชิปคือของที่ซื้อบ่อย เอาไว้กดแล้วใส่ราคาได้เลยตอนจดหลายรายการ</div>';
+   :'<div class="hintline">ยังไม่มีชิป ชิปคือของที่ซื้อบ่อย กดแล้วชื่อกับหมวดมาเอง เหลือแค่ใส่ราคา</div>';
   paint('ชิปซื้อประจำ','<div class="grp">'+rows+'</div>'
    +'<button class="btn btn-out" onclick="editPin(-1)">+ เพิ่มชิปใหม่</button>');
 }
@@ -2807,9 +2836,6 @@ function drawEdit(){
    +'<div class="seg"><button class="'+(edit.type==='out'?'on o':'')+'" onclick="setEditType(\'out\')">จ่ายออก</button>'
    +'<button class="'+(edit.type==='in'?'on i':'')+'" onclick="setEditType(\'in\')">รับเข้า</button></div>'
    +'<div class="field"><span class="fl">หมวด</span><div class="chipwrap">'+chips+'</div></div>'
-   +'<div class="field"><span class="fl">ราคาที่ใช้บ่อย (ใส่หรือไม่ใส่ก็ได้)</span>'
-   +'<div class="money'+(edit.last>0?' filled':'')+'"><span class="cur">฿</span>'
-   +'<input type="number" inputmode="decimal" id="eLast" value="'+(edit.last||'')+'" oninput="edit.last=parseFloat(this.value)||0"></div></div>'
    +'<button class="btn btn-main" onclick="saveEdit()">บันทึก</button>'
    +(edit.idx>=0?'<div class="btn-row"><button class="btn btn-danger" onclick="removeEdit()">ลบชิปนี้</button></div>':''));
 }
