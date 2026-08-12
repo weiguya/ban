@@ -10,7 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.28 — หมวดมาอยู่แถวเดียวกับชื่อ + เดาคำจากที่เคยลง + การ์ดเฉลี่ยใส่สีหมวด
+   Muifei  Ver.29 — เมนูหมวดกางแนวยาว + อ่านสลิป/ใบเสร็จจากรูป
+   (Ver.28 เดิม: หมวดมาอยู่แถวเดียวกับชื่อ + เดาคำจากที่เคยลง + การ์ดเฉลี่ยใส่สีหมวด)
    (Ver.27 เดิม: เอฟเฟค 5 อย่าง + การ์ดเฉลี่ยต่อวัน + ค้นหา + ลบแล้วเลิกทำได้)
    (Ver.26 เดิม: แถบเลื่อนเร็วกลับไปลากแบบ 1:1)
    (Ver.24 เดิม: โลโก้วาดใหม่ตามรูปต้นฉบับ + ชิปไม่ใส่ราคาให้แล้ว)
@@ -1322,6 +1323,50 @@ body.dark mark{background:rgba(90,175,240,.26)}
 /* ---------- 3 การ์ดเฉลี่ยต่อวัน ---------- */
 .avr .adot{width:10px;height:10px;flex:0 0 10px;border-radius:50%}
 .avr{gap:9px}
+</style>
+
+<style id="skin26">
+/* ============================================================
+   Ver.29
+   1. ช่องหมวดไม่ปล่อยว่างแล้ว ยังไม่พิมชื่อ = ขึ้นคำว่า "เลือกหมวด"
+   2. เมนูหมวดกางลงเป็นแนวยาว ไม่ใช่ชิปเรียงขวาง
+   3. ถ่ายรูป / อัพรูป สลิปกับใบเสร็จ อ่านเอาแต่ตัวหนังสือ ไม่เก็บรูป
+   ============================================================ */
+
+/* ---------- 1+2 ปุ่มหมวด กับ เมนูที่กางลงมา ---------- */
+.frow .rcw{flex:0 0 108px;min-width:0;position:relative}
+.frow .rcw .rc{width:100%;flex:0 0 auto}
+.frow .rc.ph b{color:var(--ink3)}      /* ยังไม่ได้เลือก = สีจาง */
+.frow .rc.inv{visibility:visible}      /* Ver.28 เคยซ่อนไว้ ยกเลิก */
+.rcm{position:absolute;top:calc(100% + 5px);right:0;z-index:46;
+  width:max-content;min-width:160px;max-width:min(240px,72vw);
+  background:var(--card);border-radius:13px;box-shadow:var(--sh3);
+  overflow-y:auto;overflow-x:hidden;padding:4px 0;-webkit-overflow-scrolling:touch}
+.rcm.up{top:auto;bottom:calc(100% + 5px)}
+.rcmi{display:flex;align-items:center;gap:9px;width:100%;
+  padding:10px 12px;font:inherit;font-size:13.5px;color:var(--ink);
+  text-align:left;background:none;border:0}
+.rcmi .dot{width:9px;height:9px;flex:0 0 9px}
+.rcmi span.cn{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rcmi i{flex:0 0 auto;font-style:normal;font-size:13px;color:var(--accent);visibility:hidden}
+.rcmi.on{font-weight:600}
+.rcmi.on i{visibility:visible}
+.rcmi:active{background:var(--card2)}
+
+/* ---------- 3 ปุ่มอ่านรูป ---------- */
+.ocrb{display:flex;align-items:center;gap:10px;width:100%;
+  padding:13px 14px;border-radius:var(--r-ctl);border:0;
+  background:var(--card2);font:inherit;color:var(--ink);text-align:left}
+.ocrb svg{width:20px;height:20px;flex:0 0 20px;fill:none;stroke:var(--accent);
+  stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.ocrb b{flex:1;min-width:0;font-size:14px;font-weight:500}
+.ocrb i{flex:0 0 auto;font-style:normal;font-size:12px;color:var(--ink3);
+  font-variant-numeric:tabular-nums}
+.ocrb.busy{opacity:.65}
+.ocrb:active{background:var(--line)}
+.ocrnote{font-size:11.5px;color:var(--ink3);line-height:1.5;padding:6px 2px 0}
+.ocrgot{font-size:11.5px;color:var(--ink2);line-height:1.55;padding:7px 2px 0}
+.ocrgot b{color:var(--ink);font-weight:600}
 </style>
 
 </head>
@@ -2885,17 +2930,27 @@ function rowHtml(r,i){
   var h='<div class="rowwrap"><div class="frow">'
    +'<span class="fn"><input type="text" id="fNm'+i+'" value="'+esc(r.n)+'" oninput="onRowNm('+i+',this.value)" onfocus="drawSug('+i+')" autocomplete="off" placeholder="เช่น ค่าข้าว">'
    +'<div class="sugw" id="sug'+i+'"></div></span>'
-   +'<button class="rc'+(hasN?'':' inv')+'" onclick="toggleRowCat('+i+')" id="rcat'+i+'">'
-   +'<span class="dot" style="background:'+catColor(r.cat,draft.type)+'"></span><b>'+esc(r.cat)+'</b><i>'+(r.catOpen?'▴':'▾')+'</i></button>'
+   +'<span class="rcw">'+rcBtn(r,i)
+   +(r.catOpen?('<div class="rcm">'+cats.map(function(c,ci){
+      return '<button class="rcmi'+((c.n===r.cat&&(hasN||r.catSet))?' on':'')+'" onclick="pickRowCat('+i+','+ci+')">'
+       +'<span class="dot" style="background:'+c.c+'"></span><span class="cn">'+esc(c.n)+'</span><i>✓</i></button>';}).join('')+'</div>'):'')
+   +'</span>'
    +'<span class="fm money sm'+(filled?' filled':'')+'" id="moneyBox'+i+'"><span class="cur">฿</span>'
    +'<input type="number" inputmode="decimal" id="fAmt'+i+'" value="'+(r.a===''?'':r.a)+'" oninput="onRowAmt('+i+',this.value)" onfocus="hideSug()" placeholder="0"></span>'
    +(draft.rows.length>1?'<button class="fx tap" onclick="delRow('+i+')" aria-label="ลบแถวนี้">✕</button>':'')
    +'</div>';
-  if(r.catOpen)
-    h+='<div class="chiprow" style="margin-top:6px">'+cats.map(function(c,ci){
-      return '<button class="chip sm'+(c.n===r.cat?' on':'')+'" onclick="pickRowCat('+i+','+ci+')">'
-       +'<span class="dot" style="background:'+c.c+'"></span>'+esc(c.n)+'</button>';}).join('')+'</div>';
   return h+'</div>';
+}
+/* Ver.29: ยังไม่พิมชื่อ ไม่ปล่อยปุ่มว่างแล้ว ขึ้นคำว่า "เลือกหมวด" ไปเลย
+   ปล่อยว่างมันผิด เพราะปุ่มที่ไม่มีคำอยู่ข้างในไม่ได้บอกอะไรใครทั้งนั้น
+   พอพิมชื่อแล้วก็ยังเดาหมวดให้เหมือนเดิม ไม่ได้เปลี่ยนตรงนั้น */
+function rcBtn(r,i){
+  /* โชว์ชื่อหมวดเมื่อ พิมชื่อแล้ว (แอปเดาให้) หรือ เขาเลือกเอง
+     เลือกเองทั้งที่ยังไม่ได้พิมชื่อ ก็ต้องขึ้นหมวดนั้น ไม่ใช่กลับไปเป็นคำว่าเลือกหมวด */
+  var show=!!((r.n&&r.n.trim())||r.catSet);
+  return '<button class="rc'+(show?'':' ph')+'" onclick="toggleRowCat('+i+')" id="rcat'+i+'">'
+   +'<span class="dot" style="background:'+(show?catColor(r.cat,draft.type):'var(--ink3)')+'"></span>'
+   +'<b>'+(show?esc(r.cat):'เลือกหมวด')+'</b><i>'+(r.catOpen?'\u25b4':'\u25be')+'</i></button>';
 }
 function drawForm(fromVoice){
   curSheet='form';
@@ -2918,6 +2973,14 @@ function drawForm(fromVoice){
   paint(ttl,
    '<div class="seg"><button class="'+(draft.type==='out'?'on o':'')+'" onclick="setType(\'out\')">จ่ายออก</button>'
   +'<button class="'+(draft.type==='in'?'on i':'')+'" onclick="setType(\'in\')">รับเข้า</button></div>'
+  +'<div class="field"><span class="fl">สลิป หรือ ใบเสร็จ</span>'
+  +'<button class="ocrb" id="ocrBtn" onclick="ocrPick()">'
+   +'<svg viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.7l1.2-2h6.2l1.2 2h1.7A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/>'
+   +'<circle cx="12" cy="12.5" r="3.4"/></svg>'
+   +'<b>ถ่ายรูป หรือ เลือกรูป</b><i id="ocrS"></i></button>'
+  +'<input type="file" accept="image/*" id="ocrFile" onchange="ocrFilePicked(this)" style="display:none">'
+  +'<div class="ocrnote">อ่านเอาแต่ตัวหนังสือ ไม่เก็บรูปไว้ และไม่ส่งรูปออกไปไหน · สลิปธนาคารแม่นกว่าใบเสร็จกระดาษ</div>'
+  +'</div>'
   +'<div class="field"><span class="fl">รายการ และ จำนวนเงิน</span>'
   +draft.rows.map(rowHtml).join('')
   +(draft.multi?'<button class="addrowbtn" onclick="addRow()">＋ เพิ่มแถว</button>':'')
@@ -3018,18 +3081,215 @@ function pickSug(i,j){
    พอถึงจังหวะ bubble ตัว target หลุดจาก DOM ไปแล้ว closest() คืน null (บทเรียน Ver.20) */
 document.addEventListener('click',function(ev){
   var t=ev.target;
-  if(t&&t.closest&&(t.closest('.sugw')||t.closest('.frow .fn')))return;
-  hideSug();
+  if(!(t&&t.closest&&(t.closest('.sugw')||t.closest('.frow .fn'))))hideSug();
+  /* เมนูหมวดที่กางอยู่ ปิดเมื่อแตะที่อื่น ต้องหน่วง 0 ms ให้ onclick ของสิ่งที่แตะทำงานก่อน
+     ไม่งั้นการแตะครั้งแรกจะถูกกินไปกับการปิดเมนู (บทเรียนปฏิทิน Ver.20) */
+  if(t&&t.closest&&t.closest('.rcw'))return;
+  if(curSheet==='form'&&draft&&draft.rows&&draft.rows.some(function(r){return r.catOpen;}))
+    setTimeout(function(){
+      if(!draft||!draft.rows)return;
+      draft.rows.forEach(function(r){r.catOpen=false;});
+      drawForm(false);
+    },0);
 },true);
+
+
+/* ================= Ver.29 — อ่านสลิป / ใบเสร็จ จากรูป =================
+   ทั้งหมดทำในเครื่อง ไม่มีการอัปโหลดรูปไปไหน และไม่เก็บรูปไว้ด้วย
+   จบงานเมื่อไหร่ล้าง canvas ทิ้งทันที เหลือแต่ข้อความที่แยกออกมาได้
+   ตัวอ่านตัวหนังสือโหลดจาก CDN ครั้งแรกครั้งเดียวแล้ว browser cache ไว้เอง */
+var OCR_SRC=window.OCR_CDN||'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+var OCR_OPT=window.OCR_OPTS||{};
+var _ocrW=null,_ocrBusy=false;
+
+function ocrStat(t,busy){
+  var e=document.getElementById('ocrS'),b=document.getElementById('ocrBtn');
+  if(e)e.textContent=t||'';
+  if(b)b.classList.toggle('busy',!!busy);
+}
+function ocrPick(){
+  if(_ocrBusy){toast('กำลังอ่านรูปอยู่ รอแป๊บนึง','info');return;}
+  var f=document.getElementById('ocrFile');if(f)f.click();
+}
+function ocrLoad(){
+  return new Promise(function(res,rej){
+    if(window.Tesseract)return res();
+    var s=document.createElement('script');
+    s.src=OCR_SRC;s.onload=function(){res();};s.onerror=function(){rej(new Error('cdn'));};
+    document.head.appendChild(s);
+  });
+}
+function ocrWorker(){
+  if(_ocrW)return Promise.resolve(_ocrW);
+  return Tesseract.createWorker('tha+eng',1,Object.assign({
+    logger:function(m){
+      if(m.status==='loading language traineddata')ocrStat('โหลดตัวอ่าน '+Math.round((m.progress||0)*100)+'%',true);
+      else if(m.status==='recognizing text')ocrStat('อ่านอยู่ '+Math.round((m.progress||0)*100)+'%',true);
+    }},OCR_OPT)).then(function(w){_ocrW=w;return w;});
+}
+/* ย่อ + ทำขาวดำ + ดึงคอนทราสต์ ก่อนส่งให้อ่าน
+   ด้านยาว 1600 คือจุดที่พอดี ใหญ่กว่านี้ช้าขึ้นแต่ไม่แม่นขึ้น */
+function ocrPrep(file){
+  return createImageBitmap(file).then(function(bm){
+    var mx=1600,sc=Math.min(1,mx/Math.max(bm.width,bm.height));
+    var w=Math.round(bm.width*sc),h=Math.round(bm.height*sc);
+    var cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    var cx=cv.getContext('2d',{willReadFrequently:true});
+    cx.drawImage(bm,0,0,w,h);
+    if(bm.close)bm.close();
+    var im=cx.getImageData(0,0,w,h),p=im.data,i,g,hist=new Array(256).fill(0);
+    for(i=0;i<p.length;i+=4){
+      g=(p[i]*.299+p[i+1]*.587+p[i+2]*.114)|0;
+      p[i]=p[i+1]=p[i+2]=g;hist[g]++;
+    }
+    /* ยืดช่วงสว่างจากเปอร์เซ็นไทล์ 2/98 ไม่ใช่ min/max
+       จุดดำจุดเดียวในรูปไม่ควรกำหนดคอนทราสต์ของทั้งใบ */
+    var tot=w*h,acc=0,lo=0,hi=255;
+    for(i=0;i<256;i++){acc+=hist[i];if(acc>tot*.02){lo=i;break;}}
+    acc=0;
+    for(i=255;i>=0;i--){acc+=hist[i];if(acc>tot*.02){hi=i;break;}}
+    if(hi-lo>20){
+      var k=255/(hi-lo);
+      for(i=0;i<p.length;i+=4){
+        g=(p[i]-lo)*k;g=g<0?0:(g>255?255:g);
+        p[i]=p[i+1]=p[i+2]=g;
+      }
+    }
+    cx.putImageData(im,0,0);
+    return cv;
+  });
+}
+function ocrFilePicked(inp){
+  var f=inp.files&&inp.files[0];inp.value='';
+  if(!f)return;
+  if(_ocrBusy)return;
+  _ocrBusy=true;ocrStat('เตรียมรูป…',true);
+  var cv=null;
+  ocrPrep(f).then(function(c){cv=c;ocrStat('โหลดตัวอ่าน…',true);return ocrLoad();})
+   .then(ocrWorker)
+   .then(function(w){ocrStat('อ่านอยู่…',true);return w.recognize(cv);})
+   .then(function(r){
+     var txt=(r&&r.data&&r.data.text)||'';
+     if(cv){cv.width=1;cv.height=1;cv=null;}   /* ทิ้งรูปทันที ไม่เก็บ */
+     ocrApply(slipParse(txt));
+   })
+   .catch(function(e){
+     if(cv){cv.width=1;cv.height=1;cv=null;}
+     toast(String(e&&e.message)==='cdn'?'โหลดตัวอ่านไม่ได้ ต้องต่อเน็ตครั้งแรก':'อ่านรูปนี้ไม่ออก ลองถ่ายใหม่ให้ตรงและสว่างกว่านี้','del');
+   })
+   .then(function(){_ocrBusy=false;ocrStat('',false);});
+}
+
+/* ---------- แยกข้อความที่อ่านได้ออกเป็น ชื่อ / ยอด / วันที่ ---------- */
+function ocrDigits(s){
+  return String(s||'').replace(/[๐-๙]/g,function(c){return String('๐๑๒๓๔๕๖๗๘๙'.indexOf(c));});
+}
+var OCR_MON=[['ม.ค.','มกราคม','jan'],['ก.พ.','กุมภาพันธ์','feb'],['มี.ค.','มีนาคม','mar'],
+ ['เม.ย.','เมษายน','apr'],['พ.ค.','พฤษภาคม','may'],['มิ.ย.','มิถุนายน','jun'],
+ ['ก.ค.','กรกฎาคม','jul'],['ส.ค.','สิงหาคม','aug'],['ก.ย.','กันยายน','sep'],
+ ['ต.ค.','ตุลาคม','oct'],['พ.ย.','พฤศจิกายน','nov'],['ธ.ค.','ธันวาคม','dec']];
+function slipDate(t){
+  function mk(y,mo,d){
+    if(y<100)y+=(y>60?1900:2000);
+    if(y>2400)y-=543;                       /* พ.ศ. → ค.ศ. */
+    if(mo<1||mo>12||d<1||d>31)return '';
+    var dt=new Date(y,mo-1,d);
+    if(dt.getMonth()!==mo-1)return '';
+    var now=new Date();
+    if(dt>new Date(now.getFullYear(),now.getMonth(),now.getDate()))return '';  /* วันในอนาคต = อ่านผิด */
+    if(y<2015)return '';
+    return dkey(dt);
+  }
+  var m=t.match(/(\d{1,2})\s*[\/\-.]\s*(\d{1,2})\s*[\/\-.]\s*(\d{2,4})/);
+  if(m){var r=mk(+m[3],+m[2],+m[1]);if(r)return r;}
+  for(var i=0;i<12;i++){
+    for(var j=0;j<3;j++){
+      var w=OCR_MON[i][j].replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      var re=new RegExp('(\\d{1,2})\\s*'+w+'[ก-๙a-z]*\\s*(\\d{2,4})','i');
+      var mm=t.match(re);
+      if(mm){var r2=mk(+mm[2],i+1,+mm[1]);if(r2)return r2;}
+    }
+  }
+  return '';
+}
+var OCR_AMTKEY=/(จำนวนเงิน|จํานวนเงิน|ยอดเงิน|ยอดรวม|รวมทั้งสิ้น|รวมเงิน|ทั้งสิ้น|สุทธิ|ยอดชำระ|รวม|total|amount|net|grand)/i;
+var OCR_NAMEKEY=/(ไปยัง|ไปที่|ผู้รับ|ถึง|บัญชีปลายทาง|to\b)/i;
+var OCR_SKIP=/(สลิป|slip|โอนเงิน|transfer|สำเร็จ|success|ธนาคาร|bank|รหัส|เลขที่|ref|วันที่|date|เวลา|time|จาก|from|ใบเสร็จ|receipt|ภาษี|tax|สาขา|branch|โทร|tel)/i;
+function slipParse(raw){
+  var t=ocrDigits(raw).replace(/[ \t]+/g,' ');
+  var lines=t.split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean);
+  var out={amount:0,date:'',name:'',raw:t};
+
+  /* ยอดเงิน: หาบรรทัดที่มีคำว่า จำนวนเงิน/รวม/total ก่อน เอาเลขตัวสุดท้ายในบรรทัดนั้น
+     (บรรทัดพวกนี้มักเป็น "จำนวนเงิน 1,250.00") ถ้าไม่เจอค่อยถอยไปเอาเลขที่ใหญ่ที่สุด
+     ที่หน้าตาเป็นเงินจริงๆ คือมีลูกน้ำหรือมีทศนิยม 2 ตำแหน่ง — กันเลขที่บัญชีกับเลขอ้างอิง */
+  var MONEY=/\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+\.\d{2}/g;
+  var ANY=/\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+\.\d{1,2}|\d{1,6}/g;
+  for(var i=0;i<lines.length&&!out.amount;i++){
+    if(!OCR_AMTKEY.test(lines[i]))continue;
+    var seg=lines[i].replace(/^\D*/,'')||lines[i];
+    var mm=lines[i].match(ANY)||[];
+    if(!mm.length&&lines[i+1])mm=lines[i+1].match(ANY)||[];
+    if(mm.length){
+      var v=parseFloat(mm[mm.length-1].replace(/,/g,''));
+      if(v>0&&v<1e7)out.amount=v;
+    }
+  }
+  if(!out.amount){
+    var all=t.match(MONEY)||[],best=0;
+    all.forEach(function(x){var v=parseFloat(x.replace(/,/g,''));if(v>best&&v<1e7)best=v;});
+    out.amount=best;
+  }
+
+  out.date=slipDate(t);
+
+  /* ชื่อ: สลิปโอนเงินมีคำว่า ไปยัง/ผู้รับ อยู่แล้ว เอาชื่อหลังคำนั้น
+     ใบเสร็จไม่มี ก็เอาบรรทัดแรกที่เป็นตัวหนังสือล้วนๆ ซึ่งเกือบทุกใบคือชื่อร้าน */
+  for(var k=0;k<lines.length&&!out.name;k++){
+    if(!OCR_NAMEKEY.test(lines[k]))continue;
+    var c=lines[k].replace(OCR_NAMEKEY,'').replace(/[:：]/g,'').trim();
+    if(c.length<2&&lines[k+1])c=lines[k+1].trim();
+    c=c.replace(/[xX*]{2,}[-\d]*/g,'').replace(/\d{3,}/g,'').trim();
+    if(c.length>=2)out.name=c.slice(0,30);
+  }
+  if(!out.name){
+    for(var q=0;q<lines.length&&!out.name;q++){
+      var s=lines[q];
+      if(s.length<3||s.length>34)continue;
+      if(/\d/.test(s))continue;
+      if(OCR_SKIP.test(s))continue;
+      if(!/[ก-๙a-zA-Z]{3,}/.test(s))continue;
+      out.name=s.slice(0,30);
+    }
+  }
+  return out;
+}
+/* เอาที่อ่านได้ใส่ฟอร์ม ไม่บันทึกเอง ให้เขาตรวจก่อนเสมอ */
+function ocrApply(g){
+  if(!draft)return;
+  if(!g.amount&&!g.name&&!g.date){toast('อ่านไม่เจอทั้งยอดและชื่อ ลองถ่ายใหม่','del');return;}
+  var at=-1;
+  draft.rows.forEach(function(r,j){if(at<0&&!(r.n&&r.n.trim())&&!(r.a>0))at=j;});
+  if(at<0){draft.rows.push(newRow('','','',draft.type));at=draft.rows.length-1;}
+  var r0=draft.rows[at];
+  if(g.name){r0.n=g.name;r0.cat=guessCat(g.name,draft.type);r0.catSet=false;}
+  if(g.amount)r0.a=g.amount;
+  if(g.date){draft.date=g.date;draft.calYm=g.date.slice(0,7);}
+  window._ocrGot=g;
+  buzz(14);drawForm(false);
+  var p=[];
+  if(g.name)p.push('ชื่อ');
+  if(g.amount)p.push('ยอด');
+  if(g.date)p.push('วันที่');
+  toast('อ่านได้ '+p.join(' · ')+' ตรวจดูก่อนบันทึก','ok');
+}
 
 function onRowNm(i,v){
   var r=draft.rows[i];if(!r)return;
   r.n=v;
   if(!r.catSet)r.cat=guessCat(v,draft.type);
   var el=document.getElementById('rcat'+i);
-  if(el){
-    el.innerHTML='<span class="dot" style="background:'+catColor(r.cat,draft.type)+'"></span><b>'+esc(r.cat)+'</b><i>▾</i>';
-    el.classList.toggle('inv',!(r.n&&r.n.trim()));}
+  if(el)el.outerHTML=rcBtn(r,i);
   drawSug(i);
   _syncFoot();
 }
@@ -3050,7 +3310,21 @@ function _syncFoot(){
 }
 function toggleRowCat(i){
   draft.rows.forEach(function(r,j){r.catOpen=(j===i)?!r.catOpen:false;});
-  buzz(8);drawForm(false);
+  buzz(8);drawForm(false);setTimeout(rcmFit,0);
+}
+/* Ver.29: หมวดเยอะกว่าที่จอเหลือได้ ถ้ากางลงแล้วล้นจอ ให้ตัดความสูงแล้วเลื่อนในเมนูเอง
+   หรือพลิกขึ้นบนถ้าข้างบนที่เหลือเยอะกว่า — ไม่ดันเนื้อหาข้างล่างไม่ว่ากรณีไหน */
+function rcmFit(){
+  var m=document.querySelector('.rcm');if(!m)return;
+  m.classList.remove('up');m.style.maxHeight='';
+  var btn=m.parentNode.querySelector('.rc');if(!btn)return;
+  var br=btn.getBoundingClientRect(),vh=window.innerHeight;
+  var below=vh-10-(br.bottom+5),above=br.top-5-10;
+  if(m.scrollHeight<=below)return;
+  /* กางลงไว้ก่อนเสมอถ้าข้างล่างพอเลื่อนดูได้ พลิกขึ้นบนแล้วเมนูจะโผล่พ้นชีตออกไปทับหน้าหลัง ดูไม่เข้าพวก */
+  if(below>=150){m.style.maxHeight=Math.floor(below)+'px';return;}
+  if(above>below){m.classList.add('up');m.style.maxHeight=Math.floor(Math.min(above,320))+'px';}
+  else m.style.maxHeight=Math.max(Math.floor(below),140)+'px';
 }
 function pickRowCat(i,ci){
   var r=draft.rows[i];if(!r)return;
@@ -3206,7 +3480,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.28 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.29 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
