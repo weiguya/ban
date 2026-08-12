@@ -10,7 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.26 — แถบเลื่อนเร็วกลับไปลากแบบ 1:1 (ถอย Ver.25)
+   Muifei  Ver.27 — เอฟเฟค 5 อย่าง + การ์ดเฉลี่ยต่อวัน + ค้นหา + ลบแล้วเลิกทำได้
+   (Ver.26 เดิม: แถบเลื่อนเร็วกลับไปลากแบบ 1:1)
    (Ver.24 เดิม: โลโก้วาดใหม่ตามรูปต้นฉบับ + ชิปไม่ใส่ราคาให้แล้ว)
    (Ver.23 เดิม: โลโก้ใช้ภาพจริง + ลูกศรลงล่างกลับมา)
    (Ver.22 เดิม: โลโก้หมูวงกลม + ยอดท้ายวันขนาดเท่าแถว + แสดงเพิ่มเติม + แถบเลื่อนเร็ว)
@@ -1175,6 +1176,105 @@ body.dark{
    ============================================================ */
 .mkicon{width:100%;height:100%;display:block}
 </style>
+<style id="skin24">
+/* ============================================================
+   Ver.27 — สามก้อน
+   A) เอฟเฟค 5 อย่างตามที่ดูพรีวิวแล้ว
+   B) การ์ด "เฉลี่ยต่อวัน" บนหน้าแรก
+   C) ค้นหาในหน้ารายการ + ลบแล้วเลิกทำได้
+   ลบชั้นนี้ทิ้ง = หน้าตากลับไปเป็น Ver.26 (แต่ของใหม่ใน JS ยังทำงาน)
+   ============================================================ */
+
+/* ---------- A1 สปริง ----------
+   เส้นโค้งนี้เลยเป้าไปนิดแล้วค่อยเข้าที่ เหมือนของมีน้ำหนักจริง
+   ease ปกติทำแบบนี้ไม่ได้ มันแค่ช้าลงตอนจบ
+   ใช้ตอน "เข้า" เท่านั้น ตอนปิดยังเป็นเส้นตรงเร็วๆ เหมือนเดิม
+   เพราะของที่กำลังจะหายไปไม่ควรมาแกว่งให้รอ */
+:root{
+  --spring:linear(0,.006,.025 2.8%,.101 6.1%,.539 18.9%,.721 25.3%,.849 31.5%,
+    .937 38.1%,.968 41.8%,.991 45.7%,1.006 50.1%,1.015 55%,1.017 63.9%,1.001 84.2%,1);
+}
+.sheet{transition:transform .58s var(--spring)}
+.sheet:not(.on){transition:transform .24s var(--ez)}
+.dial.on{transition:transform .44s var(--spring),opacity .16s linear}
+
+/* ---------- A3 โดนัทวาดตัวเอง ---------- */
+.dseg{transition:stroke-dasharray .8s cubic-bezier(.3,.9,.3,1)}
+
+/* ---------- A4 สลับหน้าแบบไหลต่อกัน ----------
+   ถ้าเครื่องไหนไม่รองรับ View Transitions มันจะตัดภาพแบบเดิม ไม่พัง */
+::view-transition-old(root),::view-transition-new(root){animation-duration:.26s}
+
+/* ---------- A5 แถวโผล่ไล่กัน ----------
+   ไล่ทีละ 45ms แค่ 8 กลุ่มแรก ที่เหลือโผล่พร้อมกัน
+   ไล่ทั้งหน้าเมื่อไหร่จะกลายเป็น "รอ" ซึ่งแย่กว่าไม่มีเอฟเฟค
+   ใส่คลาส .stag ตอนเข้าหน้าเท่านั้น แล้วถอดออกใน 1 วิ
+   ไม่งั้นกดแสดงเพิ่มเติมทีไรทั้งหน้าจะเด้งใหม่หมด */
+@keyframes fxrise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.stag>.daygrp,.stag>.card{animation:fxrise .34s var(--ez) both}
+.stag>*:nth-child(1){animation-delay:0ms}
+.stag>*:nth-child(2){animation-delay:45ms}
+.stag>*:nth-child(3){animation-delay:90ms}
+.stag>*:nth-child(4){animation-delay:135ms}
+.stag>*:nth-child(5){animation-delay:180ms}
+.stag>*:nth-child(6){animation-delay:225ms}
+.stag>*:nth-child(7){animation-delay:270ms}
+.stag>*:nth-child(n+8){animation-delay:300ms}
+
+/* ---------- A2 ยอดวูบตอนจดใหม่ ---------- */
+@keyframes fxflash{0%,62%{color:var(--in)}100%{color:inherit}}
+.hero .amt.fx{animation:fxflash 1s ease}
+
+/* ---------- B การ์ดเฉลี่ยต่อวัน ---------- */
+.avr{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.avr:first-child{border-top:0;padding-top:2px}
+.avk{flex:1;min-width:0}
+.avk b{display:block;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.avk i{display:block;font-style:normal;font-size:11px;color:var(--ink3);margin-top:1px}
+.avd{font-size:11.5px;color:var(--ink3);flex:0 0 auto;font-variant-numeric:tabular-nums}
+.avv{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;flex:0 0 auto;min-width:76px;text-align:right}
+.avv u{text-decoration:none;font-size:11px;font-weight:400;color:var(--ink3);margin-left:2px}
+.avtot{display:flex;align-items:baseline;justify-content:space-between;gap:8px;
+  margin-top:9px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink2)}
+.avtot b{font-size:16px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.avnote{font-size:11.5px;color:var(--ink3);line-height:1.5;margin-top:9px}
+.avpick{margin-top:10px}
+
+/* ---------- C1 ช่องค้นหา ---------- */
+.srch{position:relative;display:flex;align-items:center;margin-bottom:9px}
+.srch .si{position:absolute;left:12px;width:17px;height:17px;color:var(--ink3);pointer-events:none}
+.srch .si svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2.1;
+  stroke-linecap:round;stroke-linejoin:round}
+.srch input{width:100%;height:44px;padding:0 40px 0 37px;border:0;border-radius:var(--r-ctl);
+  background:var(--glass);box-shadow:var(--sh2);font:inherit;font-size:14.5px;color:var(--ink);
+  -webkit-appearance:none;appearance:none}
+.srch input::-webkit-search-cancel-button{display:none}
+.srch input::placeholder{color:var(--ink3)}
+.srch .sx{position:absolute;right:5px;width:34px;height:34px;border-radius:50%;
+  display:none;align-items:center;justify-content:center;color:var(--ink3);font-size:15px}
+.srch.has .sx{display:flex}
+.qbar{display:flex;align-items:center;gap:8px;margin:-2px 0 9px;padding:0 2px;
+  font-size:12px;color:var(--ink2)}
+.qbar .qs{flex:1;min-width:0}
+.qbar .qs b{color:var(--ink);font-weight:600}
+.qbar .qt{flex:0 0 auto;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;
+  background:var(--card2);color:var(--ink2)}
+.qbar .qt.on{background:var(--fill);color:#fff}
+mark{background:rgba(27,127,192,.16);color:inherit;border-radius:3px;padding:0 1px}
+body.dark mark{background:rgba(90,175,240,.26)}
+.mnav.qoff{opacity:.4;pointer-events:none}
+
+/* ---------- C2 เลิกทำหลังลบ ---------- */
+.toast.act{pointer-events:auto}
+.toast .tu{margin-left:10px;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.18);
+  color:#fff;font-size:12.5px;font-weight:600;flex:0 0 auto}
+
+@media (prefers-reduced-motion:reduce){
+  .stag>*,.hero .amt.fx{animation:none!important}
+  .dseg{transition:none!important}
+  ::view-transition-old(root),::view-transition-new(root){animation:none!important}
+}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1208,6 +1308,12 @@ body.dark{
   </section>
 
   <section class="card">
+    <div class="ct"><h2>เฉลี่ยต่อวัน</h2><span class="sub" id="avgSub"></span></div>
+    <div class="selrow" id="avgSel"></div>
+    <div id="avgBody"></div>
+  </section>
+
+  <section class="card">
     <div class="ct"><h2>เดือนนี้จ่ายไปกับอะไร</h2><span class="sub" id="sumSub"></span></div>
     <div id="sumBody"></div>
   </section>
@@ -1227,6 +1333,12 @@ body.dark{
     <button class="tile tabtop tfbtn" id="ltIn" style="--tabc:var(--in)" onclick="setTypeFilter('in')"><div class="tk">รับ</div><div class="tv i" id="lIn">0</div></button>
     <button class="tile tabtop tfbtn" id="ltOut" style="--tabc:var(--out)" onclick="setTypeFilter('out')"><div class="tk">จ่าย</div><div class="tv o" id="lOut">0</div></button>
   </div>
+  <div class="srch" id="srchWrap">
+    <span class="si"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg></span>
+    <input type="search" id="qIn" placeholder="ค้นหาชื่อรายการ หรือ หมวด" oninput="setQ(this.value)" autocomplete="off">
+    <button class="sx" onclick="clearQ()" aria-label="ล้างคำค้น">✕</button>
+  </div>
+  <div class="qbar" id="qBar" style="display:none"></div>
   <div class="chiprow" id="filterChips" style="margin-bottom:9px"></div>
   <div id="fullList"></div>
   <button class="uptop" onclick="scrollTopFast()"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg><span>กลับขึ้นข้างบน</span></button>
@@ -1418,6 +1530,7 @@ function load(){
       if(!Array.isArray(c.w))c.w=[];});});
   if(!Array.isArray(d.pins))d.pins=[];
   if(!d.learned)d.learned={};
+  if(!Array.isArray(d.avgPins))d.avgPins=[];   /* Ver.27: หมวดที่ปักไว้บนการ์ดเฉลี่ยต่อวัน */
   if(!d.setup)d.setup=false;
   if(!d.backupAt)d.backupAt=0;
   if(!d.theme)d.theme='sky';
@@ -1830,11 +1943,16 @@ function renderSummary(){
   var ks=Object.keys(by).sort(function(a,b){return by[b]-by[a];});
   document.getElementById('sumSub').textContent=MTH[+ym.slice(5,7)-1];
   if(!ks.length){document.getElementById('sumBody').innerHTML='<div class="empty" style="padding:8px 4px">เดือนนี้ยังไม่มีรายจ่าย</div>';return;}
-  var C=2*Math.PI*38,off=0,segs='';
+  var C=2*Math.PI*38,off=0,segs='',_dsi=0;
   ks.forEach(function(k){
     var frac=by[k]/tot,len=Math.max(0,C*frac-Math.min(4,C*.012));
-    segs+='<circle cx="55" cy="55" r="37" fill="none" stroke="'+catColor(k,'out')+'" stroke-width="14" '
-      +'stroke-dasharray="'+len+' '+(C-len)+'" stroke-dashoffset="'+(-off)+'"></circle>';
+    /* Ver.27: เส้นโค้งโตออกมาเองด้วยการขยับ stroke-dasharray จาก "0" ไปเป็นความยาวจริง
+       dashoffset เป็นค่าคงที่ ทำหน้าที่แค่บอกว่าหมวดนี้เริ่มตรงไหนของวง
+       (ถ้าไปขยับ dashoffset วงจะหมุน ไม่ใช่โต) */
+    segs+='<circle class="dseg" cx="55" cy="55" r="37" fill="none" stroke="'+catColor(k,'out')+'" stroke-width="14" '
+      +'data-da="'+len+' '+(C-len)+'" stroke-dasharray="'+(_fxDonut?('0 '+C):(len+' '+(C-len)))+'" '
+      +'style="transition-delay:'+(_fxDonut?_dsi*90:0)+'ms" stroke-dashoffset="'+(-off)+'"></circle>';
+    _dsi++;
     off+=C*frac;});
   var rows=ks.slice(0,5).map(function(k){
     /* Ver.17: เดิมยอดกับเปอร์เซ็นต์อยู่ในสแปนเดียว ความยาวเลขต่างกันขอบขวาจึงไม่ตรงกันสักแถว
@@ -1854,25 +1972,23 @@ function renderSummary(){
    +'<div class="sumfoot"><span class="sfk">รวมทั้งหมด'
    +(ks.length>5?' <i>('+ks.length+' หมวด)</i>':'')+'</span>'
    +'<span class="sfv">'+fmt(tot)+'</span></div>';
+  if(_fxDonut){
+    _fxDonut=false;
+    var dn=document.getElementById('sumBody');
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      dn.querySelectorAll('.dseg').forEach(function(c){
+        c.setAttribute('stroke-dasharray',c.getAttribute('data-da'));});});});
+  }
 }
 
 /* ================= วาดหน้า ================= */
 var curTab='home',curMonth=monthOf(today()),curFilter='',_lastBal=null;
 var curType='';      /* Ver.12: '' | 'in' | 'out' — ฟิลเตอร์ชนิดของหน้ารายการ */
-function goTab(t){
-  curTab=t;closeDial();
-  if(t==='list')listShow=LIST_STEP;   /* Ver.22: เข้าหน้ารายการใหม่ เริ่มนับหนึ่งเสมอ */
-  document.body.setAttribute('data-tab',t);   /* Ver.10: วอลเปเปอร์คนละชุดต่อหน้า */
-  ['home','list','mv','set'].forEach(function(x){
-    document.getElementById('page-'+x).classList.toggle('off',x!==t);
-    document.getElementById('tab-'+x).classList.toggle('on',x===t);});
-  window.scrollTo(0,0);render();
-}
 function render(){
   renderBk();
   /* Ver.18: กราฟเส้นแนวโน้มถูกตัดออกจากหน้าแรกตามที่สั่ง (ตัวการ์ดหายไปจากมาร์กอัปแล้ว)
      ตัวฟังก์ชัน renderTrend/trendData ยังอยู่เฉยๆ เผื่ออยากได้กลับ — ใส่การ์ดคืนแล้วเรียกตรงนี้ */
-  if(curTab==='home'){renderHome();renderChart();renderSummary();}
+  if(curTab==='home'){renderHome();renderChart();renderAvg();renderSummary();}
   if(curTab==='list')renderList();
   if(curTab==='mv')renderMv();
   if(curTab==='set')renderSet();
@@ -1881,6 +1997,9 @@ function render(){
 function renderHome(){
   var b=balance(),el=document.getElementById('balNum');
   countUp(el,_lastBal===null?b:_lastBal,b);_lastBal=b;
+  /* Ver.27: จดใหม่เสร็จ ยอดวูบเป็นสีเขียวแวบเดียว บอกว่าเข้าแล้วนะ
+     ต้องถอดคลาสแล้วบังคับ reflow ก่อน ไม่งั้นสั่งซ้ำติดๆ กันจะไม่เล่นรอบสอง */
+  if(_fxFlash){_fxFlash=false;el.classList.remove('fx');void el.offsetWidth;el.classList.add('fx');}
   var s=sumMonth(monthOf(today())),n=D.entries.length;
   document.getElementById('mIn').textContent=fmt(s['in']);
   document.getElementById('mOut').textContent=fmt(s.out);
@@ -1892,6 +2011,7 @@ function renderHome(){
     : 'ยังไม่มีรายการในเดือนนี้';
   var st=streakDays();
   document.getElementById('streak').textContent=st>1?('จดต่อเนื่อง '+st+' วัน'):'';
+  _hlQ='';   /* Ver.27: หน้าแรกไม่ต้องไฮไลต์อะไร */
   var list=sortEntries(D.entries).slice(0,6);
   document.getElementById('recentR').textContent=n?('ทั้งหมด '+n+' รายการ'):'';
   document.getElementById('homeList').innerHTML=list.length?dayHtml(list,false)
@@ -1906,17 +2026,185 @@ function countUp(el,from,to){
     if(k<1)requestAnimationFrame(step);}
   requestAnimationFrame(step);
 }
+/* ================= Ver.27 A — เอฟเฟค =================
+   สปริงกับสลับหน้าอยู่ใน CSS (skin24) ตรงนี้คือส่วนที่ต้องสั่งจาก JS
+   หลักที่ใช้ทุกตัว: เล่นตอน "เนื้อหาเปลี่ยนจริง" เท่านั้น
+   ไม่ใช่ทุกครั้งที่วาดใหม่ ไม่งั้นจดเสร็จทีเด้งที ก่อกวนมากกว่าสวย */
+var _fxDonut=false,_fxFlash=false;
+function fxStag(id){
+  var el=document.getElementById(id);if(!el)return;
+  el.classList.add('stag');
+  clearTimeout(el._fxT);
+  el._fxT=setTimeout(function(){el.classList.remove('stag');},1000);
+}
+/* สลับแท็บให้ภาพไหลต่อกัน — เครื่องไหนไม่รองรับก็ตัดภาพแบบเดิม ไม่พัง
+   ถ้ามี View Transitions แล้วไม่ต้องให้แถวไล่กันซ้อนอีก มันจะซ้อนกันสองชั้น */
+function goTab(t){
+  if(document.startViewTransition&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.startViewTransition(function(){_goTab(t,false);});
+  }else _goTab(t,true);
+}
+function _goTab(t,stag){
+  curTab=t;closeDial();
+  if(t==='list')listShow=LIST_STEP;   /* Ver.22: เข้าหน้ารายการใหม่ เริ่มนับหนึ่งเสมอ */
+  document.body.setAttribute('data-tab',t);   /* Ver.10: วอลเปเปอร์คนละชุดต่อหน้า */
+  ['home','list','mv','set'].forEach(function(x){
+    document.getElementById('page-'+x).classList.toggle('off',x!==t);
+    document.getElementById('tab-'+x).classList.toggle('on',x===t);});
+  if(t==='home')_fxDonut=true;
+  window.scrollTo(0,0);render();
+  if(stag)fxStag(t==='home'?'homeList':'fullList');
+}
+
+/* ================= Ver.27 B — เฉลี่ยต่อวัน =================
+   กฎที่ทำให้เลขนี้เชื่อได้ มีข้อเดียว: หารด้วยจำนวนวันในช่วง
+   ไม่ใช่จำนวนวันที่มีบันทึก ค่าเน็ตจ่ายเดือนละครั้ง 599
+   ถ้าหารด้วยวันที่จด = วันละ 599 (บ้า) หารด้วย 30 วัน = วันละ 20 (จริง)
+   เดือนนี้หารด้วยวันที่ผ่านมาแล้วเท่านั้น ไม่ใช่ 31
+   ไม่งั้นต้นเดือนทุกเดือนจะดูประหยัดผิดปกติ เทียบกับเดือนก่อนไม่ได้เลย */
+var avgRange='month';
+function avgWindow(r){
+  var now=new Date(),end=new Date(now.getFullYear(),now.getMonth(),now.getDate()),start,days;
+  if(r==='wk'){start=new Date(end);start.setDate(start.getDate()-6);days=7;}
+  else if(r==='all'){
+    var first='';
+    D.entries.forEach(function(e){if(!first||e.date<first)first=e.date;});
+    if(!first)return null;
+    start=parseKey(first);
+    days=Math.round((end-start)/864e5)+1;
+    if(days<1)days=1;
+  }else{
+    start=new Date(end.getFullYear(),end.getMonth(),1);
+    days=end.getDate();
+  }
+  return {s:dkey(start),e:dkey(end),d:days,st:start};
+}
+function avgSum(s,e){
+  var by={},tot=0;
+  D.entries.forEach(function(x){
+    if(x.type!=='out'||x.date<s||x.date>e)return;
+    by[x.cat]=(by[x.cat]||0)+x.amount;tot+=x.amount;});
+  return {by:by,tot:tot};
+}
+function avgDelta(cur,prev){
+  /* เทียบกับช่วงก่อนหน้าที่ยาวเท่ากันเป๊ะ ต่ำกว่า 5% ถือว่าเท่าเดิม ไม่ต้องโชว์
+     ตั้งใจใช้สีเทากับลูกศร ไม่ใช้เขียว/แดง — ตัวเลขเล็กๆ ที่ระบายสีเต็มทุกแถว
+     จะกลายเป็นการ์ดลายพร้อย ซึ่งเป็นสิ่งที่เขาไม่ชอบมาตั้งแต่รอบการ์ดรับ/จ่าย */
+  if(!prev)return '';
+  var k=cur/prev-1;
+  if(Math.abs(k)<.05)return '';
+  /* เกิน 1 เท่าให้บอกเป็น "กี่เท่า" ไปเลย เห็น ▲1967% แล้วสมองไม่แปลงเป็นอะไรทั้งนั้น */
+  var t=k>1?('▲'+(1+k).toFixed((1+k)<10?1:0)+' เท่า')
+           :((k>0?'▲':'▼')+Math.round(Math.abs(k)*100)+'%');
+  return '<span class="avd">'+t+'</span>';
+}
+function setAvgRange(r){avgRange=r;mselCloseAll();renderAvg();buzz(8);}
+function renderAvg(){
+  var w=avgWindow(avgRange),body=document.getElementById('avgBody');
+  if(!body)return;
+  document.getElementById('avgSel').innerHTML=mselHtml('avg',avgRange,
+    [['all','ทั้งหมด'],['month','เดือนนี้'],['wk','7 วันล่าสุด']],'setAvgRange');
+  if(!w){body.innerHTML='<div class="empty" style="padding:8px 4px">ยังไม่มีรายจ่าย</div>';
+    document.getElementById('avgSub').textContent='';return;}
+  document.getElementById('avgSub').textContent='หารด้วย '+w.d+' วัน';
+  var cur=avgSum(w.s,w.e);
+  var ps=new Date(w.st);ps.setDate(ps.getDate()-w.d);
+  var pe=new Date(w.st);pe.setDate(pe.getDate()-1);
+  var prev=avgSum(dkey(ps),dkey(pe));
+  var ks=Object.keys(cur.by).sort(function(a,b){return cur.by[b]-cur.by[a];});
+  if(!ks.length){body.innerHTML='<div class="empty" style="padding:8px 4px">ช่วงนี้ยังไม่มีรายจ่าย</div>';return;}
+  /* ปักหมุดไว้ = ใช้ตามนั้น ไม่ได้ปัก = 4 หมวดที่จ่ายเยอะสุดของช่วงนั้นเอง
+     ตั้งต้นด้วยการ์ดเปล่าให้ไปเลือกเองไม่ได้ เพราะส่วนใหญ่จะเป็นการ์ดเปล่าตลอดไป */
+  var pick=(D.avgPins&&D.avgPins.length)?D.avgPins.slice():ks.slice(0,4);
+  var rows=pick.map(function(c){
+    var v=cur.by[c]||0,pv=prev.by[c]||0;
+    return '<div class="avr"><span class="avk"><b>'+esc(c)+'</b>'
+     +'<i>รวม '+fmt(v)+' ใน '+w.d+' วัน</i></span>'
+     +avgDelta(v/w.d,pv?pv/w.d:0)
+     +'<span class="avv">'+fmt(Math.round(v/w.d))+'<u>/วัน</u></span></div>';}).join('');
+  body.innerHTML=rows
+   +'<div class="avtot"><span>ทุกหมวดรวมกัน</span>'
+   +'<span><b>'+fmt(Math.round(cur.tot/w.d))+'</b> /วัน</span></div>'
+   +(w.d<7?'<div class="avnote">ข้อมูลยังไม่ถึง 7 วัน ค่าเฉลี่ยยังไม่นิ่ง</div>':'')
+   +'<button class="linkbtn avpick" onclick="openAvgPick()">เลือกหมวดเอง</button>';
+}
+function openAvgPick(){sheetOpen(drawAvgPick);}
+function drawAvgPick(){
+  curSheet='avgpick';
+  var rows=D.cats.out.map(function(c,i){
+    var on=(D.avgPins||[]).indexOf(c.n)>=0;
+    return '<button class="setrow" onclick="toggleAvgPin('+i+')">'
+     +'<span class="dot" style="background:'+c.c+';width:14px;height:14px;flex:0 0 14px"></span>'
+     +'<span class="cn">'+esc(c.n)+'</span>'
+     +'<span class="go">'+(on?'✓':'')+'</span></button>';}).join('');
+  paint('เลือกหมวดที่จะโชว์',
+   '<div class="hintline">ไม่เลือกเลย = โชว์ 4 หมวดที่จ่ายเยอะสุดของช่วงนั้นให้เอง</div>'
+   +'<div class="grp">'+rows+'</div>'
+   +((D.avgPins&&D.avgPins.length)?'<button class="btn btn-out" onclick="clearAvgPins()">กลับไปใช้อัตโนมัติ</button>':''));
+}
+function toggleAvgPin(i){
+  var n=D.cats.out[i].n;
+  if(!Array.isArray(D.avgPins))D.avgPins=[];
+  var k=D.avgPins.indexOf(n);
+  if(k>=0)D.avgPins.splice(k,1);else D.avgPins.push(n);
+  save();buzz(8);drawAvgPick();renderAvg();
+}
+function clearAvgPins(){D.avgPins=[];save();buzz(8);drawAvgPick();renderAvg();}
+
+/* ================= Ver.27 C — ค้นหา =================
+   ค่าจริงของการค้นหาอยู่ที่การข้ามเดือน ค้นแค่เดือนปัจจุบันแทบไม่ต้องมีก็ได้
+   ตั้งต้นที่เดือนนี้ กดปุ่มเดียวขยายเป็นทุกเดือน
+   ค้นทั้งชื่อรายการและชื่อหมวด */
+var curQ='',qAll=false,_hlQ='';
+function setQ(v){
+  curQ=v;listShow=LIST_STEP;
+  var w=document.getElementById('srchWrap');
+  if(w)w.classList.toggle('has',!!v);
+  renderList();
+}
+function clearQ(){
+  var el=document.getElementById('qIn');if(el)el.value='';
+  setQ('');buzz(8);
+}
+function toggleQAll(){qAll=!qAll;listShow=LIST_STEP;renderList();buzz(8);}
+function qMatch(e,q){
+  return (e.name||'').toLowerCase().indexOf(q)>=0||(e.cat||'').toLowerCase().indexOf(q)>=0;
+}
+function hlq(s){
+  /* s ผ่าน esc() มาแล้ว ต้อง esc คำค้นด้วยก่อนเทียบ ไม่งั้นคำที่มี & < > จะไม่เจอ */
+  var q=(_hlQ||'').trim();if(!q)return s;
+  var eq=esc(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  try{return s.replace(new RegExp('('+eq+')','ig'),'<mark>$1</mark>');}catch(e){return s;}
+}
+
 /* Ver.22: จำนวนรายการที่หน้ารายการโชว์ตอนเปิดหน้า และเพิ่มทีละเท่านี้ทุกครั้งที่กด
    30 รายการ ≈ 3 หน้าจอ พอให้เลื่อนดูได้เพลินๆ โดยไม่ต้องวาดทั้งเดือนรวดเดียว
    เปลี่ยนเลขนี้ที่เดียวจบ */
 var LIST_STEP=30,listShow=LIST_STEP;
 function renderList(){
   var y=+curMonth.slice(0,4),mo=+curMonth.slice(5,7);
-  document.getElementById('mTitle').textContent=MTH[mo-1]+' '+(y+543);
-  var s=sumMonth(curMonth);
+  /* Ver.27: มีคำค้นและกด "ทุกเดือน" อยู่ = เดือนไม่มีความหมายแล้ว
+     หรี่แถบเดือนทิ้งไว้ให้เห็นว่ามันไม่ทำงานตอนนี้ ดีกว่าซ่อนหายไปเลย */
+  var q=curQ.trim().toLowerCase(),qa=!!(q&&qAll);
+  _hlQ=curQ;
+  document.getElementById('mTitle').textContent=qa?'ค้นทุกเดือน':(MTH[mo-1]+' '+(y+543));
+  document.querySelector('#page-list .mnav').classList.toggle('qoff',qa);
+  var list=D.entries.filter(function(e){
+    if(!qa&&monthOf(e.date)!==curMonth)return false;
+    return !q||qMatch(e,q);});
+  /* การ์ดรับ/จ่ายด้านบน: ปกติคือยอดทั้งเดือน แต่ถ้ากำลังค้นอยู่
+     ให้เป็นยอดของ "ผลที่เจอ" ทั้งหน้าจะได้พูดเรื่องเดียวกันหมด */
+  var s=q?{'in':0,out:0}:sumMonth(curMonth);
+  if(q)list.forEach(function(e){s[e.type]+=e.amount;});
   document.getElementById('lIn').textContent=fmt(s['in']);
   document.getElementById('lOut').textContent=fmt(s.out);
-  var list=D.entries.filter(function(e){return monthOf(e.date)===curMonth;});
+  var qb=document.getElementById('qBar');
+  if(q){
+    qb.style.display='flex';
+    qb.innerHTML='<span class="qs">เจอ <b>'+list.length+'</b> รายการ'
+     +(s.out?' · จ่าย <b>'+fmt(s.out)+'</b>':'')+(s['in']?' · รับ <b>'+fmt(s['in'])+'</b>':'')+'</span>'
+     +'<button class="qt'+(qAll?' on':'')+'" onclick="toggleQAll()">'+(qAll?'ทุกเดือน':'เดือนนี้')+'</button>';
+  }else qb.style.display='none';
   /* Ver.12: กรองด้วยชนิดก่อน (แตะการ์ดรับ/จ่ายด้านบนก็ได้) แล้วค่อยกรองด้วยหมวด
      ชิปหมวดที่ขึ้นจึงเป็นเฉพาะหมวดที่มีจริงในชนิดที่เลือกอยู่ */
   document.getElementById('ltIn').classList.toggle('on',curType==='in');
@@ -1955,13 +2243,15 @@ function renderList(){
   }
   var rest=total-cut;
   var h=total?dayHtml(list.slice(0,cut),true)
-             :'<div class="card"><div class="empty">เดือนนี้ยังไม่มีรายการ</div></div>';
+             :'<div class="card"><div class="empty">'
+              +(q?'ไม่เจอ “'+esc(curQ.trim())+'”'+(qAll?'':'<br>ลองกด <b>เดือนนี้</b> ให้เป็น <b>ทุกเดือน</b>')
+                 :'เดือนนี้ยังไม่มีรายการ')+'</div></div>';
   if(rest>0)h+='<button class="moreb" onclick="listMore()">แสดงเพิ่มเติม'
     +'<i>ยังเหลืออีก '+rest+' รายการ</i></button>';
   document.getElementById('fullList').innerHTML=h;
 }
 function listMore(){listShow+=LIST_STEP;renderList();buzz(8);}
-function setFilter(i){curFilter=i<0?'':(window._chipKeys[i]||'');listShow=LIST_STEP;renderList();buzz(8);}
+function setFilter(i){curFilter=i<0?'':(window._chipKeys[i]||'');listShow=LIST_STEP;renderList();fxStag('fullList');buzz(8);}
 function setFilterS(i){setFilter(+i);}
 function setTypeFilter(t){
   curType=(curType===t?'':t);   /* แตะซ้ำที่เดิม = เอาฟิลเตอร์ออก */
@@ -1972,7 +2262,7 @@ function setTypeFilter(t){
 function shiftMonth(d){
   var y=+curMonth.slice(0,4),m=+curMonth.slice(5,7)+d;
   if(m<1){m=12;y--;}if(m>12){m=1;y++;}
-  curMonth=y+'-'+String(m).padStart(2,'0');curFilter='';listShow=LIST_STEP;renderList();buzz(8);
+  curMonth=y+'-'+String(m).padStart(2,'0');curFilter='';listShow=LIST_STEP;renderList();fxStag('fullList');buzz(8);
 }
 /* ================= หน้าเคลื่อนไหว (Ver.19) =================
    ลอกโครงมาจากหน้า "เคลื่อนไหว" ของแอปร้านหอม (Onion Ver.295, ฟังก์ชัน renderTimeline)
@@ -2103,7 +2393,7 @@ function dayHtml(list,showTot){
       var col=catColor(e.cat,e.type);
       h+='<button class="line" data-id="'+esc(e.id)+'">'
        +'<span class="ico" style="background:'+col+'1F;color:'+col+'">'+esc((e.cat||'?').trim().charAt(0))+'</span>'
-       +'<span class="nm"><span class="t1">'+esc(e.name)+'</span><span class="t2">'+esc(e.cat)+'</span></span>'
+       +'<span class="nm"><span class="t1">'+hlq(esc(e.name))+'</span><span class="t2">'+hlq(esc(e.cat))+'</span></span>'
        +'<span class="amt '+(e.type==='in'?'i':'o')+'">'+(e.type==='in'?'+':'−')+fmt(e.amount)+'</span></button>';});
     if(showTot)h+='<div class="dfoot">'
       +'<span class="dfk">รับ <b class="'+(din?'i':'z')+'">'+fmt(din)+'</b>'
@@ -2680,16 +2970,29 @@ function saveEntry(){
   var sum=0,first='';
   rows.forEach(function(x){var o=mk(x);sum+=o.amount;if(!first)first=o.name;
     D.entries.push(o);D.learned[learnKey(o.name)]={cat:o.cat,type:o.type};});
-  save();buzz(18);closeSheet(true);render();
+  save();buzz(18);closeSheet(true);_fxFlash=true;render();
   toast(rows.length>1?('บันทึก '+rows.length+' รายการ · รวม '+fmt(sum))
     :('บันทึก'+(draft.type==='in'?'รายรับ ':'รายจ่าย ')+first+' '+fmt(sum)+' แล้ว'),'ok');
 }
 function delEntry(){
   if(!editId)return;
   var e=D.entries.filter(function(x){return x.id===editId;})[0];
-  askConfirm('ลบรายการนี้?',(e?e.name+' · '+fmt(e.amount):'')+' ลบแล้วเอากลับไม่ได้','ลบเลย',function(){
-    D.entries=D.entries.filter(function(x){return x.id!==editId;});
-    save();closeSheet(true);render();toast('ลบ '+(e?e.name:'รายการ')+' แล้ว','del');},true);
+  if(!e)return;
+  /* Ver.27: เลิกถามยืนยันก่อนลบ เปลี่ยนเป็นลบเลยแล้วให้ "เลิกทำ" 6 วินาที
+     ถามก่อนลบกันพลาดได้ก็จริง แต่ต้องมากดยืนยันทุกครั้งแม้ตั้งใจลบ
+     ส่วนเลิกทำ เสียเวลาเฉพาะตอนที่พลาดจริง ซึ่งนานๆ ที */
+  D.entries=D.entries.filter(function(x){return x.id!==e.id;});
+  save();buzz(18);closeSheet(true);render();
+  toastUndo('ลบ '+e.name+' แล้ว',function(){
+    D.entries.push(e);save();buzz(14);render();toast('เอา '+e.name+' กลับมาแล้ว','ok');});
+}
+function toastUndo(m,fn){
+  var el=document.getElementById('toast');
+  el.className='toast on del act';
+  el.innerHTML='<span class="tk">✕</span>'+esc(m)+'<button class="tu" id="tuB">เลิกทำ</button>';
+  document.getElementById('tuB').onclick=function(){
+    clearTimeout(_tt);el.className='toast del';fn();};
+  clearTimeout(_tt);_tt=setTimeout(function(){el.className='toast del';},6000);
 }
 function pinThis(){
   var r=draft.rows[0];if(!r||!r.n)return;
@@ -2761,7 +3064,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.26 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.27 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
@@ -2955,7 +3258,7 @@ document.getElementById('askNo').onclick=function(){askClose(false);};
 document.getElementById('ask').onclick=function(e){if(e.target===this)askClose(false);};
 applyTheme();
 seedInPins();
-goTab('home');
+_goTab('home',true);   /* Ver.27: เปิดแอปครั้งแรก ให้แถวไล่กันขึ้นมา ไม่ต้องผ่าน view transition */
 if(!D.setup)document.getElementById('first').classList.remove('hide');
 </script>
 </body>
