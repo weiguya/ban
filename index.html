@@ -10,8 +10,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.29 — เมนูหมวดกางแนวยาว + อ่านสลิป/ใบเสร็จจากรูป
-   (Ver.28 เดิม: หมวดมาอยู่แถวเดียวกับชื่อ + เดาคำจากที่เคยลง + การ์ดเฉลี่ยใส่สีหมวด)
+   Muifei  Ver.30 — ตัดสวิตช์รับ/จ่ายในฟอร์ม + ปุ่มถ่ายรูปแยกจากเลือกรูป + กล่องบอกสถานะการอ่าน
+   (Ver.29 เดิม: เมนูหมวดกางแนวยาว + อ่านสลิป/ใบเสร็จจากรูป
+   (Ver.28 เดิม: หมวดมาอยู่แถวเดียวกับชื่อ + เดาคำจากที่เคยลง + การ์ดเฉลี่ยใส่สีหมวด))
    (Ver.27 เดิม: เอฟเฟค 5 อย่าง + การ์ดเฉลี่ยต่อวัน + ค้นหา + ลบแล้วเลิกทำได้)
    (Ver.26 เดิม: แถบเลื่อนเร็วกลับไปลากแบบ 1:1)
    (Ver.24 เดิม: โลโก้วาดใหม่ตามรูปต้นฉบับ + ชิปไม่ใส่ราคาให้แล้ว)
@@ -1369,6 +1370,26 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .ocrgot b{color:var(--ink);font-weight:600}
 </style>
 
+<style id="skin27">
+/* ============================================================
+   Ver.30 — ฟีดแบคหลังลองใช้จริง
+   1. ตัดสวิตช์ จ่ายออก/รับเข้า ออกจากฟอร์มเพิ่มรายการ ได้พื้นที่คืน 57px
+   2. ปุ่มอ่านรูปลงไปอยู่ใต้ช่องพิมพ์ ไม่แย่งที่บนสุด
+   3. แยกเป็นสองปุ่ม ถ่ายรูป / เลือกรูป + กล่องบอกสถานะที่ค้างไว้ให้อ่าน
+   ============================================================ */
+.ocrrow{display:flex;gap:8px}
+.ocrrow .ocrb{flex:1;min-width:0;justify-content:center;padding:12px 10px}
+.ocrb b{flex:0 1 auto;font-size:13.5px}
+.ocrbox{margin-top:8px;padding:10px 12px;border-radius:12px;background:var(--card2);
+  font-size:12.5px;line-height:1.55;color:var(--ink2)}
+.ocrbox.hide{display:none}
+.ocrbox b{color:var(--ink);font-weight:600}
+.ocrbox b.ocrbad{color:var(--out)}
+.ocrdim{color:var(--ink3);font-size:11.5px}
+.ocrraw{margin-top:7px;padding:8px 9px;border-radius:9px;background:var(--card);
+  max-height:118px;overflow:auto;white-space:pre-wrap;word-break:break-word;
+  font-size:11.5px;line-height:1.5;color:var(--ink3)}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -2970,22 +2991,28 @@ function drawForm(fromVoice){
   var live=liveRows().length;
   var okTxt=draft.mode==='basketEdit'?'อัปเดตรายการนี้':(draft.mode==='basketNew'?'เพิ่มเข้ารายการรอบันทึก'
     :(editId?'บันทึกการแก้':(live>1?('บันทึก '+live+' รายการ'):'บันทึก')));
+  /* Ver.30: สวิตช์ จ่ายออก/รับเข้า โผล่เฉพาะตอนแก้รายการเดิม ซึ่งเป็นที่เดียวที่ไม่มีทางอื่นให้สลับ
+     ตอนเพิ่มรายการใหม่เขาเลือกฝั่งมาตั้งแต่กดปุ่มบนหน้าหลักแล้ว สวิตช์ตรงนี้เลยไม่เคยได้ใช้ กินที่เปล่าๆ 57px */
+  var CAMSVG='<svg viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.7l1.2-2h6.2l1.2 2h1.7A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.5" r="3.4"/></svg>';
+  var PICSVG='<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.4"/><circle cx="9" cy="10" r="1.6"/><path d="m5 17 4.2-4.4 3 2.8 3-2.6L19 17"/></svg>';
   paint(ttl,
-   '<div class="seg"><button class="'+(draft.type==='out'?'on o':'')+'" onclick="setType(\'out\')">จ่ายออก</button>'
-  +'<button class="'+(draft.type==='in'?'on i':'')+'" onclick="setType(\'in\')">รับเข้า</button></div>'
-  +'<div class="field"><span class="fl">สลิป หรือ ใบเสร็จ</span>'
-  +'<button class="ocrb" id="ocrBtn" onclick="ocrPick()">'
-   +'<svg viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.7l1.2-2h6.2l1.2 2h1.7A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/>'
-   +'<circle cx="12" cy="12.5" r="3.4"/></svg>'
-   +'<b>ถ่ายรูป หรือ เลือกรูป</b><i id="ocrS"></i></button>'
-  +'<input type="file" accept="image/*" id="ocrFile" onchange="ocrFilePicked(this)" style="display:none">'
-  +'<div class="ocrnote">อ่านเอาแต่ตัวหนังสือ ไม่เก็บรูปไว้ และไม่ส่งรูปออกไปไหน · สลิปธนาคารแม่นกว่าใบเสร็จกระดาษ</div>'
-  +'</div>'
+   (editId?('<div class="seg"><button class="'+(draft.type==='out'?'on o':'')+'" onclick="setType(\'out\')">จ่ายออก</button>'
+  +'<button class="'+(draft.type==='in'?'on i':'')+'" onclick="setType(\'in\')">รับเข้า</button></div>'):'')
   +'<div class="field"><span class="fl">รายการ และ จำนวนเงิน</span>'
   +draft.rows.map(rowHtml).join('')
   +(draft.multi?'<button class="addrowbtn" onclick="addRow()">＋ เพิ่มแถว</button>':'')
   +(n>1?'<div class="ftot"><span class="k" id="fTotK">รวม '+live+' รายการ</span><span class="v" id="fTot" style="color:'
     +(draft.type==='in'?'var(--in)':'var(--out)')+'">'+(draft.type==='in'?'+':'−')+fmt(rowsTotal())+'</span></div>':'')
+  +'</div>'
+  +'<div class="field"><span class="fl">หรือ อ่านจากสลิป / ใบเสร็จ</span>'
+  +'<div class="ocrrow">'
+   +'<button class="ocrb" id="ocrCam" onclick="ocrPick(1)">'+CAMSVG+'<b>ถ่ายรูป</b></button>'
+   +'<button class="ocrb" id="ocrPic" onclick="ocrPick(0)">'+PICSVG+'<b>เลือกรูป</b></button>'
+  +'</div>'
+  +'<input type="file" accept="image/*" capture="environment" id="ocrFileCam" onchange="ocrFilePicked(this)" style="display:none">'
+  +'<input type="file" accept="image/*" id="ocrFilePic" onchange="ocrFilePicked(this)" style="display:none">'
+  +'<div class="ocrbox hide" id="ocrBox"></div>'
+  +'<div class="ocrnote">อ่านเอาแต่ตัวหนังสือ ไม่เก็บรูปไว้ และไม่ส่งรูปออกไปไหน</div>'
   +'</div>'
   +pinChips
   +'<div class="field"><span class="fl">วันที่</span><div class="chiprow">'
@@ -3098,39 +3125,57 @@ document.addEventListener('click',function(ev){
    ทั้งหมดทำในเครื่อง ไม่มีการอัปโหลดรูปไปไหน และไม่เก็บรูปไว้ด้วย
    จบงานเมื่อไหร่ล้าง canvas ทิ้งทันที เหลือแต่ข้อความที่แยกออกมาได้
    ตัวอ่านตัวหนังสือโหลดจาก CDN ครั้งแรกครั้งเดียวแล้ว browser cache ไว้เอง */
-var OCR_SRC=window.OCR_CDN||'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+var OCR_SRCS=window.OCR_CDN?[window.OCR_CDN]
+ :['https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js',
+   'https://unpkg.com/tesseract.js@5.1.1/dist/tesseract.min.js'];
 var OCR_OPT=window.OCR_OPTS||{};
 var _ocrW=null,_ocrBusy=false;
 
-function ocrStat(t,busy){
-  var e=document.getElementById('ocrS'),b=document.getElementById('ocrBtn');
-  if(e)e.textContent=t||'';
-  if(b)b.classList.toggle('busy',!!busy);
+/* กล่องบอกสถานะใต้ปุ่ม ไม่ใช้ toast อย่างเดียวแล้ว
+   toast อยู่แค่ 2 วินาทีครึ่งแล้วหาย พังตอนไหนก็ไม่รู้ กล่องนี้ค้างไว้จนกดใหม่ */
+function ocrSay(h){
+  var b=document.getElementById('ocrBox');if(!b)return;
+  if(!h){b.className='ocrbox hide';b.innerHTML='';return;}
+  b.className='ocrbox';b.innerHTML=h;
 }
-function ocrPick(){
+function ocrBusyUI(on){
+  ['ocrCam','ocrPic'].forEach(function(id){
+    var e=document.getElementById(id);if(e)e.classList.toggle('busy',!!on);});
+}
+/* ปุ่มแยกสองปุ่มเพราะ Chrome บน Android รุ่นใหม่ส่ง accept="image/*" เข้า Photo Picker
+   ซึ่งไม่มีทางเลือกกล้องเลย ต้องมี capture="environment" แยกอีกปุ่มถึงจะเปิดกล้องได้ */
+function ocrPick(cam){
   if(_ocrBusy){toast('กำลังอ่านรูปอยู่ รอแป๊บนึง','info');return;}
-  var f=document.getElementById('ocrFile');if(f)f.click();
+  var f=document.getElementById(cam?'ocrFileCam':'ocrFilePic');
+  if(f)f.click();
 }
-function ocrLoad(){
+function ocrLoad(k){
+  k=k||0;
+  if(window.Tesseract)return Promise.resolve();
+  if(k>=OCR_SRCS.length)return Promise.reject(new Error('โหลดตัวอ่านไม่ได้ · ครั้งแรกต้องต่อเน็ต'));
   return new Promise(function(res,rej){
-    if(window.Tesseract)return res();
     var s=document.createElement('script');
-    s.src=OCR_SRC;s.onload=function(){res();};s.onerror=function(){rej(new Error('cdn'));};
+    s.src=OCR_SRCS[k];s.onload=function(){res();};s.onerror=function(){rej();};
     document.head.appendChild(s);
-  });
+  }).catch(function(){return ocrLoad(k+1);});
 }
 function ocrWorker(){
   if(_ocrW)return Promise.resolve(_ocrW);
   return Tesseract.createWorker('tha+eng',1,Object.assign({
     logger:function(m){
-      if(m.status==='loading language traineddata')ocrStat('โหลดตัวอ่าน '+Math.round((m.progress||0)*100)+'%',true);
-      else if(m.status==='recognizing text')ocrStat('อ่านอยู่ '+Math.round((m.progress||0)*100)+'%',true);
+      var p=Math.round((m.progress||0)*100);
+      if(m.status&&m.status.indexOf('loading')>=0)ocrSay('กำลังโหลดตัวอ่านภาษาไทย '+p+'%<br><span class="ocrdim">ครั้งแรกครั้งเดียว ประมาณ 5MB</span>');
+      else if(m.status==='initializing tesseract'||m.status==='initializing api')ocrSay('กำลังเริ่มตัวอ่าน…');
+      else if(m.status==='recognizing text')ocrSay('กำลังอ่านตัวหนังสือ '+p+'%');
     }},OCR_OPT)).then(function(w){_ocrW=w;return w;});
 }
-/* ย่อ + ทำขาวดำ + ดึงคอนทราสต์ ก่อนส่งให้อ่าน
-   ด้านยาว 1600 คือจุดที่พอดี ใหญ่กว่านี้ช้าขึ้นแต่ไม่แม่นขึ้น */
+/* ย่อ + ทำขาวดำ + ดึงคอนทราสต์ ก่อนส่งให้อ่าน */
 function ocrPrep(file){
-  return createImageBitmap(file).then(function(bm){
+  /* imageOrientation:'from-image' จำเป็น รูปถ่ายจากมือถือมี EXIF บอกว่าหมุนกี่องศา
+     ถ้าไม่สั่ง canvas จะวาดตามพิกเซลดิบ = ตัวหนังสือนอนตะแคง แล้วอ่านไม่ออกทั้งใบ */
+  return createImageBitmap(file,{imageOrientation:'from-image'})
+   .catch(function(){return createImageBitmap(file);})
+   .then(function(bm){
     var mx=1600,sc=Math.min(1,mx/Math.max(bm.width,bm.height));
     var w=Math.round(bm.width*sc),h=Math.round(bm.height*sc);
     var cv=document.createElement('canvas');cv.width=w;cv.height=h;
@@ -3159,25 +3204,36 @@ function ocrPrep(file){
     return cv;
   });
 }
+function ocrTimeout(pr,ms,msg){
+  return new Promise(function(res,rej){
+    var t=setTimeout(function(){rej(new Error(msg));},ms);
+    pr.then(function(v){clearTimeout(t);res(v);},function(e){clearTimeout(t);rej(e);});
+  });
+}
 function ocrFilePicked(inp){
   var f=inp.files&&inp.files[0];inp.value='';
-  if(!f)return;
-  if(_ocrBusy)return;
-  _ocrBusy=true;ocrStat('เตรียมรูป…',true);
+  if(!f||_ocrBusy)return;
+  _ocrBusy=true;ocrBusyUI(true);
+  ocrSay('กำลังเตรียมรูป…');
   var cv=null;
-  ocrPrep(f).then(function(c){cv=c;ocrStat('โหลดตัวอ่าน…',true);return ocrLoad();})
-   .then(ocrWorker)
-   .then(function(w){ocrStat('อ่านอยู่…',true);return w.recognize(cv);})
+  function drop(){if(cv){cv.width=1;cv.height=1;cv=null;}}   /* ทิ้งรูปทันที ไม่เก็บ */
+  ocrTimeout(ocrPrep(f),20000,'เปิดไฟล์รูปนี้ไม่ได้')
+   .then(function(c){cv=c;ocrSay('กำลังโหลดตัวอ่าน…');return ocrTimeout(ocrLoad(),40000,'โหลดตัวอ่านนานผิดปกติ · เน็ตช้าหรือเปล่า');})
+   .then(function(){return ocrTimeout(ocrWorker(),120000,'เริ่มตัวอ่านไม่สำเร็จ');})
+   .then(function(w){return ocrTimeout(w.recognize(cv),120000,'อ่านนานเกินไป');})
    .then(function(r){
      var txt=(r&&r.data&&r.data.text)||'';
-     if(cv){cv.width=1;cv.height=1;cv=null;}   /* ทิ้งรูปทันที ไม่เก็บ */
-     ocrApply(slipParse(txt));
+     drop();
+     var g=slipParse(txt);
+     window._ocrGot=g;
+     ocrApply(g,txt);
    })
    .catch(function(e){
-     if(cv){cv.width=1;cv.height=1;cv=null;}
-     toast(String(e&&e.message)==='cdn'?'โหลดตัวอ่านไม่ได้ ต้องต่อเน็ตครั้งแรก':'อ่านรูปนี้ไม่ออก ลองถ่ายใหม่ให้ตรงและสว่างกว่านี้','del');
+     drop();
+     var msg=(e&&e.message)||'อ่านรูปนี้ไม่ออก';
+     ocrSay('<b class="ocrbad">ไม่สำเร็จ</b> '+esc(msg));
    })
-   .then(function(){_ocrBusy=false;ocrStat('',false);});
+   .then(function(){_ocrBusy=false;ocrBusyUI(false);});
 }
 
 /* ---------- แยกข้อความที่อ่านได้ออกเป็น ชื่อ / ยอด / วันที่ ---------- */
@@ -3265,9 +3321,14 @@ function slipParse(raw){
   return out;
 }
 /* เอาที่อ่านได้ใส่ฟอร์ม ไม่บันทึกเอง ให้เขาตรวจก่อนเสมอ */
-function ocrApply(g){
+function ocrApply(g,raw){
   if(!draft)return;
-  if(!g.amount&&!g.name&&!g.date){toast('อ่านไม่เจอทั้งยอดและชื่อ ลองถ่ายใหม่','del');return;}
+  /* โชว์ตัวหนังสือดิบที่อ่านได้เสมอ ทั้งตอนสำเร็จและตอนแยกไม่ออก
+     ถ้าอ่านไม่ออกเลยกับอ่านออกแต่แยกผิด เป็นคนละปัญหาคนละวิธีแก้ ต้องแยกให้ออกก่อน */
+  var rawBox=raw?('<div class="ocrraw">'+esc(raw.trim().slice(0,600)||'(ไม่ได้ตัวหนังสือเลยสักตัว)')+'</div>'):'';
+  if(!g.amount&&!g.name&&!g.date){
+    ocrSay('<b class="ocrbad">แยกข้อมูลไม่ออก</b> ตัวหนังสือที่อ่านได้อยู่ข้างล่าง ส่งให้ผมดูได้'+rawBox);
+    return;}
   var at=-1;
   draft.rows.forEach(function(r,j){if(at<0&&!(r.n&&r.n.trim())&&!(r.a>0))at=j;});
   if(at<0){draft.rows.push(newRow('','','',draft.type));at=draft.rows.length-1;}
@@ -3281,6 +3342,7 @@ function ocrApply(g){
   if(g.name)p.push('ชื่อ');
   if(g.amount)p.push('ยอด');
   if(g.date)p.push('วันที่');
+  ocrSay('<b>อ่านได้ '+p.join(' · ')+'</b> ใส่ให้ในช่องข้างบนแล้ว ตรวจก่อนกดบันทึก'+rawBox);
   toast('อ่านได้ '+p.join(' · ')+' ตรวจดูก่อนบันทึก','ok');
 }
 
@@ -3480,7 +3542,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.29 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.30 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
