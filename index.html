@@ -10,7 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.27 — เอฟเฟค 5 อย่าง + การ์ดเฉลี่ยต่อวัน + ค้นหา + ลบแล้วเลิกทำได้
+   Muifei  Ver.28 — หมวดมาอยู่แถวเดียวกับชื่อ + เดาคำจากที่เคยลง + การ์ดเฉลี่ยใส่สีหมวด
+   (Ver.27 เดิม: เอฟเฟค 5 อย่าง + การ์ดเฉลี่ยต่อวัน + ค้นหา + ลบแล้วเลิกทำได้)
    (Ver.26 เดิม: แถบเลื่อนเร็วกลับไปลากแบบ 1:1)
    (Ver.24 เดิม: โลโก้วาดใหม่ตามรูปต้นฉบับ + ชิปไม่ใส่ราคาให้แล้ว)
    (Ver.23 เดิม: โลโก้ใช้ภาพจริง + ลูกศรลงล่างกลับมา)
@@ -1275,6 +1276,54 @@ body.dark mark{background:rgba(90,175,240,.26)}
   ::view-transition-old(root),::view-transition-new(root){animation:none!important}
 }
 </style>
+<style id="skin25">
+/* ============================================================
+   Ver.28 — 3 เรื่อง
+   1. หมวด ย้ายมาอยู่แถวเดียวกับช่องชื่อ (เดิมอยู่บรรทัดล่าง)
+   2. เดาคำจากที่เคยลงไว้ พิมไม่กี่ตัวก็ขึ้นให้เลือก
+   3. การ์ดเฉลี่ยต่อวัน ใส่สีหมวด ตัดแถวรวม เปิดมาที่ "ทั้งหมด"
+   ============================================================ */
+
+/* ---------- 1 แถวฟอร์ม: [ชื่อ][หมวด][฿ราคา][✕] ----------
+   ปุ่มหมวดกว้างคงที่ 108px ตั้งใจให้คงที่ ไม่ใช่ยืดตามชื่อหมวด
+   ไม่งั้นช่องชื่อจะขยับซ้ายขวาทุกครั้งที่แอปเดาหมวดใหม่ระหว่างพิมพ์
+   ชื่อหมวดยาวเกินก็ตัด … เอา เพราะจุดสีบอกได้อยู่แล้วว่าหมวดไหน */
+.frow{gap:6px}
+.frow .fn{flex:1 1 auto;min-width:70px;position:relative}
+.frow .fm{flex:0 0 96px}
+.frow .rc{flex:0 0 108px;min-width:0;display:flex;align-items:center;gap:5px;
+  height:46px;padding:0 8px;border-radius:var(--r-ctl);
+  background:var(--card2);font:inherit;font-size:11.5px;color:var(--ink2);
+  overflow:hidden;text-align:left}
+.frow .rc .dot{width:8px;height:8px;flex:0 0 8px}
+.frow .rc b{flex:1;min-width:0;font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.frow .rc i{flex:0 0 auto;font-style:normal;font-size:10px;color:var(--ink3)}
+.frow .rc.inv{visibility:hidden}   /* ยังไม่พิมชื่อ = ซ่อนแต่กันที่ไว้ ไม่ให้แถวกระตุกตอนพิมตัวแรก */
+.rowcat{display:none}
+
+/* ---------- 2 รายการที่เดาให้ ----------
+   ลอยทับ ไม่ดันของข้างล่างลงไป (บทเรียนปฏิทินหน้าเคลื่อนไหว Ver.20) */
+.sugw{position:absolute;top:calc(100% + 5px);left:0;z-index:45;
+  min-width:100%;width:max-content;max-width:min(250px,78vw);
+  background:var(--card);border-radius:13px;box-shadow:var(--sh3);
+  overflow:hidden;display:none}
+.sugw.on{display:block}
+.sugb{display:flex;align-items:center;gap:8px;width:100%;
+  padding:10px 11px;font:inherit;font-size:13.5px;color:var(--ink);
+  text-align:left;background:none;border:0}
+.sugb+.sugb{border-top:1px solid var(--line)}
+.sugb .dot{width:8px;height:8px;flex:0 0 8px}
+.sugb .sn{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sugb .sc{flex:0 0 auto;font-size:10.5px;color:var(--ink3);
+  max-width:96px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sugb:active{background:var(--card2)}
+
+/* ---------- 3 การ์ดเฉลี่ยต่อวัน ---------- */
+.avr .adot{width:10px;height:10px;flex:0 0 10px;border-radius:50%}
+.avr{gap:9px}
+</style>
+
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1540,7 +1589,7 @@ function load(){
   return d;
 }
 function cp(c){return {n:c.n,c:c.c,w:c.w.slice()};}
-function save(){try{LS.setItem(KEY,JSON.stringify(D));}catch(e){toast('บันทึกไม่สำเร็จ พื้นที่เครื่องอาจเต็ม','del');}}
+function save(){_sugCache=null;try{LS.setItem(KEY,JSON.stringify(D));}catch(e){toast('บันทึกไม่สำเร็จ พื้นที่เครื่องอาจเต็ม','del');}}
 function buzz(ms){try{if(navigator.vibrate)navigator.vibrate(ms||12);}catch(e){}}
 
 /* ================= ตัวช่วย ================= */
@@ -2062,7 +2111,7 @@ function _goTab(t,stag){
    ถ้าหารด้วยวันที่จด = วันละ 599 (บ้า) หารด้วย 30 วัน = วันละ 20 (จริง)
    เดือนนี้หารด้วยวันที่ผ่านมาแล้วเท่านั้น ไม่ใช่ 31
    ไม่งั้นต้นเดือนทุกเดือนจะดูประหยัดผิดปกติ เทียบกับเดือนก่อนไม่ได้เลย */
-var avgRange='month';
+var avgRange='all';   /* Ver.28: เปิดมาที่ "ทั้งหมด" */
 function avgWindow(r){
   var now=new Date(),end=new Date(now.getFullYear(),now.getMonth(),now.getDate()),start,days;
   if(r==='wk'){start=new Date(end);start.setDate(start.getDate()-6);days=7;}
@@ -2118,13 +2167,14 @@ function renderAvg(){
   var pick=(D.avgPins&&D.avgPins.length)?D.avgPins.slice():ks.slice(0,4);
   var rows=pick.map(function(c){
     var v=cur.by[c]||0,pv=prev.by[c]||0;
-    return '<div class="avr"><span class="avk"><b>'+esc(c)+'</b>'
+    return '<div class="avr"><span class="adot" style="background:'+catColor(c,'out')+'"></span>'
+     +'<span class="avk"><b>'+esc(c)+'</b>'
      +'<i>รวม '+fmt(v)+' ใน '+w.d+' วัน</i></span>'
      +avgDelta(v/w.d,pv?pv/w.d:0)
      +'<span class="avv">'+fmt(Math.round(v/w.d))+'<u>/วัน</u></span></div>';}).join('');
+  /* Ver.28: ตัดแถว "ทุกหมวดรวมกัน" ออกตามที่สั่ง
+     ยอดรวมทั้งเดือนมีอยู่บนการ์ดรับ/จ่าย กับใต้โดนัทอยู่แล้ว การ์ดนี้มีไว้เทียบหมวดกันเอง */
   body.innerHTML=rows
-   +'<div class="avtot"><span>ทุกหมวดรวมกัน</span>'
-   +'<span><b>'+fmt(Math.round(cur.tot/w.d))+'</b> /วัน</span></div>'
    +(w.d<7?'<div class="avnote">ข้อมูลยังไม่ถึง 7 วัน ค่าเฉลี่ยยังไม่นิ่ง</div>':'')
    +'<button class="linkbtn avpick" onclick="openAvgPick()">เลือกหมวดเอง</button>';
 }
@@ -2830,14 +2880,17 @@ function liveRows(){return draft.rows.filter(function(r){return (r.n&&r.n.trim()
 function rowHtml(r,i){
   var cats=D.cats[draft.type];
   var filled=r.a!==''&&!isNaN(r.a)&&r.a>0;
+  var hasN=!!(r.n&&r.n.trim());
+  /* Ver.28: หมวดมาอยู่ต่อจากช่องชื่อในแถวเดียวกัน ชื่อรายการสั้นอยู่แล้ว ไม่ต้องกินความกว้างทั้งแถว */
   var h='<div class="rowwrap"><div class="frow">'
-   +'<span class="fn"><input type="text" id="fNm'+i+'" value="'+esc(r.n)+'" oninput="onRowNm('+i+',this.value)" autocomplete="off" placeholder="เช่น ค่าข้าว"></span>'
+   +'<span class="fn"><input type="text" id="fNm'+i+'" value="'+esc(r.n)+'" oninput="onRowNm('+i+',this.value)" onfocus="drawSug('+i+')" autocomplete="off" placeholder="เช่น ค่าข้าว">'
+   +'<div class="sugw" id="sug'+i+'"></div></span>'
+   +'<button class="rc'+(hasN?'':' inv')+'" onclick="toggleRowCat('+i+')" id="rcat'+i+'">'
+   +'<span class="dot" style="background:'+catColor(r.cat,draft.type)+'"></span><b>'+esc(r.cat)+'</b><i>'+(r.catOpen?'▴':'▾')+'</i></button>'
    +'<span class="fm money sm'+(filled?' filled':'')+'" id="moneyBox'+i+'"><span class="cur">฿</span>'
-   +'<input type="number" inputmode="decimal" id="fAmt'+i+'" value="'+(r.a===''?'':r.a)+'" oninput="onRowAmt('+i+',this.value)" placeholder="0"></span>'
+   +'<input type="number" inputmode="decimal" id="fAmt'+i+'" value="'+(r.a===''?'':r.a)+'" oninput="onRowAmt('+i+',this.value)" onfocus="hideSug()" placeholder="0"></span>'
    +(draft.rows.length>1?'<button class="fx tap" onclick="delRow('+i+')" aria-label="ลบแถวนี้">✕</button>':'')
    +'</div>';
-  h+='<div class="rowcat'+((r.n&&r.n.trim())?'':' hide')+'" id="rcw'+i+'"><button class="rc" onclick="toggleRowCat('+i+')" id="rcat'+i+'">'
-   +'<span class="dot" style="background:'+catColor(r.cat,draft.type)+'"></span>'+esc(r.cat)+' '+(r.catOpen?'▴':'▾')+'</button></div>';
   if(r.catOpen)
     h+='<div class="chiprow" style="margin-top:6px">'+cats.map(function(c,ci){
       return '<button class="chip sm'+(c.n===r.cat?' on':'')+'" onclick="pickRowCat('+i+','+ci+')">'
@@ -2881,14 +2934,103 @@ function drawForm(fromVoice){
     +'<button class="btn btn-danger" onclick="delEntry()">ลบ</button></div>':'')+'</div>');
   /* ไม่เรียกคีย์บอร์ดขึ้นมาเอง ให้เขาแตะช่องก่อน */
 }
+
+/* ================= Ver.28 — เดาคำจากที่เคยลงไว้ =================
+   คลังคำมาจากของจริงสามที่ ไม่ได้ใส่คำสำเร็จรูปอะไรไว้เลย
+     - ชิปประจำ (ถ่วงน้ำหนักหนักสุด เพราะเขาเลือกปักเอง)
+     - ชื่อรายการที่เคยบันทึก นับความถี่ ยิ่งลงบ่อยยิ่งขึ้นก่อน
+   ค้นแบบ "ขึ้นต้นด้วย" มาก่อน แล้วค่อยตามด้วย "มีคำนี้อยู่ข้างใน"
+   พิมพ์ครบคำเป๊ะแล้วไม่ต้องเสนอ เสนอไปก็ไม่ได้ช่วยอะไร
+   เทียบด้วย learnKey() ตัวเดียวกับที่ระบบเดาหมวดใช้ ช่องว่างกับตัวพิมพ์ไม่มีผล */
+var _sugCache=null,_sugKey='';
+function sugBuild(type){
+  var key=type+'|'+D.entries.length+'|'+D.pins.length;
+  if(_sugCache&&_sugKey===key)return _sugCache;
+  var m={},ord=[];
+  function put(n,cat,w,date){
+    var k=learnKey(n);if(!k)return;
+    if(!m[k]){m[k]={n:n,cat:cat||'',w:0,d:''};ord.push(k);}
+    var o=m[k];o.w+=w;
+    /* ชื่อกับหมวดให้ยึดครั้งล่าสุดที่ลง ไม่ใช่ครั้งแรก เผื่อเปลี่ยนหมวดทีหลัง */
+    if(date&&date>=o.d){o.d=date;o.n=n;if(cat)o.cat=cat;}
+    if(!o.cat&&cat)o.cat=cat;
+  }
+  D.pins.forEach(function(p){if((p.type||'out')===type)put(p.n,p.cat,4,'');});
+  D.entries.forEach(function(e){if(e.type===type)put(e.name,e.cat,1,e.date);});
+  _sugCache=ord.map(function(k){return m[k];});_sugKey=key;
+  return _sugCache;
+}
+function sugFind(q,type){
+  var s=learnKey(q);if(!s)return [];
+  var pre=[],mid=[];
+  sugBuild(type).forEach(function(o){
+    var k=learnKey(o.n);
+    if(k===s)return;
+    var p=k.indexOf(s);
+    if(p===0)pre.push(o);else if(p>0)mid.push(o);});
+  function cmp(a,b){return (b.w-a.w)||(a.d<b.d?1:(a.d>b.d?-1:0));}
+  pre.sort(cmp);mid.sort(cmp);
+  return pre.concat(mid).slice(0,5);
+}
+function sugHl(name,q){
+  var s=esc(name),k=learnKey(name),p=k.indexOf(learnKey(q));
+  if(p<0||!q)return s;
+  /* learnKey ตัดช่องว่างออก ตำแหน่งเลยอาจไม่ตรงกับสตริงจริง
+     หาในสตริงจริงอีกทีแบบไม่สนตัวพิมพ์ ถ้าไม่เจอก็ไม่ต้องไฮไลต์ */
+  var eq=esc(q.trim()).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  if(!eq)return s;
+  try{return s.replace(new RegExp('('+eq+')','i'),'<mark>$1</mark>');}catch(e){return s;}
+}
+function drawSug(i){
+  var box=document.getElementById('sug'+i),r=draft&&draft.rows?draft.rows[i]:null;
+  if(!box||!r)return;
+  var list=sugFind(r.n,draft.type);
+  window._sug=window._sug||{};window._sug[i]=list;
+  if(!list.length){box.className='sugw';box.innerHTML='';return;}
+  box.innerHTML=list.map(function(o,j){
+    return '<button class="sugb" onmousedown="event.preventDefault()" onclick="pickSug('+i+','+j+')">'
+     +'<span class="dot" style="background:'+catColor(o.cat,draft.type)+'"></span>'
+     +'<span class="sn">'+sugHl(o.n,r.n)+'</span>'
+     +'<span class="sc">'+esc(o.cat)+'</span></button>';}).join('');
+  box.className='sugw on';
+}
+function hideSug(i){
+  if(i===undefined){
+    var all=document.querySelectorAll('.sugw.on');
+    for(var k=0;k<all.length;k++)all[k].className='sugw';
+    return;
+  }
+  var b=document.getElementById('sug'+i);if(b)b.className='sugw';
+}
+function pickSug(i,j){
+  var L=window._sug&&window._sug[i],o=L?L[j]:null,r=draft&&draft.rows?draft.rows[i]:null;
+  if(!o||!r)return;
+  r.n=o.n;
+  r.cat=o.cat||guessCat(o.n,draft.type);
+  r.catSet=true;r.catOpen=false;
+  hideSug(i);buzz(8);drawForm(false);
+  /* แตะคำที่เดาให้ = ชื่อกับหมวดครบแล้ว เหลืออย่างเดียวคือราคา ยิงเคอร์เซอร์ไปรอเลย
+     (กฎ "ห้ามเด้งคีย์บอร์ดเอง" คือตอนเปิดฟอร์ม ตรงนี้เขาแตะเองแล้วคีย์บอร์ดขึ้นอยู่ก่อนแล้ว) */
+  var f=document.getElementById('fAmt'+i);
+  if(f)setTimeout(function(){f.focus();},70);
+}
+/* แตะที่อื่นแล้วปิด ต้องดักที่ capture เพราะ drawForm() เขียนทับปุ่มทิ้งไปแล้ว
+   พอถึงจังหวะ bubble ตัว target หลุดจาก DOM ไปแล้ว closest() คืน null (บทเรียน Ver.20) */
+document.addEventListener('click',function(ev){
+  var t=ev.target;
+  if(t&&t.closest&&(t.closest('.sugw')||t.closest('.frow .fn')))return;
+  hideSug();
+},true);
+
 function onRowNm(i,v){
   var r=draft.rows[i];if(!r)return;
   r.n=v;
-  if(!r.catSet){r.cat=guessCat(v,draft.type);
-    var el=document.getElementById('rcat'+i);
-    if(el)el.innerHTML='<span class="dot" style="background:'+catColor(r.cat,draft.type)+'"></span>'+esc(r.cat)+' ▾';}
-  var w=document.getElementById('rcw'+i);
-  if(w)w.classList.toggle('hide',!(r.n&&r.n.trim()));
+  if(!r.catSet)r.cat=guessCat(v,draft.type);
+  var el=document.getElementById('rcat'+i);
+  if(el){
+    el.innerHTML='<span class="dot" style="background:'+catColor(r.cat,draft.type)+'"></span><b>'+esc(r.cat)+'</b><i>▾</i>';
+    el.classList.toggle('inv',!(r.n&&r.n.trim()));}
+  drawSug(i);
   _syncFoot();
 }
 function onRowAmt(i,v){
@@ -3064,7 +3206,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.27 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.28 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
