@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.32 — ตัดจดต่อเนื่อง · ป้ายปุ่ม + ไปอยู่ขวา แก้คำเป็นรายรับ/รายจ่าย ไอคอนใหม่
+   Muifei  Ver.33 — ไอคอนลูกศรเข้า-ออกถาด + เอฟเฟค 12 อย่าง
    (Ver.29 เดิม: เมนูหมวดกางแนวยาว + อ่านสลิป/ใบเสร็จจากรูป
    (Ver.28 เดิม: หมวดมาอยู่แถวเดียวกับชื่อ + เดาคำจากที่เคยลง + การ์ดเฉลี่ยใส่สีหมวด))
    (Ver.27 เดิม: เอฟเฟค 5 อย่าง + การ์ดเฉลี่ยต่อวัน + ค้นหา + ลบแล้วเลิกทำได้)
@@ -1399,6 +1399,60 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .dial>.db{grid-column:2;grid-row:1;justify-self:center}
 .dial .db svg{width:24px;height:24px}
 </style>
+<style id="skin29">
+/* ============================================================
+   Ver.33 — ไอคอนแบบ C + เอฟเฟคทั้งชุด
+   หลักเดิมจาก Ver.27: เล่นตอน "เนื้อหาเปลี่ยนจริง" เท่านั้น
+   ไม่ใช่ทุกครั้งที่วาดใหม่ ไม่งั้นจดเสร็จทีเด้งที ก่อกวนมากกว่าสวย
+   ============================================================ */
+
+/* ---------- 2 แถวที่เพิ่งบันทึก เรืองสีหมวดแล้วจางหาย ---------- */
+.line.newfx{animation:newglow 1.15s var(--ez)}
+@keyframes newglow{
+  0%{background:color-mix(in srgb,var(--gl) 20%,transparent)}
+  55%{background:color-mix(in srgb,var(--gl) 13%,transparent)}
+  100%{background:transparent}}
+
+/* ---------- 3 ชิปประจำบินเข้าช่องชื่อ ---------- */
+.flyghost{z-index:120;pointer-events:none;margin:0;
+  display:flex;align-items:center;justify-content:center;white-space:nowrap}
+
+/* ---------- 6 ลากแถวไปซ้ายเพื่อลบ ---------- */
+.daygrp{overflow:hidden}
+.line{position:relative}
+.line.swiping{transition:none;z-index:3}
+.line::after{content:'ลบ';position:absolute;left:100%;top:0;bottom:0;width:150px;
+  background:var(--out);color:#fff;font-size:14px;font-weight:600;
+  display:none;align-items:center;padding-left:24px;letter-spacing:.02em}
+.line.swiping::after{display:flex}
+.line.swgo::after{padding-left:15px}
+
+/* ---------- 7 แตะแท่งกราฟแล้วเด้ง + ตัวเลขเลื่อนขึ้น ---------- */
+#bars .bcol.pop .bar{animation:barpop .36s var(--ez)}
+@keyframes barpop{0%{transform:translateY(0)}38%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+.readout.rin{animation:rvup .3s var(--ez)}
+@keyframes rvup{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+/* ---------- 8 โดนัทหมุนเข้าที่ ---------- */
+.donut.spin svg{animation:dspin .85s var(--ez)}
+@keyframes dspin{from{transform:rotate(-104deg)}to{transform:rotate(-90deg)}}
+
+/* ---------- 9 ดึงลงเพื่อโหลดข้อมูลล่าสุด ---------- */
+.ptr{position:fixed;left:50%;top:-56px;z-index:60;width:46px;height:46px;
+  border-radius:50%;background:var(--card);box-shadow:var(--sh3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--fill);opacity:0;transform:translate(-50%,0);pointer-events:none}
+.ptr svg{width:30px;height:30px}
+.ptr.go{color:var(--in)}
+
+/* ---------- 10+12 แถบยอดรวม เลื่อนเข้ามา + เลขนับขึ้น ---------- */
+.qbar.qin{animation:qbin .3s var(--ez)}
+@keyframes qbin{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion:reduce){
+  .line.newfx,#bars .bcol.pop .bar,.readout.rin,.donut.spin svg,.qbar.qin{animation:none!important}
+}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1512,9 +1566,9 @@ body.dark mark{background:rgba(90,175,240,.26)}
 <div class="dial dial3" id="dial3"><span class="dl">พูดเพื่อจด</span>
   <button class="db" style="background:var(--fill)" onclick="dialSay()" aria-label="พูดเพื่อจด"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9.1" y="2.9" width="5.8" height="10.4" rx="2.9"/><path d="M5.6 11.1a6.4 6.4 0 0 0 12.8 0"/><path d="M12 17.5v3.4"/><path d="M8.9 20.9h6.2"/></svg></button></div>
 <div class="dial dial2" id="dial2"><span class="dl">รายรับ</span>
-  <button class="db" style="background:var(--in)" onclick="dialGo('in')" aria-label="รายรับ"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3.1" y="11.9" width="17.8" height="9.2" rx="2.5"/><circle cx="16.9" cy="16.5" r="1.15" fill="#fff" stroke="none"/><path d="M12 2.9v6.5"/><path d="M9.1 6.5 12 9.4l2.9-2.9"/></svg></button></div>
+  <button class="db" style="background:var(--in)" onclick="dialGo('in')" aria-label="รายรับ"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M4.3 14.4v3.8a2.4 2.4 0 0 0 2.4 2.4h10.6a2.4 2.4 0 0 0 2.4-2.4v-3.8"/><path d="M12 3.2v11"/><path d="M8.4 10.6 12 14.2l3.6-3.6"/></svg></button></div>
 <div class="dial dial1" id="dial1"><span class="dl">รายจ่าย</span>
-  <button class="db" style="background:var(--out)" onclick="dialGo('out')" aria-label="รายจ่าย"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3.1" y="11.9" width="17.8" height="9.2" rx="2.5"/><circle cx="16.9" cy="16.5" r="1.15" fill="#fff" stroke="none"/><path d="M12 9.4V2.9"/><path d="M9.1 5.8 12 2.9l2.9 2.9"/></svg></button></div>
+  <button class="db" style="background:var(--out)" onclick="dialGo('out')" aria-label="รายจ่าย"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M4.3 14.4v3.8a2.4 2.4 0 0 0 2.4 2.4h10.6a2.4 2.4 0 0 0 2.4-2.4v-3.8"/><path d="M12 14.2V3.2"/><path d="M8.4 6.6 12 3l3.6 3.6"/></svg></button></div>
 
 <div class="scrim" id="scrim" onclick="closeSheet()"></div>
 <div class="sheet" id="sheet">
@@ -1996,7 +2050,10 @@ document.addEventListener('click',function(ev){
 
 function setRange(r){chRange=r;chSel=-1;renderChart();buzz(8);}
 function setShow(s){chShow=s;renderChart();buzz(8);}
-function pickBar(i){chSel=(chSel===i?-1:i);renderChart();buzz(8);}
+function pickBar(i){
+  chSel=(chSel===i?-1:i);renderChart();buzz(8);
+  if(chSel>=0)fxBarPop(chSel);   /* Ver.33 ข้อ 7 — เล่นเฉพาะตอนเลือก ไม่เล่นตอนกดปิด */
+}
 
 /* ================= กราฟเส้นเงินคงเหลือ (แบบกราฟหุ้น) =================
    เส้นคือยอดคงเหลือ ณ สิ้นวัน ไม่ใช่ยอดรับ-จ่ายรายวัน
@@ -2094,6 +2151,9 @@ function renderSummary(){
    +'<span class="sfv">'+fmt(tot)+'</span></div>';
   if(_fxDonut){
     _fxDonut=false;
+    var dn=document.querySelector('.donut');   /* Ver.33 ข้อ 8 */
+    if(dn){dn.classList.remove('spin');void dn.offsetWidth;dn.classList.add('spin');
+      setTimeout(function(){dn.classList.remove('spin');},900);}
     var dn=document.getElementById('sumBody');
     requestAnimationFrame(function(){requestAnimationFrame(function(){
       dn.querySelectorAll('.dseg').forEach(function(c){
@@ -2113,7 +2173,183 @@ function render(){
   if(curTab==='mv')renderMv();
   if(curTab==='set')renderSet();
   setTimeout(function(){_scrollBtns();_fsSync(false);},0);   /* Ver.21: เช็คหลังวาดเสร็จ ความสูงหน้าถึงจะเป็นค่าจริง */
+  fxNewRows();   /* Ver.33 ข้อ 2 */
 }
+
+/* ================= Ver.33 — เอฟเฟคชุดใหญ่ =================
+   ข้อ 1 (ยอดวิ่ง) 4 (ปุ่ม + หมุน) 5 (ปุ่มเด้งแบบสปริง) มีอยู่แล้วตั้งแต่ Ver.27
+   ที่เพิ่มรอบนี้คือข้อ 2,3,6,7,8,9,10,11,12 */
+
+/* ---- 11 สั่นแยกจังหวะ บันทึกกับลบต้องรู้สึกต่างกันโดยไม่ต้องมอง ---- */
+function buzzPat(a){try{if(navigator.vibrate)navigator.vibrate(a);}catch(e){}}
+function buzzDel(){buzzPat([24,72,24]);}   /* ลบ = สองจังหวะ */
+function buzzUndo(){buzzPat([10,50,10,50,10]);}
+
+/* ---- 2 แถวที่เพิ่งบันทึก เรืองสีหมวดของตัวเองแล้วจางหาย ---- */
+var _fxNew=[];
+function fxNewRows(){
+  if(!_fxNew.length)return;
+  var ids=_fxNew;_fxNew=[];
+  ids.forEach(function(id){
+    var e=null,i;
+    for(i=0;i<D.entries.length;i++)if(D.entries[i].id===id){e=D.entries[i];break;}
+    if(!e)return;
+    var els=document.querySelectorAll('.line[data-id="'+id+'"]');
+    for(i=0;i<els.length;i++){
+      els[i].style.setProperty('--gl',catColor(e.cat,e.type));
+      /* ถอดคลาสแล้วบังคับ reflow ก่อน ไม่งั้นสั่งซ้ำติดๆ กันจะไม่เล่นรอบสอง */
+      els[i].classList.remove('newfx');void els[i].offsetWidth;els[i].classList.add('newfx');
+    }
+  });
+}
+
+/* ---- 3 ชิปประจำบินเข้าช่องชื่อ ---- */
+function fxFly(from,toSel){
+  var to=document.querySelector(toSel);
+  if(!from||!to||!from.getBoundingClientRect)return;
+  var a=from.getBoundingClientRect(),b=to.getBoundingClientRect();
+  if(!a.width||!b.width)return;
+  var c=from.cloneNode(true);
+  c.classList.add('flyghost');
+  c.style.cssText+=';position:fixed;left:'+a.left+'px;top:'+a.top+'px;width:'+a.width+'px;height:'+a.height+'px;';
+  document.body.appendChild(c);
+  var dx=(b.left+13)-a.left,dy=(b.top+b.height/2)-(a.top+a.height/2);
+  requestAnimationFrame(function(){
+    c.style.transition='transform .34s var(--ez),opacity .34s var(--ez)';
+    c.style.transform='translate('+dx+'px,'+dy+'px) scale(.62)';
+    c.style.opacity='0';
+  });
+  setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c);},430);
+}
+
+/* ---- 7 แตะแท่งกราฟแล้วเด้ง ตัวเลขข้างล่างเลื่อนขึ้นมา ---- */
+function fxBarPop(i){
+  var col=document.querySelectorAll('#bars .bcol')[i];
+  if(col){col.classList.remove('pop');void col.offsetWidth;col.classList.add('pop');}
+  var r=document.getElementById('readout');
+  if(r){r.classList.remove('rin');void r.offsetWidth;r.classList.add('rin');}
+}
+
+/* ---- 6 ลากแถวไปทางซ้ายเพื่อลบ ----
+   เกณฑ์ -96px มาจากความกว้างของคำว่า "ลบ" ที่โผล่มา ลากจนอ่านคำได้ครบ = ตั้งใจลบ
+   ลากขวาหน่วงไว้ที่ 25% ให้รู้สึกว่ามันไปทางนั้นไม่ได้ ไม่ใช่แค่ไม่ตอบสนอง */
+var _sw=null,_swBlock=0;
+function swStart(ev){
+  if(_sw||!ev.touches||ev.touches.length!==1)return;
+  var t=ev.target,row=t&&t.closest?t.closest('.line[data-id]'):null;
+  if(!row)return;
+  _sw={row:row,x:ev.touches[0].clientX,y:ev.touches[0].clientY,dx:0,on:false};
+}
+function swMove(ev){
+  if(!_sw||!ev.touches||!ev.touches.length)return;
+  var t=ev.touches[0],dx=t.clientX-_sw.x,dy=t.clientY-_sw.y;
+  if(!_sw.on){
+    /* ตัดสินใจครั้งเดียวว่าเป็นการปัดหรือการเลื่อนหน้า แล้วไม่เปลี่ยนใจกลางคัน
+       ไม่งั้นนิ้วที่เอียงนิดเดียวจะสลับโหมดไปมาจนทั้งสองอย่างใช้ไม่ได้ */
+    if(Math.abs(dy)>Math.abs(dx)||Math.abs(dy)>12){_sw=null;return;}
+    if(Math.abs(dx)<11)return;
+    _sw.on=true;_sw.row.classList.add('swiping');
+  }
+  if(dx>0)dx*=.25;
+  if(dx<-150)dx=-150;
+  _sw.dx=dx;
+  _sw.row.style.transform='translateX('+dx+'px)';
+  _sw.row.classList.toggle('swgo',dx<=-96);
+  if(ev.cancelable)ev.preventDefault();
+}
+function swEnd(){
+  if(!_sw)return;
+  var s=_sw;_sw=null;
+  if(!s.on)return;
+  _swBlock=Date.now();   /* กันไม่ให้คลิกที่ตามมาหลังปล่อยนิ้วไปเปิดฟอร์ม */
+  s.row.classList.remove('swgo');
+  s.row.style.transition='transform .22s var(--ez)';
+  s.row.style.transform='';
+  setTimeout(function(){s.row.classList.remove('swiping');s.row.style.transition='';},240);
+  if(s.dx<=-96)swipeDel(s.row.getAttribute('data-id'));
+}
+function swipeDel(id){
+  var e=null;
+  for(var i=0;i<D.entries.length;i++)if(D.entries[i].id===id){e=D.entries[i];break;}
+  if(!e)return;
+  D.entries=D.entries.filter(function(x){return x.id!==id;});
+  save();buzzDel();_fxDonut=true;render();
+  toastUndo('ลบ '+e.name+' แล้ว',function(){
+    D.entries.push(e);save();buzzUndo();_fxNew=[e.id];_fxDonut=true;render();
+    toast('เอา '+e.name+' กลับมาแล้ว','ok');});
+}
+
+/* ---- 9 ดึงลงเพื่อโหลดข้อมูลล่าสุดในเครื่อง ----
+   แอปนี้ไม่มีเซิร์ฟเวอร์ให้รีเฟรช แต่เขาเปิดหลายแท็บอยู่จริง (เห็นในสกรีนช็อต)
+   แท็บที่ค้างไว้จะไม่รู้ว่าอีกแท็บบันทึกอะไรไป ดึงลงตรงนี้จึงอ่าน localStorage ใหม่
+   ไม่ใช่แอนิเมชันหลอกว่ามีอะไรเกิดขึ้น */
+var _ptr=null;
+function ptrEl(){
+  var e=document.getElementById('ptr');
+  if(!e){
+    e=document.createElement('div');e.id='ptr';e.className='ptr';
+    var mk=document.querySelector('.mark');
+    e.innerHTML=mk?mk.innerHTML:'';
+    document.body.appendChild(e);
+  }
+  return e;
+}
+function ptrStart(ev){
+  if(_sw||curTab!=='home'||curSheet||window.scrollY>2)return;
+  if(!ev.touches||ev.touches.length!==1)return;
+  _ptr={y:ev.touches[0].clientY,on:false};
+}
+function ptrMove(ev){
+  if(!_ptr||!ev.touches||!ev.touches.length)return;
+  var dy=ev.touches[0].clientY-_ptr.y;
+  if(dy<=0||window.scrollY>2){if(!_ptr.on)_ptr=null;return;}
+  if(!_ptr.on){if(dy<10)return;_ptr.on=true;}
+  var p=Math.min(dy*.5,104),e=ptrEl();
+  e.style.transition='';
+  e.style.transform='translate(-50%,'+p+'px) rotate('+Math.round(p*4)+'deg)';
+  e.style.opacity=Math.min(1,p/38);
+  e.classList.toggle('go',p>=70);
+  if(ev.cancelable)ev.preventDefault();
+}
+function ptrEnd(){
+  if(!_ptr)return;
+  var on=_ptr.on;_ptr=null;
+  if(!on)return;
+  var e=ptrEl(),go=e.classList.contains('go');
+  e.style.transition='transform .3s var(--ez),opacity .28s linear';
+  e.style.transform='translate(-50%,0) rotate(720deg)';
+  e.style.opacity='0';
+  setTimeout(function(){e.style.transition='';e.classList.remove('go');},330);
+  if(go)ptrRun();
+}
+function ptrRun(){
+  buzz(12);
+  var before=D.entries.length;
+  try{D=load();}catch(err){}
+  _lastBal=null;_fxDonut=true;render();
+  var d=D.entries.length-before;
+  toast(d?('โหลดข้อมูลล่าสุดแล้ว · '+(d>0?('+'+d):d)+' รายการ'):'ข้อมูลเป็นอันล่าสุดอยู่แล้ว','info');
+}
+document.addEventListener('touchstart',function(ev){swStart(ev);ptrStart(ev);},{passive:true});
+document.addEventListener('touchmove',function(ev){swMove(ev);ptrMove(ev);},{passive:false});
+document.addEventListener('touchend',function(){swEnd();ptrEnd();},{passive:true});
+document.addEventListener('touchcancel',function(){swEnd();ptrEnd();},{passive:true});
+
+/* ---- 10 เลขบนแถบยอดรวมนับขึ้นตอนเปลี่ยนฟิลเตอร์ ---- */
+var _lastQV=null;
+function countTo(el,from,to,pre){
+  if(!el)return;
+  if(from===null||from===to){el.textContent=pre+fmt(to);return;}
+  var t0=null,dur=440;
+  function step(ts){
+    if(!t0)t0=ts;
+    var k=Math.min(1,(ts-t0)/dur),v=from+(to-from)*(1-Math.pow(1-k,3));
+    el.textContent=pre+fmt(Math.round(v));
+    if(k<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 function renderHome(){
   var b=balance(),el=document.getElementById('balNum');
   countUp(el,_lastBal===null?b:_lastBal,b);_lastBal=b;
@@ -2356,13 +2592,21 @@ function renderList(){
     if(!lbl.length)lbl.push('ทั้งหมด');
     var mixed=fIn>0&&fOut>0,nett=fIn-fOut,pos=mixed?(nett>=0):(fIn>0);
     var big=mixed?Math.abs(nett):(fIn>0?fIn:fOut);
+    /* Ver.33 ข้อ 12: เลื่อนเข้ามาเฉพาะตอนแถบเพิ่งโผล่ ไม่ใช่ทุกครั้งที่เปลี่ยนฟิลเตอร์
+       ไม่งั้นแค่สลับหมวดทีเดียวแถบก็วิ่งใหม่ทั้งแถบ กวนสายตา */
+    var wasOn=qb.style.display==='flex';
     qb.style.display='flex';
     qb.innerHTML='<span class="lsl"><b>'+lbl.join(' · ')+'</b>'
      +'<i>'+list.length+' รายการ'+(qa?' · ทุกเดือน':'')
      +(mixed?(' · รับ '+fmt(fIn)+' · จ่าย '+fmt(fOut)):'')+'</i></span>'
-     +'<span class="lsv '+(pos?'i':'o')+'">'+(list.length?(pos?'+':'−'):'')+fmt(big)+'</span>'
+     +'<span class="lsv '+(pos?'i':'o')+'" id="qbNum"></span>'
      +(q?'<button class="qt'+(qAll?' on':'')+'" onclick="toggleQAll()">'+(qAll?'ทุกเดือน':'เดือนนี้')+'</button>':'');
-  }else qb.style.display='none';
+    if(!wasOn){qb.classList.remove('qin');void qb.offsetWidth;qb.classList.add('qin');}
+    else qb.classList.remove('qin');
+    /* Ver.33 ข้อ 10 */
+    countTo(document.getElementById('qbNum'),wasOn?_lastQV:null,big,list.length?(pos?'+':'−'):'');
+    _lastQV=big;
+  }else{qb.style.display='none';qb.classList.remove('qin');_lastQV=null;}
   list=sortEntries(list);
   /* Ver.22: เดือนหนึ่งจดกันเป็นร้อยรายการ วาดทีเดียวหมดทั้งเดือนหน้าจะยาวมาก
      โชว์ทีละ LIST_STEP รายการ แล้วค่อยกดเพิ่ม
@@ -2695,6 +2939,9 @@ function renderBk(){
 var armKey=null,armEl=null,armT=null;
 function disarm(){if(armEl)armEl.classList.remove('armed');armEl=null;armKey=null;clearTimeout(armT);}
 document.addEventListener('click',function(ev){
+  /* Ver.33 ข้อ 6: ปล่อยนิ้วจากการปัด เบราว์เซอร์ยังยิง click ตามมาอีกที ต้องกินทิ้ง
+     ไม่งั้นปัดลบเสร็จแล้วฟอร์มแก้รายการจะเด้งขึ้นมาทับทันที */
+  if(Date.now()-_swBlock<420){disarm();return;}
   var row=ev.target.closest?ev.target.closest('.line,.mvr[data-id]'):null;
   if(!row){disarm();return;}
   var id=row.getAttribute('data-id');
@@ -3008,7 +3255,7 @@ function drawForm(fromVoice){
   var pinLbl=draft.type==='in'?'รับประจำ — แตะแล้วชื่อกับหมวดมาเอง':'ซื้อประจำ — แตะแล้วชื่อกับหมวดมาเอง';
   var pinChips=pins.length?'<div class="field"><span class="fl">'+pinLbl+'</span>'
    +'<div class="chiprow">'+pins.map(function(p,i){
-      return '<button class="chip" onclick="useFormPin('+i+')">'
+      return '<button class="chip" onclick="useFormPin('+i+',this)">'
        +'<span class="dot" style="background:'+catColor(p.cat,p.type||'out')+'"></span>'+esc(p.n)+'</button>';}).join('')
    +'</div></div>'
    :'<div class="field"><span class="fl">'+pinLbl.split(' —')[0]+'</span>'
@@ -3192,10 +3439,13 @@ function delRow(i){
   if(draft.rows.length<2)return;
   draft.rows.splice(i,1);buzz(10);drawForm(false);
 }
-function useFormPin(i){
+function useFormPin(i,el){
   var p=window._formPins[i];if(!p)return;
   var at=-1;
   draft.rows.forEach(function(r,j){if(at<0&&!(r.n&&r.n.trim()))at=j;});
+  /* Ver.33 ข้อ 3: ต้องยิงก่อน drawForm เพราะ drawForm เขียนทับชิปตัวนั้นทิ้งไปแล้ว
+     ตัวที่บินเป็นสำเนาที่ย้ายไปแปะบน body จึงรอดจากการวาดใหม่ */
+  fxFly(el,'#fNm'+(at>=0?at:Math.max(0,draft.rows.length-1)));
   /* Ver.24: แตะชิปแล้วเอาแค่ชื่อกับหมวด ไม่ใส่ราคาให้แล้ว
      ราคาของเดิมเปลี่ยนบ่อย เติมมาให้แล้วต้องมาลบทิ้งเองทุกที เสียเวลากว่าพิมพ์ใหม่ */
   var row=newRow(p.n,'',p.cat,draft.type);
@@ -3239,7 +3489,9 @@ function saveEntry(){
   var sum=0,first='';
   rows.forEach(function(x){var o=mk(x);sum+=o.amount;if(!first)first=o.name;
     D.entries.push(o);D.learned[learnKey(o.name)]={cat:o.cat,type:o.type};});
-  save();buzz(18);closeSheet(true);_fxFlash=true;render();
+  save();buzz(18);closeSheet(true);_fxFlash=true;_fxDonut=true;
+  _fxNew=D.entries.slice(-rows.length).map(function(x){return x.id;});
+  render();
   toast(rows.length>1?('บันทึก '+rows.length+' รายการ · รวม '+fmt(sum))
     :('บันทึก'+(draft.type==='in'?'รายรับ ':'รายจ่าย ')+first+' '+fmt(sum)+' แล้ว'),'ok');
 }
@@ -3251,9 +3503,10 @@ function delEntry(){
      ถามก่อนลบกันพลาดได้ก็จริง แต่ต้องมากดยืนยันทุกครั้งแม้ตั้งใจลบ
      ส่วนเลิกทำ เสียเวลาเฉพาะตอนที่พลาดจริง ซึ่งนานๆ ที */
   D.entries=D.entries.filter(function(x){return x.id!==e.id;});
-  save();buzz(18);closeSheet(true);render();
+  save();buzzDel();closeSheet(true);_fxDonut=true;render();
   toastUndo('ลบ '+e.name+' แล้ว',function(){
-    D.entries.push(e);save();buzz(14);render();toast('เอา '+e.name+' กลับมาแล้ว','ok');});
+    D.entries.push(e);save();buzzUndo();_fxNew=[e.id];_fxDonut=true;render();
+    toast('เอา '+e.name+' กลับมาแล้ว','ok');});
 }
 function toastUndo(m,fn){
   var el=document.getElementById('toast');
@@ -3333,7 +3586,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.32 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.33 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
