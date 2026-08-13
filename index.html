@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.31 — ถอดการอ่านรูปออก · สวิตช์รับ/จ่ายกลับมา · แถบยอดรวมตอนกรอง
+   Muifei  Ver.32 — ตัดจดต่อเนื่อง · ป้ายปุ่ม + ไปอยู่ขวา แก้คำเป็นรายรับ/รายจ่าย ไอคอนใหม่
    (Ver.29 เดิม: เมนูหมวดกางแนวยาว + อ่านสลิป/ใบเสร็จจากรูป
    (Ver.28 เดิม: หมวดมาอยู่แถวเดียวกับชื่อ + เดาคำจากที่เคยลง + การ์ดเฉลี่ยใส่สีหมวด))
    (Ver.27 เดิม: เอฟเฟค 5 อย่าง + การ์ดเฉลี่ยต่อวัน + ค้นหา + ลบแล้วเลิกทำได้)
@@ -1376,6 +1376,29 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .qbar .lsv.i{color:var(--in)}
 .qbar .lsv.o{color:var(--out)}
 </style>
+<style id="skin28">
+/* ============================================================
+   Ver.32
+   1. "จดต่อเนื่อง N วัน" เอาออกจากหน้าแรก
+   2. ป้ายของปุ่ม + ย้ายจากซ้ายปุ่มไปขวาปุ่ม · จ่ายออก/รับเข้า → รายจ่าย/รายรับ
+   3. ไอคอนใหม่ ลูกศรเปล่าๆ เปลี่ยนเป็นกระเป๋าเงินกับลูกศรเข้า-ออก
+      ลูกศรขึ้นลงล้วนๆ ไม่ได้แปลว่าเงิน มันแปลว่าอะไรก็ได้ ขึ้นอยู่กับว่าใครมอง
+   ============================================================ */
+/* Ver.12 วางป้ายไว้คอลัมน์ 1 (ซ้ายปุ่ม) — ย้ายไปคอลัมน์ 3
+   ต้องเปลี่ยน 1fr เป็น minmax(0,1fr) ด้วย เพราะ 1fr มีพื้นความกว้างเป็น min-content
+   พอย้ายป้ายไปคอลัมน์ 3 คอลัมน์นั้นเลยกว้างกว่าคอลัมน์ 1 แล้วดันปุ่มหลุดจากกึ่งกลาง
+   (วัดได้ ปุ่มเยื้องไปซ้ายจนขอบขวาอยู่ที่ 114 แทนที่จะเป็น 217) */
+.dial{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
+.dial>.dl{grid-column:3;grid-row:1;justify-self:start;margin-left:9px;margin-right:0;
+  max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ปุ่มต้องระบุคอลัมน์ด้วย ไม่งั้นพอป้ายถูกจับไปคอลัมน์ 3 แล้ว ปุ่มจะไหลไปลงคอลัมน์ 1 แทน
+   (วัดได้ ปุ่มไปอยู่ 74–114 ทั้งที่ปุ่ม + ข้างล่างอยู่ 168–222 คนละที่กันเลย) */
+/* ต้องระบุ grid-row:1 ให้ทั้งคู่ด้วย ไม่ใช่แค่คอลัมน์
+   พอป้ายจองคอลัมน์ 3 ไว้ ปุ่มที่ตามมาจะวางย้อนกลับไปคอลัมน์ 2 แถวเดิมไม่ได้ มันเลยตกไปแถว 2
+   ผลคือป้ายลอยอยู่เหนือปุ่ม แถวสูง 77px แล้วชนกับปุ่มตัวถัดไปที่ห่างกันแค่ 48px */
+.dial>.db{grid-column:2;grid-row:1;justify-self:center}
+.dial .db svg{width:24px;height:24px}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1399,7 +1422,6 @@ body.dark mark{background:rgba(90,175,240,.26)}
     <div class="tile tabtop" style="--tabc:var(--in)"><div class="tk">รับเดือนนี้</div><div class="tv i" id="mIn">0</div><div class="tsub" id="mInSub"></div></div>
     <div class="tile tabtop" style="--tabc:var(--out)"><div class="tk">จ่ายเดือนนี้</div><div class="tv o" id="mOut">0</div><div class="tsub" id="mOutSub"></div></div>
   </div>
-  <div class="streak" id="streak"></div>
 
   <section class="card">
     <div class="ct"><h2>กราฟรับ-จ่าย</h2><span class="sub" id="chSub"></span></div>
@@ -1488,14 +1510,11 @@ body.dark mark{background:rgba(90,175,240,.26)}
 <div class="fsc" id="fsc" aria-hidden="true"><div class="fscb" id="fscBub"></div><button class="fsct" id="fscT" aria-label="เลื่อนเร็ว"><svg viewBox="0 0 24 24"><polyline points="7 9.5 12 4.8 17 9.5"></polyline><polyline points="7 14.5 12 19.2 17 14.5"></polyline></svg></button></div>
 <div class="dialscrim" id="dialScrim" onclick="closeDial()"></div>
 <div class="dial dial3" id="dial3"><span class="dl">พูดเพื่อจด</span>
-  <button class="db" style="background:var(--fill)" onclick="dialSay()" aria-label="พูดเพื่อจด">
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3.4" width="6" height="10.4" rx="3"/><path d="M5.4 11.2a6.6 6.6 0 0 0 13.2 0"/><path d="M12 17.8v2.8"/></svg></button></div>
-<div class="dial dial2" id="dial2"><span class="dl">รับเข้า</span>
-  <button class="db" style="background:var(--in)" onclick="dialGo('in')" aria-label="รับเข้า">
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></div>
-<div class="dial dial1" id="dial1"><span class="dl">จ่ายออก</span>
-  <button class="db" style="background:var(--out)" onclick="dialGo('out')" aria-label="จ่ายออก">
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button></div>
+  <button class="db" style="background:var(--fill)" onclick="dialSay()" aria-label="พูดเพื่อจด"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9.1" y="2.9" width="5.8" height="10.4" rx="2.9"/><path d="M5.6 11.1a6.4 6.4 0 0 0 12.8 0"/><path d="M12 17.5v3.4"/><path d="M8.9 20.9h6.2"/></svg></button></div>
+<div class="dial dial2" id="dial2"><span class="dl">รายรับ</span>
+  <button class="db" style="background:var(--in)" onclick="dialGo('in')" aria-label="รายรับ"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3.1" y="11.9" width="17.8" height="9.2" rx="2.5"/><circle cx="16.9" cy="16.5" r="1.15" fill="#fff" stroke="none"/><path d="M12 2.9v6.5"/><path d="M9.1 6.5 12 9.4l2.9-2.9"/></svg></button></div>
+<div class="dial dial1" id="dial1"><span class="dl">รายจ่าย</span>
+  <button class="db" style="background:var(--out)" onclick="dialGo('out')" aria-label="รายจ่าย"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3.1" y="11.9" width="17.8" height="9.2" rx="2.5"/><circle cx="16.9" cy="16.5" r="1.15" fill="#fff" stroke="none"/><path d="M12 9.4V2.9"/><path d="M9.1 5.8 12 2.9l2.9 2.9"/></svg></button></div>
 
 <div class="scrim" id="scrim" onclick="closeSheet()"></div>
 <div class="sheet" id="sheet">
@@ -2110,8 +2129,6 @@ function renderHome(){
   document.getElementById('heroFoot').textContent=n
     ? (net>=0?'เดือนนี้เหลือ ':'เดือนนี้ติดลบ ')+fmt(Math.abs(net))
     : 'ยังไม่มีรายการในเดือนนี้';
-  var st=streakDays();
-  document.getElementById('streak').textContent=st>1?('จดต่อเนื่อง '+st+' วัน'):'';
   _hlQ='';   /* Ver.27: หน้าแรกไม่ต้องไฮไลต์อะไร */
   var list=sortEntries(D.entries).slice(0,6);
   document.getElementById('recentR').textContent=n?('ทั้งหมด '+n+' รายการ'):'';
@@ -3316,7 +3333,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.31 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.32 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
