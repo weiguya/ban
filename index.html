@@ -1561,6 +1561,42 @@ body.dark mark{background:rgba(90,175,240,.26)}
    จำนวนแท่งที่เห็นพร้อมกันต่างกันตามช่วง จึงเป็นตัวแปร ไม่ใช่ 7 ตายตัว */
 .bars.scr .bcol{flex:0 0 calc(100% / var(--vis, 7))}
 </style>
+<style id="skin33">
+/* ============================================================
+   Ver.37 — แจ้งเตือน
+   · เลิกใช้พื้นดำ ใช้โทนของแอปเอง (พื้นอ่อนตามชนิด + ขอบ + เงาลอย)
+   · กว้างคงที่ ข้อความมีคอลัมน์ของตัวเอง คำจึงไม่ถูกบีบจนตกบรรทัดกลางคำ
+   · โชว์สั้นลงอีก
+   ============================================================ */
+.toast{
+  width:min(348px,90vw);max-width:none;
+  box-sizing:border-box;padding:12px 14px;gap:11px;
+  align-items:center;text-align:left;
+  border-radius:16px;
+  background:var(--glass);color:var(--ink);
+  border:1px solid var(--line2);
+  box-shadow:var(--sh3),0 2px 6px rgba(0,0,0,.06);
+  overflow:visible;text-overflow:clip;
+  font-size:14px;font-weight:600
+}
+/* พื้นอ่อนตามชนิด — บอกได้ตั้งแต่ยังไม่อ่านว่าเพิ่ง "เพิ่ม" หรือเพิ่ง "ลบ" */
+.toast.ok{background:var(--in-tint);border-color:color-mix(in srgb,var(--in) 26%,transparent)}
+.toast.del{background:var(--out-tint);border-color:color-mix(in srgb,var(--out) 26%,transparent)}
+.toast.info{background:var(--tint);border-color:color-mix(in srgb,var(--accent) 26%,transparent)}
+@supports not (color:color-mix(in srgb,red 50%,transparent)){
+  .toast.ok,.toast.del,.toast.info{border-color:var(--line2)}
+}
+
+/* ข้อความมีคอลัมน์ของตัวเอง ไม่ต้องแย่งที่กับไอคอนและปุ่ม */
+.toast .tmsg{flex:1 1 auto;min-width:0;line-height:1.38;
+  overflow-wrap:break-word;word-break:normal}
+.toast .tk{flex:0 0 22px;width:22px;height:22px;font-size:13px;font-weight:700;align-self:flex-start;margin-top:1px}
+
+.toast .tu{flex:0 0 auto;margin-left:4px;padding:8px 13px;
+  background:var(--glass);color:var(--ink);border:1px solid var(--line2);
+  box-shadow:var(--sh1);font-size:13.5px;font-weight:600}
+.toast .tu:active{background:var(--card2)}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1853,9 +1889,12 @@ function toast(m,kind){
   kind=kind||'ok';
   var mark=kind==='del'?'✕':(kind==='info'?'·':'✓');
   e.className='toast on '+kind;
-  e.innerHTML='<span class="tk">'+mark+'</span>'+esc(m);
+  /* Ver.37: ข้อความต้องเป็น element ของตัวเอง ไม่ใช่ text node ลอยๆ
+     ไม่งั้นมันไม่มีคอลัมน์เป็นของตัวเอง โดนไอคอน/ปุ่มบีบจนคำแตกกลางคำ */
+  e.innerHTML='<span class="tk">'+mark+'</span><span class="tmsg">'+esc(m)+'</span>';
   /* Ver.36: 3.4 วิ นานไป (Ver.35) · 2.4 วิ เร็วไป (Ver.34) — ลงตัวที่ 2.8 */
-  clearTimeout(_tt);_tt=setTimeout(function(){e.classList.remove('on');},2800);
+  /* Ver.37: สั้นลงอีกตามที่สั่ง — 2.4 เร็วไป / 3.4 นานไป / 2.8 ยังนาน */
+  clearTimeout(_tt);_tt=setTimeout(function(){e.classList.remove('on');},2200);
 }
 function catOf(name,type){
   var arr=D.cats[type]||[];
@@ -3722,11 +3761,12 @@ function delEntryGo(e){
 function toastUndo(m,fn){
   var el=document.getElementById('toast');
   el.className='toast on del act';
-  el.innerHTML='<span class="tk">✕</span>'+esc(m)+'<button class="tu" id="tuB">เลิกทำ</button>';
+  el.innerHTML='<span class="tk">✕</span><span class="tmsg">'+esc(m)+'</span>'
+    +'<button class="tu" id="tuB">เลิกทำ</button>';
   document.getElementById('tuB').onclick=function(){
     clearTimeout(_tt);el.className='toast del';fn();};
   /* Ver.35: 6 วิ นานกว่าฝั่งบันทึกเกินเท่าตัว ขยับให้ใกล้กัน แต่ยังเผื่อเวลาอ่านแล้วกดเลิกทำ */
-  clearTimeout(_tt);_tt=setTimeout(function(){el.className='toast del';},4800);
+  clearTimeout(_tt);_tt=setTimeout(function(){el.className='toast del';},3800);
 }
 function pinThis(){
   var r=draft.rows[0];if(!r||!r.n)return;
