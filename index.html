@@ -1491,6 +1491,41 @@ body.dark mark{background:rgba(90,175,240,.26)}
   font-variant-numeric:tabular-nums;letter-spacing:.01em}
 #askP{white-space:pre-line}
 </style>
+<style id="skin31">
+/* ============================================================
+   Ver.35 — ฟีดแบค 4 ข้อ
+   1 ป็อปอัพยืนยัน = ถามแล้วให้เลือก ตกลง / ยกเลิก คู่กันในบรรทัดเดียว
+   2 แจ้งเตือนย้ายมากลางจอ และเวลาแสดงของ บันทึก/ลบ ใกล้กันแล้ว
+   3 ปุ่มลบตอนปัดซ้าย กดได้จริง (ตัวจับนิ้วกินปุ่มไปก่อน — แก้ในสคริปต์)
+   4 แตะแท่งกราฟแล้วยุบตัวนิดเดียว ไม่ใช่ทั้งกราฟเด้งขึ้นใหม่
+   ============================================================ */
+
+/* ---------- 1 ยืนยัน: สองปุ่มเรียงกัน ยกเลิกซ้าย ตกลงขวา ---------- */
+.askbox .askrow{margin-top:14px;gap:9px}
+.askbox .askrow .btn{flex:1;padding:12px 10px}
+.askbox .askrow #askOk{font-weight:700}
+.askbox p:empty{display:none}
+
+/* ---------- 2 แจ้งเตือน: กลางจอ ----------
+   บนสุดอยู่นอกจุดสายตาเวลาก้มมองแป้นพิมพ์ กลางจอคือที่ที่ตากำลังอยู่ */
+.toast{top:50%;bottom:auto;
+  transform:translate(-50%,-50%) scale(.94);
+  max-width:min(320px,86vw)}
+.toast.on{transform:translate(-50%,-50%) scale(1)}
+.sheet.on ~ .toast{top:50%;bottom:auto;transform:translate(-50%,-50%) scale(.94)}
+.sheet.on ~ .toast.on{transform:translate(-50%,-50%) scale(1)}
+
+/* ---------- 4 แตะแท่งกราฟ = ยุบตัวลงนิดเดียวแล้วคืนตัว ----------
+   ของเดิมไม่ได้ "เด้ง" ตั้งใจ แต่การแตะสั่งวาดกราฟใหม่ทั้งใบ
+   แท่งทุกแท่งจึงงอกจาก 0 ขึ้นมาใหม่พร้อมกัน (และกราฟรายวันเด้งกลับไปวันล่าสุดด้วย) */
+@keyframes bsink{
+  0%{transform:scaleY(1)}
+  40%{transform:scaleY(.94)}
+  100%{transform:scaleY(1)}
+}
+.bcol.press .bar{transform-origin:50% 100%;animation:bsink .19s var(--ez)}
+@media (prefers-reduced-motion:reduce){.bcol.press .bar{animation:none}}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1626,8 +1661,7 @@ body.dark mark{background:rgba(90,175,240,.26)}
   <div class="askbox">
     <h4 id="askT"></h4>
     <p id="askP"></p>
-    <button class="btn btn-main" id="askOk">ตกลง</button>
-    <div class="btn-row"><button class="btn btn-out" id="askNo">ยกเลิก</button></div>
+    <div class="btn-row askrow"><button class="btn btn-out" id="askNo">ยกเลิก</button><button class="btn btn-main" id="askOk">ตกลง</button></div>
   </div>
 </div>
 
@@ -1784,7 +1818,7 @@ function toast(m,kind){
   var mark=kind==='del'?'✕':(kind==='info'?'·':'✓');
   e.className='toast on '+kind;
   e.innerHTML='<span class="tk">'+mark+'</span>'+esc(m);
-  clearTimeout(_tt);_tt=setTimeout(function(){e.classList.remove('on');},2400);
+  clearTimeout(_tt);_tt=setTimeout(function(){e.classList.remove('on');},3400);
 }
 function catOf(name,type){
   var arr=D.cats[type]||[];
@@ -1800,7 +1834,10 @@ function askConfirm(title,body,okText,cb,danger){
   document.getElementById('askT').textContent=title;
   document.getElementById('askP').textContent=body||'';
   var ok=document.getElementById('askOk');
-  ok.textContent=okText||'ตกลง';
+  /* Ver.35: ป็อปอัพยืนยันถามเป็นคำถาม แล้วให้เลือก ตกลง / ยกเลิก เหมือนกันทุกที่
+     คำกริยาเฉพาะเรื่อง (บันทึกเลย/ลบเลย) ย้ายไปอยู่ในหัวข้อคำถามแทน
+     okText ยังรับไว้เผื่อของเดิมเรียกมา แต่ไม่ได้ใช้เป็นป้ายปุ่มแล้ว */
+  ok.textContent='ตกลง';
   ok.className='btn '+(danger?'btn-danger':'btn-main');
   _askCb=cb;a.classList.add('on');
 }
@@ -2093,7 +2130,22 @@ document.addEventListener('click',function(ev){
 
 function setRange(r){chRange=r;chSel=-1;renderChart();buzz(8);}
 function setShow(s){chShow=s;renderChart();buzz(8);}
-function pickBar(i){chSel=(chSel===i?-1:i);renderChart();buzz(8);}
+function pickBar(i){
+  /* Ver.35: ของเดิมเรียก renderChart() ทุกครั้งที่แตะ = สร้างแท่งใหม่ทั้งใบ
+     แท่งทุกแท่งจึงงอกจาก 0 ขึ้นมาพร้อมกัน (อาการ "แท่งเด้งขึ้น")
+     และกราฟรายวันยังถูกเลื่อนกลับไปวันล่าสุดทุกครั้งด้วย
+     ตอนนี้แค่สลับคลาส .sel + วาดบรรทัดสรุปใหม่ แล้วให้แท่งที่ถูกแตะยุบตัวนิดเดียว */
+  chSel=(chSel===i?-1:i);
+  var bx=document.getElementById('bars');
+  if(bx){
+    var cols=bx.querySelectorAll('.bcol');
+    for(var k=0;k<cols.length;k++)cols[k].classList.toggle('sel',k===chSel);
+    var c=cols[i];
+    if(c){c.classList.remove('press');void c.offsetWidth;c.classList.add('press');
+      setTimeout(function(){c.classList.remove('press');},220);}
+  }
+  drawReadout();buzz(8);
+}
 
 /* ================= กราฟเส้นเงินคงเหลือ (แบบกราฟหุ้น) =================
    เส้นคือยอดคงเหลือ ณ สิ้นวัน ไม่ใช่ยอดรับ-จ่ายรายวัน
@@ -2280,7 +2332,12 @@ function fxFly(from,toSel){
 var _sw=null,_swBlock=0;
 function swStart(ev){
   if(_sw||!ev.touches||ev.touches.length!==1)return;
-  var t=ev.target,row=t&&t.closest?t.closest('.line[data-id]'):null;
+  var t=ev.target;
+  /* Ver.35 บั๊ก: แตะปุ่มลบ = นิ้วลงนอก .line จึงเข้าเงื่อนไข latchClose() ข้างล่าง
+     ปุ่มถูกถอดออกจาก DOM ตั้งแต่ touchstart แถวหุบกลับ และ click ไม่มีปุ่มให้ลงแล้ว
+     -> เห็นเป็น "กดลบแล้วแถวหุบกลับ ลบไม่ทำงาน" ต้องปล่อยปุ่มไว้ให้มันทำงานเอง */
+  if(t&&t.closest&&t.closest('.swdel'))return;
+  var row=t&&t.closest?t.closest('.line[data-id]'):null;
   if(!row){latchClose();return;}
   if(_latch&&_latch.row!==row)latchClose();
   _sw={row:row,x:ev.touches[0].clientX,y:ev.touches[0].clientY,dx:0,on:false,
@@ -2378,9 +2435,9 @@ function confirmSave(rows,cb){
   var when=(draft.date===today())?'วันนี้':thDate(draft.date||today());
   var body=rows.length===1
     ? (rows[0].n+' · '+rows[0].cat+'\n'+when)
-    : (rows.map(function(r,i){return (i+1)+'. '+r.n+' '+fmt(parseFloat(r.a)||0);}).join('\n')+'\n'+when);
-  askConfirm(side+' '+fmt(sum)+' บาท'+(rows.length>1?(' · '+rows.length+' รายการ'):''),
-    body,'บันทึกเลย',cb,false);
+    : (rows.length+' รายการ\n'
+       +rows.map(function(r,i){return (i+1)+'. '+r.n+' '+fmt(parseFloat(r.a)||0);}).join('\n')+'\n'+when);
+  askConfirm('บันทึก'+side+' '+fmt(sum)+' บาท?',body,'',cb,false);
 }
 
 /* ---- 10 เลขบนแถบยอดรวมนับขึ้นตอนเปลี่ยนฟิลเตอร์ ---- */
@@ -3578,7 +3635,8 @@ function toastUndo(m,fn){
   el.innerHTML='<span class="tk">✕</span>'+esc(m)+'<button class="tu" id="tuB">เลิกทำ</button>';
   document.getElementById('tuB').onclick=function(){
     clearTimeout(_tt);el.className='toast del';fn();};
-  clearTimeout(_tt);_tt=setTimeout(function(){el.className='toast del';},6000);
+  /* Ver.35: 6 วิ นานกว่าฝั่งบันทึกเกินเท่าตัว ขยับให้ใกล้กัน แต่ยังเผื่อเวลาอ่านแล้วกดเลิกทำ */
+  clearTimeout(_tt);_tt=setTimeout(function(){el.className='toast del';},4800);
 }
 function pinThis(){
   var r=draft.rows[0];if(!r||!r.n)return;
