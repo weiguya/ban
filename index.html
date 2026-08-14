@@ -1597,6 +1597,49 @@ body.dark mark{background:rgba(90,175,240,.26)}
   box-shadow:var(--sh1);font-size:13.5px;font-weight:600}
 .toast .tu:active{background:var(--card2)}
 </style>
+<style id="skin34">
+/* ============================================================
+   Ver.39 — ฟอร์มบันทึก
+   · จัดลำดับใหม่: วันที่ → รายการ → ชิปประจำ
+   · แต่ละขั้นเป็นกล่องมีขอบ หัวข้อใหญ่ขึ้นและเข้มขึ้น มองแล้วรู้ว่าต้องลงมือตรงไหน
+   · ชิปประจำไม่เลื่อนแล้ว ตกบรรทัดให้เห็นครบ + จัดการได้ในตัว
+   ============================================================ */
+
+/* ---------- ขั้นตอนเป็นกล่อง ---------- */
+.sheet .field.sec{
+  border:1px solid var(--line2);border-radius:14px;
+  padding:12px 12px 13px;margin-bottom:12px;background:transparent
+}
+.sheet .field.sec>.fl,.sheet .field.sec .sechead .fl{
+  font-size:13px;font-weight:600;color:var(--ink);margin:0 0 9px 2px;letter-spacing:-.01em
+}
+.sheet .sechead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sheet .sechead .fl{margin-bottom:0}
+.sheet .field.sec .sechead{margin-bottom:9px}
+.secbtn{flex:0 0 auto;font-size:12px;font-weight:600;color:var(--fill);
+  padding:6px 11px;border-radius:999px;background:var(--tint);
+  transition:transform .13s var(--ez)}
+.secbtn:active{transform:scale(.94)}
+.secbtn.on{background:var(--fill);color:var(--on-fill)}
+
+/* ---------- ชิปประจำ: เห็นครบ ไม่ต้องเลื่อน ---------- */
+.chipwrap{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---------- โหมดจัดชิป ---------- */
+.pinman{display:flex;flex-direction:column;gap:6px}
+.pmrow{display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:10px;background:var(--card2)}
+.pmrow .dot{width:9px;height:9px;flex:0 0 9px;border-radius:999px}
+.pmn{flex:1;min-width:0;font-size:13.5px;font-weight:500;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pmn i{font-style:normal;font-weight:400;color:var(--ink3);font-size:11px;margin-left:6px}
+.pmb{flex:0 0 32px;width:32px;height:32px;border-radius:9px;
+  background:var(--glass);border:1px solid var(--line2);color:var(--ink2);
+  font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;
+  transition:transform .13s var(--ez)}
+.pmb:active{transform:scale(.9)}
+.pmb[disabled]{opacity:.3}
+.pmb.del{color:var(--out)}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1894,7 +1937,7 @@ function toast(m,kind){
   e.innerHTML='<span class="tk">'+mark+'</span><span class="tmsg">'+esc(m)+'</span>';
   /* Ver.36: 3.4 วิ นานไป (Ver.35) · 2.4 วิ เร็วไป (Ver.34) — ลงตัวที่ 2.8 */
   /* Ver.37: สั้นลงอีกตามที่สั่ง — 2.4 เร็วไป / 3.4 นานไป / 2.8 ยังนาน */
-  clearTimeout(_tt);_tt=setTimeout(function(){e.classList.remove('on');},2200);
+  clearTimeout(_tt);_tt=setTimeout(function(){e.classList.remove('on');},1700);
 }
 function catOf(name,type){
   var arr=D.cats[type]||[];
@@ -3486,18 +3529,72 @@ function rcBtn(r,i){
    +'<span class="dot" style="background:'+(show?catColor(r.cat,draft.type):'var(--ink3)')+'"></span>'
    +'<b>'+(show?esc(r.cat):'เลือกหมวด')+'</b><i>'+(r.catOpen?'\u25b4':'\u25be')+'</i></button>';
 }
+/* ================= Ver.39 — จัดการชิปประจำจากในฟอร์ม =================
+   ของเดิมต้องออกจากฟอร์มไปที่ ตั้งค่า → ชิปซื้อประจำ ทั้งที่จุดที่รู้ว่าชิปไหนเกินไหนขาด
+   คือตอนกำลังลงของอยู่พอดี ตอนนี้ย้าย เพิ่ม ลบ ได้ตรงนี้เลย
+   ย้ายใช้ปุ่มขึ้น/ลง ไม่ใช่ลาก — ชิปตกบรรทัดหลายแถว การลากในกริดแบบนั้นบนมือถือพลาดง่าย */
+function pinIdxList(){
+  var ix=[];D.pins.forEach(function(p,j){if((p.type||'out')===draft.type)ix.push(j);});
+  return ix;
+}
+function togglePinEdit(){draft.pinEdit=!draft.pinEdit;buzz(8);drawForm(false);}
+function movePin(i,d){
+  var ix=window._formPinIdx||[],a=ix[i],b=ix[i+d];
+  if(a==null||b==null)return;
+  var t=D.pins[a];D.pins[a]=D.pins[b];D.pins[b]=t;
+  save();buzz(8);drawForm(false);
+}
+function delFormPin(i){
+  var ix=window._formPinIdx||[],a=ix[i];if(a==null)return;
+  var p=D.pins[a];
+  D.pins.splice(a,1);save();buzz(10);drawForm(false);
+  /* ชิปไม่ใช่รายการเงิน ลบผิดก็ปักใหม่ได้ — ใช้เลิกทำแทนการถามยืนยันทีละใบ
+     ไม่งั้นตอนไล่จัดชิปทีเดียวหลายใบต้องมากดยืนยันทุกครั้ง */
+  toastUndo('ลบชิป '+p.n+' แล้ว',function(){
+    D.pins.splice(Math.min(a,D.pins.length),0,p);save();drawForm(false);});
+}
+function addPinsFromRows(){
+  var made=0,dup=0;
+  draft.rows.forEach(function(r){
+    var n=(r.n||'').trim();if(!n)return;
+    var k=learnKey(n),ex=false;
+    for(var j=0;j<D.pins.length;j++)
+      if((D.pins[j].type||'out')===draft.type&&learnKey(D.pins[j].n)===k)ex=true;
+    if(ex){dup++;return;}
+    D.pins.push({n:n,cat:r.cat||D.cats[draft.type][0].n,type:draft.type,last:0});made++;
+  });
+  if(!made){toast(dup?'มีชิปชื่อนี้อยู่แล้ว':'พิมพ์ชื่อรายการข้างบนก่อน แล้วค่อยกดเพิ่ม','del');return;}
+  save();buzz(12);drawForm(false);toast('เพิ่ม '+made+' ชิปแล้ว','ok');
+}
+function pinAddBtn(){
+  return '<button class="addrowbtn" style="margin-top:9px" onclick="addPinsFromRows()">＋ เพิ่มชิปจากรายการที่พิมไว้</button>';
+}
+function pinManHtml(pins){
+  if(!pins.length)return '<div class="hintline" style="padding:0">ยังไม่มีชิปฝั่งนี้</div>'+pinAddBtn();
+  return '<div class="pinman">'+pins.map(function(p,i){
+    return '<div class="pmrow">'
+     +'<span class="dot" style="background:'+catColor(p.cat,p.type||'out')+'"></span>'
+     +'<span class="pmn">'+esc(p.n)+'<i>'+esc(p.cat)+'</i></span>'
+     +'<button class="pmb" onclick="movePin('+i+',-1)"'+(i===0?' disabled':'')+'>↑</button>'
+     +'<button class="pmb" onclick="movePin('+i+',1)"'+(i===pins.length-1?' disabled':'')+'>↓</button>'
+     +'<button class="pmb del" onclick="delFormPin('+i+')">✕</button>'
+     +'</div>';}).join('')+'</div>'+pinAddBtn();
+}
 function drawForm(fromVoice){
   curSheet='form';
   var pins=D.pins.filter(function(p){return (p.type||'out')===draft.type;});
-  window._formPins=pins;
-  var pinLbl=draft.type==='in'?'รับประจำ — แตะแล้วชื่อกับหมวดมาเอง':'ซื้อประจำ — แตะแล้วชื่อกับหมวดมาเอง';
-  var pinChips=pins.length?'<div class="field"><span class="fl">'+pinLbl+'</span>'
-   +'<div class="chiprow">'+pins.map(function(p,i){
-      return '<button class="chip" onclick="useFormPin('+i+',this)">'
-       +'<span class="dot" style="background:'+catColor(p.cat,p.type||'out')+'"></span>'+esc(p.n)+'</button>';}).join('')
-   +'</div></div>'
-   :'<div class="field"><span class="fl">'+pinLbl.split(' —')[0]+'</span>'
-    +'<div class="hintline" style="padding:0">ยังไม่มีชิปฝั่งนี้ เพิ่มได้ที่ ตั้งค่า → ชิปซื้อประจำ</div></div>';
+  window._formPins=pins;window._formPinIdx=pinIdxList();
+  var pinLbl=draft.type==='in'?'รับประจำ':'ซื้อประจำ';
+  var pinBody=draft.pinEdit?pinManHtml(pins)
+   :(pins.length?('<div class="chipwrap">'+pins.map(function(p,i){
+        return '<button class="chip" onclick="useFormPin('+i+',this)">'
+         +'<span class="dot" style="background:'+catColor(p.cat,p.type||'out')+'"></span>'+esc(p.n)+'</button>';}).join('')
+      +'</div>')
+     :'<div class="hintline" style="padding:0">ยังไม่มีชิปฝั่งนี้ กด จัดชิป เพื่อเพิ่มจากรายการที่พิมไว้</div>');
+  var pinChips='<div class="field sec"><div class="sechead"><span class="fl">'+pinLbl
+   +(draft.pinEdit?'':' — แตะแล้วชื่อกับหมวดมาเอง')+'</span>'
+   +'<button class="secbtn'+(draft.pinEdit?' on':'')+'" onclick="togglePinEdit()">'
+   +(draft.pinEdit?'เสร็จแล้ว':'จัดชิป')+'</button></div>'+pinBody+'</div>';
   /* Ver.12: ตัดแถว "ล่าสุด" ออกตามที่สั่ง — ชิปประจำทำหน้าที่นี้แทนทั้งสองฝั่ง */
   var n=draft.rows.length;
   var ttl=editId?'แก้รายการ':(draft.mode!=='db'?'ตรวจรายการ':(fromVoice?'ตรวจก่อนบันทึก':(draft.type==='in'?'รับเข้า':'จ่ายออก')));
@@ -3505,19 +3602,21 @@ function drawForm(fromVoice){
   var okTxt=draft.mode==='basketEdit'?'อัปเดตรายการนี้':(draft.mode==='basketNew'?'เพิ่มเข้ารายการรอบันทึก'
     :(editId?'บันทึกการแก้':(live>1?('บันทึก '+live+' รายการ'):'บันทึก')));
   /* Ver.31: สวิตช์กลับมาแบบเดิม ทุกกรณี — Ver.30 ตัดออกตอนเพิ่มรายการใหม่แล้วเขาไม่เอา */
+  /* Ver.39: ลำดับตามการลงมือจริง — วันที่ก่อน แล้วค่อยรายการ ชิปประจำไว้ท้ายสุด
+     แต่ละขั้นอยู่ในกล่องมีขอบ จะได้เห็นว่าขั้นหนึ่งจบตรงไหน ขั้นต่อไปเริ่มตรงไหน */
   paint(ttl,
    '<div class="seg"><button class="'+(draft.type==='out'?'on o':'')+'" onclick="setType(\'out\')">จ่ายออก</button>'
   +'<button class="'+(draft.type==='in'?'on i':'')+'" onclick="setType(\'in\')">รับเข้า</button></div>'
-  +'<div class="field"><span class="fl">รายการ และ จำนวนเงิน</span>'
+  +'<div class="field sec"><span class="fl">วันที่</span><div class="chipwrap">'
+  +dateChips(draft.date,draft.calOpen,'pickDate(0)','pickDate(1)','toggleCal()')+'</div>'
+  +(draft.calOpen?calGrid(draft.calYm,draft.date,'formPickDate','calShiftForm'):'')+'</div>'
+  +'<div class="field sec"><span class="fl">รายการ และ จำนวนเงิน</span>'
   +draft.rows.map(rowHtml).join('')
   +(draft.multi?'<button class="addrowbtn" onclick="addRow()">＋ เพิ่มแถว</button>':'')
   +(n>1?'<div class="ftot"><span class="k" id="fTotK">รวม '+live+' รายการ</span><span class="v" id="fTot" style="color:'
     +(draft.type==='in'?'var(--in)':'var(--out)')+'">'+(draft.type==='in'?'+':'−')+fmt(rowsTotal())+'</span></div>':'')
   +'</div>'
   +pinChips
-  +'<div class="field"><span class="fl">วันที่</span><div class="chiprow">'
-  +dateChips(draft.date,draft.calOpen,'pickDate(0)','pickDate(1)','toggleCal()')+'</div>'
-  +(draft.calOpen?calGrid(draft.calYm,draft.date,'formPickDate','calShiftForm'):'')+'</div>'
   +'<div class="err hide" id="fErr"></div>'
   +'<div class="stick"><button class="btn '+(draft.type==='in'?'btn-in':'btn-main')+'" id="fSave" onclick="saveEntry()">'+okTxt+'</button>'
   +(editId?'<div class="btn-row"><button class="btn btn-out" onclick="pinThis()">ปักหมุดเป็นชิป</button>'
@@ -3669,9 +3768,9 @@ function pickRowCat(i,ci){
   r.cat=D.cats[draft.type][ci].n;r.catSet=true;r.catOpen=false;buzz(8);drawForm(false);
 }
 function addRow(){
+  /* Ver.39: ไม่โฟกัสช่องใหม่ให้ คีย์บอร์ดเด้งขึ้นมาบังครึ่งจอทั้งที่ยังไม่ได้จะพิมพ์
+     ให้เขาแตะช่องเองตอนพร้อม — กติกาเดียวกับตอนเปิดฟอร์ม */
   draft.rows.push(newRow('','','',draft.type));buzz(10);drawForm(false);
-  var i=draft.rows.length-1,f=document.getElementById('fNm'+i);
-  if(f)setTimeout(function(){f.focus();},80);
 }
 function delRow(i){
   if(draft.rows.length<2)return;
@@ -3766,7 +3865,8 @@ function toastUndo(m,fn){
   document.getElementById('tuB').onclick=function(){
     clearTimeout(_tt);el.className='toast del';fn();};
   /* Ver.35: 6 วิ นานกว่าฝั่งบันทึกเกินเท่าตัว ขยับให้ใกล้กัน แต่ยังเผื่อเวลาอ่านแล้วกดเลิกทำ */
-  clearTimeout(_tt);_tt=setTimeout(function(){el.className='toast del';},3800);
+  /* Ver.39: 3.0 วิ คือพื้นที่ต่ำสุดที่ยังกดเลิกทำทัน — สั้นกว่านี้ปุ่มจะหายก่อนนิ้วไปถึง */
+  clearTimeout(_tt);_tt=setTimeout(function(){el.className='toast del';},3000);
 }
 function pinThis(){
   var r=draft.rows[0];if(!r||!r.n)return;
@@ -3790,6 +3890,13 @@ function addPin(n,cat,type,last){
   for(var i=0;i<D.pins.length;i++)if(learnKey(D.pins[i].n)===learnKey(n)){
     D.pins[i].last=last||D.pins[i].last;D.pins[i].cat=cat||D.pins[i].cat;save();return;}
   D.pins.push({n:n,cat:cat,type:type||'out',last:last||0});save();
+}
+/* Ver.39 บั๊กเก่า: ชิป "วันนี้/เมื่อวาน" ในฟอร์มเรียก pickDate() มาตลอด
+   แต่ฟังก์ชันนี้ไม่เคยมีอยู่จริง แตะแล้ว throw เงียบๆ วันที่ไม่เปลี่ยน
+   (เจอตอนเทสต์รอบนี้ ของเดิมก็ไม่มี ไม่ใช่ของที่เพิ่งพัง) */
+function pickDate(n){
+  var d=new Date();if(n)d.setDate(d.getDate()-1);
+  draft.date=dkey(d);draft.calOpen=false;buzz(10);drawForm(false);
 }
 function toggleCal(){draft.calOpen=!draft.calOpen;draft.calYm=monthOf(draft.date);buzz(8);drawForm(false);showCal();}
 function showCal(){setTimeout(function(){var c=document.querySelector('.cal');
