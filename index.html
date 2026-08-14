@@ -1664,6 +1664,23 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .bar{transition:height .34s var(--ez)}
 .donut.spin svg{animation:dspin .55s var(--ez)}
 </style>
+<style id="skin36">
+/* ============================================================
+   Ver.41 — ปัดซ้ายให้ลื่นขึ้นอีก + ปิดอันเก่าก่อนเสมอ
+   ============================================================ */
+
+/* บอกเบราว์เซอร์ว่าแถวนี้ใช้ปัดแนวนอน ส่วนแนวตั้งปล่อยให้เลื่อนหน้าตามปกติ
+   ไม่งั้นเบราว์เซอร์ต้องรอดูก่อนว่านิ้วจะเลื่อนหน้าหรือเปล่า = ออกตัวช้าไปหนึ่งจังหวะ */
+.line{touch-action:pan-y}
+
+/* ยกเป็นเลเยอร์ตั้งแต่นิ้วแตะ ไม่ใช่ตอนเริ่มขยับ
+   เลเยอร์จะได้พร้อมก่อนเฟรมแรก แทนที่จะไปเตรียมตอนกำลังลากอยู่ */
+.line.swready{will-change:transform}
+
+/* ปล่อยนิ้วแล้วเลื่อนกลับ ของเดิมกระโดดกลับทันทีเพราะไม่มี transition เหลือ */
+.line.settle{transition:transform .28s var(--ez)}
+.line.latched{transition:transform .28s var(--ez)}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -2189,6 +2206,11 @@ function renderChart(){
      ไม่มีก้อนเงินเดือนเดือนละครั้งมากดกราฟให้แบน แท่งจึงสูงต่ำตามค่าจริงเทียบกันได้ตรงๆ
      ถ้าวันไหนมีก้อนใหญ่ผิดปกติแล้วแท่งอื่นแบน ให้กลับไปใช้ mxI/mxO แยกกันได้ */
   var mxB=Math.max(mxI,mxO);
+  /* Ver.41: ข้อมูลเปลี่ยนเฉยๆ ใส่ความสูงลงไปในมาร์กอัปตั้งแต่แรก
+     เบราว์เซอร์เห็นแค่ค่าปลายทางค่าเดียว จึงไม่นับเป็นการเปลี่ยนค่า = ไม่มีทรานสิชัน
+     ผลคือกดบันทึกแล้วแท่งไม่ต้องงอกใหม่ทั้ง 30 แท่งทุกครั้ง */
+  var sig=chRange+'|'+chShow,structural=(sig!==_chSig);_chSig=sig;
+  function sty(v){return structural?'':(' style="height:'+v+'%"');}
   var h='';
   data.forEach(function(d,i){
     var bi,bo,num='';
@@ -2208,10 +2230,10 @@ function renderChart(){
     else{nIn=d['in']?fmtK(d['in']):'';nOut=d.out?fmtK(d.out):'';}
     h+='<div class="bcol'+(chSel===i?' sel':'')+'" onclick="pickBar('+i+')">'
      +'<div class="bpair'+(chShow==='both'?'':' one')+'">';
-    if(chShow!=='out')h+='<div class="bar i'+(d['in']?'':' z')+(chShow==='both'?' bmark':'')+'" data-h="'+bi+'"><span class="bnum i">'+nIn+'</span></div>';
-    if(chShow!=='in')h+='<div class="bar o'+(d.out?'':' z')+'" data-h="'+bo+'"><span class="bnum o">'+nOut+'</span></div>';
+    if(chShow!=='out')h+='<div class="bar i'+(d['in']?'':' z')+(chShow==='both'?' bmark':'')+'" data-h="'+bi+'"'+sty(bi)+'><span class="bnum i">'+nIn+'</span></div>';
+    if(chShow!=='in')h+='<div class="bar o'+(d.out?'':' z')+'" data-h="'+bo+'"'+sty(bo)+'><span class="bnum o">'+nOut+'</span></div>';
     h+='</div><div class="blab">'+esc(d.lab)+'</div></div>';});
-  var bx=document.getElementById('bars');bx.innerHTML=h;
+  var bx=document.getElementById('bars'),keepLeft=bx.scrollLeft;bx.innerHTML=h;
   /* Ver.16: 8 คอลัมน์ขึ้นไป (รายสัปดาห์) ช่องแคบลงเหลือ ~37px การสแปลย์ป้ายออกด้านข้าง
      จะทำให้ป้ายยื่นไปชนป้ายของคอลัมน์ข้างๆ ตรงนั้นเลิกสแปลย์ ใช้ deColide จัดแนวตั้งพอ */
   /* Ver.34: รายวันไม่ต้อง tight เพราะคอลัมน์ยังกว้างเท่าเดิม (7 คอลัมน์เต็มจอ) แค่มีของเลยขอบไป
@@ -2222,15 +2244,27 @@ function renderChart(){
   bx.style.setProperty('--vis',CHPER[chRange]||7);
   if(!bx._chsy){bx._chsy=1;bx.addEventListener('scroll',chSubSync,{passive:true});}
   window._chData=data;
+  /* ================= Ver.41 — แยกการวาดใหม่สองแบบ =================
+     ของเดิมทุกครั้งที่วาด (รวมถึงทุกครั้งที่บันทึก/ลบ/เลิกทำ) จะ
+       · ปล่อยแท่งทั้ง 30 แท่งงอกจาก 0 ใหม่ = งานวาดยาว .34 วิ หลังกดทุกครั้ง
+       · ดีดสกรอลล์กลับไปช่วงล่าสุดเสมอ ถ้าเลื่อนย้อนดูอยู่ก็เด้งหาย
+     ตอนนี้:
+       เปลี่ยนช่วง/เปลี่ยนมุมมอง (หรือวาดครั้งแรก) = ยังงอกขึ้นมาเหมือนเดิม แล้วไปช่วงล่าสุด
+       ข้อมูลเปลี่ยนเฉยๆ = ใส่ความสูงทันทีในเฟรมเดียวกัน ไม่มีอนิเมชัน และคาสกรอลล์ไว้ที่เดิม
+     (ใส่ความสูงก่อนเบราว์เซอร์คิดสไตล์รอบแรก มันจึงเห็นแค่ค่าปลายทาง ไม่นับเป็นการเปลี่ยนค่า = ไม่ทรานสิชัน) */
   requestAnimationFrame(function(){
-    var bs=bx.querySelectorAll('.bar');
-    for(var i=0;i<bs.length;i++)if(!bs[i].classList.contains('z'))bs[i].style.height=bs[i].getAttribute('data-h')+'%';
+    if(structural){
+      /* งอกขึ้นมาจาก 0 เฉพาะตอนเปลี่ยนช่วง/มุมมอง หรือวาดครั้งแรก */
+      var bs=bx.querySelectorAll('.bar');
+      for(var i=0;i<bs.length;i++)if(!bs[i].classList.contains('z'))bs[i].style.height=bs[i].getAttribute('data-h')+'%';
+    }
     deColide(bx);
-    /* เปิดมาให้เห็นช่วงล่าสุดก่อนเสมอ ย้อนหลังค่อยเลื่อนเอา */
-    bx.scrollLeft=bx.scrollWidth;chSubSync();});
-  chSubSync();
+    /* เปลี่ยนช่วง = ไปช่วงล่าสุด · ข้อมูลเปลี่ยนเฉยๆ = อยู่ตรงไหนอยู่ตรงนั้น */
+    bx.scrollLeft=structural?bx.scrollWidth:keepLeft;
+    chSubSync();});
   drawReadout();
 }
+var _chSig='';
 /* Ver.15: ป้ายสองใบในคอลัมน์เดียวกันจะทับกันเฉพาะตอนแท่งสูงพอๆ กัน
    (คนละที่กันอยู่แล้วถ้าแท่งสูงต่างกัน) จึงยกเฉพาะใบที่อยู่บนกว่าให้ห่างกันอย่างน้อย 11px
    ไม่ดันใบล่างลง เพราะมันจะไปทับตัวแท่งจนอ่านไม่ออก */
@@ -2239,33 +2273,59 @@ function deColide(bx){
      = อาการ "บางแท่งยังไม่ชิด" ตอนนี้ลองแยกกันตามแนวนอนก่อน (ดันป้ายรับไปชิดซ้าย
      ป้ายจ่ายไปชิดขวาของคอลัมน์) ป้ายทั้งคู่จึงยังเกาะหัวแท่งอยู่ 1px เท่ากันหมด
      ยกแนวตั้งเป็นทางสำรอง ใช้เฉพาะตอนคอลัมน์แคบจนสองป้ายเรียงข้างกันไม่พอจริงๆ */
-  var cols=bx.querySelectorAll('.bcol');
-  for(var i=0;i<cols.length;i++){
+  /* ================= Ver.41 — วัดทีเดียว ไม่สลับเขียน-อ่านทีละคอลัมน์ =================
+     ของเดิมในลูปเดียวกันทำ "เขียนสไตล์ แล้วอ่าน getBoundingClientRect ทันที"
+     ทุกครั้งที่อ่านหลังเขียน เบราว์เซอร์ต้องหยุดคำนวณผังใหม่ให้เสร็จก่อน
+     กราฟรายวัน 30 คอลัมน์ = บังคับคำนวณผังร่วมร้อยรอบต่อการวาดกราฟหนึ่งครั้ง
+     ตอนนี้แบ่งเป็นรอบ: ล้างให้หมด → อ่านให้หมด → เขียนให้หมด
+     ตรรกะและผลลัพธ์เหมือนเดิมทุกตัวอักษร เปลี่ยนแค่ลำดับการแตะ DOM */
+  var cols=bx.querySelectorAll('.bcol'),it=[],i,GAPX=5;
+  for(i=0;i<cols.length;i++){
     var col=cols[i];
     var bi=col.querySelector('.bar.i'),bo=col.querySelector('.bar.o');
     if(!bi||!bo)continue;
     var ni=bi.querySelector('.bnum'),no=bo.querySelector('.bnum');
     if(!ni||!no)continue;
     ni.style.marginBottom='';no.style.marginBottom='';ni.style.transform='';no.style.transform='';
-    if(!ni.textContent||!no.textContent)continue;
-    var ph=bi.parentNode.clientHeight||1;
-    var d=(parseFloat(bi.getAttribute('data-h')||0)-parseFloat(bo.getAttribute('data-h')||0))/100*ph;
-    if(Math.abs(d)>=10)continue;               /* คนละระดับอยู่แล้ว ไม่ต้องยุ่ง */
-    var cr=col.getBoundingClientRect(),cw=cr.width,GAPX=5;
     ni.classList.remove('sm');no.classList.remove('sm');
-    var ri=ni.getBoundingClientRect(),ro=no.getBoundingClientRect();
-    /* เลข 4 ตัวอักษรสองใบในช่อง 43px เรียงข้างกันได้ก็จริง แต่ช่องไฟเหลือไม่ถึง 1px
-       อ่านติดกันเป็นเลขเดียว ("1.4k1.4k") ย่อลงหนึ่งขั้นก่อน ได้ช่องไฟกลับมา ~5px */
-    if(ri.width+ro.width+GAPX>cw){
-      ni.classList.add('sm');no.classList.add('sm');
-      ri=ni.getBoundingClientRect();ro=no.getBoundingClientRect();}
-    if(ri.width+ro.width+GAPX<=cw){
-      var cc=cr.left+cw/2;
-      ni.style.transform='translateX(calc(-50% + '+((cc-GAPX/2-ri.width/2)-(ri.left+ri.width/2)).toFixed(2)+'px))';
-      no.style.transform='translateX(calc(-50% + '+((cc+GAPX/2+ro.width/2)-(ro.left+ro.width/2)).toFixed(2)+'px))';
+    if(!ni.textContent||!no.textContent)continue;
+    it.push({col:col,bi:bi,bo:bo,ni:ni,no:no});
+  }
+  if(!it.length)return;
+  /* รอบอ่านที่ 1 */
+  for(i=0;i<it.length;i++){
+    var o=it[i];
+    var ph=o.bi.parentNode.clientHeight||1;
+    o.d=(parseFloat(o.bi.getAttribute('data-h')||0)-parseFloat(o.bo.getAttribute('data-h')||0))/100*ph;
+    if(Math.abs(o.d)>=10){o.skip=true;continue;}   /* คนละระดับอยู่แล้ว ไม่ต้องยุ่ง */
+    o.cr=o.col.getBoundingClientRect();
+    o.ri=o.ni.getBoundingClientRect();
+    o.ro=o.no.getBoundingClientRect();
+  }
+  /* เลข 4 ตัวอักษรสองใบในช่อง 43px เรียงข้างกันได้ก็จริง แต่ช่องไฟเหลือไม่ถึง 1px
+     อ่านติดกันเป็นเลขเดียว ("1.4k1.4k") ย่อลงหนึ่งขั้นก่อน ได้ช่องไฟกลับมา ~5px */
+  var sm=[];
+  for(i=0;i<it.length;i++){
+    var o2=it[i];if(o2.skip)continue;
+    if(o2.ri.width+o2.ro.width+GAPX>o2.cr.width){
+      o2.ni.classList.add('sm');o2.no.classList.add('sm');sm.push(o2);}
+  }
+  /* รอบอ่านที่ 2 เฉพาะใบที่เพิ่งย่อ */
+  for(i=0;i<sm.length;i++){
+    sm[i].ri=sm[i].ni.getBoundingClientRect();
+    sm[i].ro=sm[i].no.getBoundingClientRect();
+  }
+  /* รอบเขียนสุดท้าย */
+  for(i=0;i<it.length;i++){
+    var o3=it[i];if(o3.skip)continue;
+    var cw=o3.cr.width;
+    if(o3.ri.width+o3.ro.width+GAPX<=cw){
+      var cc=o3.cr.left+cw/2;
+      o3.ni.style.transform='translateX(calc(-50% + '+((cc-GAPX/2-o3.ri.width/2)-(o3.ri.left+o3.ri.width/2)).toFixed(2)+'px))';
+      o3.no.style.transform='translateX(calc(-50% + '+((cc+GAPX/2+o3.ro.width/2)-(o3.ro.left+o3.ro.width/2)).toFixed(2)+'px))';
     }else{
-      ni.classList.remove('sm');no.classList.remove('sm');
-      (d>=0?ni:no).style.marginBottom=(1+(10-Math.abs(d)))+'px';
+      o3.ni.classList.remove('sm');o3.no.classList.remove('sm');
+      (o3.d>=0?o3.ni:o3.no).style.marginBottom=(1+(10-Math.abs(o3.d)))+'px';
     }
   }
 }
@@ -2525,8 +2585,11 @@ function swStart(ev){
      -> เห็นเป็น "กดลบแล้วแถวหุบกลับ ลบไม่ทำงาน" ต้องปล่อยปุ่มไว้ให้มันทำงานเอง */
   if(t&&t.closest&&t.closest('.swdel'))return;
   var row=t&&t.closest?t.closest('.line[data-id]'):null;
+  /* Ver.41: ตอนมีแถวคาอยู่ นิ้วที่ลงครั้งถัดไป "ปิดอันเก่า" อย่างเดียว ไม่ทำอย่างอื่นต่อ
+     ของเดิมปิดให้ก็จริง แต่ปล่อยให้ปัดแถวใหม่ได้เลยในจังหวะเดียวกัน กลายเป็นเปิดค้างได้ทีละหลายแถว
+     _swBlock กินคลิกที่ตามมาด้วย ไม่งั้นแตะแถวอื่นแล้วฟอร์มแก้จะเด้งขึ้นมาพร้อมกัน */
+  if(_latch&&_latch.row!==row){latchClose();_swBlock=Date.now();return;}
   if(!row){latchClose();return;}
-  if(_latch&&_latch.row!==row)latchClose();
   _sw={row:row,x:ev.touches[0].clientX,y:ev.touches[0].clientY,dx:0,on:false,
        was:row.classList.contains('latched'),btn:(_latch&&_latch.row===row)?_latch.btn:null};
   if(_sw.was){row.classList.remove('latched');_latch=null;}
@@ -2534,6 +2597,8 @@ function swStart(ev){
      งานแตะ DOM ทั้งหมดจึงจบก่อนเฟรมแรกของการลาก */
   _sw.btn=latchBtn(row);
   if(_sw.was&&_sw.btn)_sw.btn.classList.add('armed');
+  row.classList.remove('settle');
+  row.classList.add('swready');   /* Ver.41: เตรียมเลเยอร์ก่อนเฟรมแรก */
 }
 function swMove(ev){
   if(!_sw||!ev.touches||!ev.touches.length)return;
@@ -2550,7 +2615,9 @@ function swMove(ev){
   var base=_sw.was?-108:0;
   dx=base+dx;
   if(dx>0)dx*=.25;
-  if(dx<-150)dx=-150;
+  /* Ver.41: ของเดิมชนกำแพงที่ -150 แล้วหยุดนิ่ง นิ้วยังไปต่อแต่ภาพค้าง = รู้สึกเหมือนเฟรมหลุด
+     เลย 108 (ความกว้างปุ่ม) ให้หน่วงลงเรื่อยๆ แทน ยังขยับตามนิ้วอยู่ แค่ฝืดขึ้น */
+  if(dx<-108)dx=-108-(-108-dx)*.34;
   _sw.dx=dx;
   /* Ver.40: touchmove ยิงถี่กว่าจอรีเฟรช (จอ 120Hz แต่ทัชอ่านเร็วกว่านั้น)
      ของเดิมสั่ง transform ทุกครั้งที่ยิง = สั่งซ้ำหลายรอบต่อเฟรม เสียแรงเปล่า
@@ -2562,7 +2629,8 @@ var _swRaf=0;
 function swPaint(){
   _swRaf=0;
   if(!_sw||!_sw.on)return;
-  _sw.row.style.transform='translateX('+_sw.dx+'px)';
+  /* translate3d บังคับให้เป็นงานของ GPU ชัดเจน ไม่ต้องลุ้นว่าเบราว์เซอร์จะยกเลเยอร์ให้หรือเปล่า */
+  _sw.row.style.transform='translate3d('+_sw.dx.toFixed(1)+'px,0,0)';
 }
 function swEnd(){
   if(!_sw)return;
@@ -2572,11 +2640,16 @@ function swEnd(){
     /* Ver.40: แตะเฉยๆ ไม่ได้ปัด — เก็บปุ่มที่เตรียมไว้ตอนนิ้วลงออกให้ด้วย
        (ของเดิมเส้นทางนี้ก็ทิ้งปุ่มค้างไว้เหมือนกันตอนแตะแถวที่คาอยู่ แต่ตอนนั้นปุ่มไม่มีตัวซ่อน จึงค้างแบบเห็นได้) */
     if(s.btn&&s.btn.parentNode&&(!_latch||_latch.btn!==s.btn))s.btn.parentNode.removeChild(s.btn);
+    s.row.classList.remove('swready');
     return;
   }
   _swBlock=Date.now();   /* กันไม่ให้คลิกที่ตามมาหลังปล่อยนิ้วไปเปิดฟอร์ม */
   s.row.classList.remove('swiping');
+  /* Ver.41: ของเดิมล้าง transform ทิ้งเฉยๆ แถวจึงกระโดดกลับที่เดิมทันทีแบบไม่มีจังหวะ
+     .settle ให้มันไหลกลับ .28s แล้วถอดคลาสทิ้งเพื่อไม่ให้ไปหน่วงการปัดครั้งถัดไป */
+  s.row.classList.add('settle');
   s.row.style.transform='';
+  (function(r){setTimeout(function(){r.classList.remove('settle','swready');},300);})(s.row);
   /* เกิน 54px = ครึ่งทางของปุ่ม ถือว่าตั้งใจเปิด ค้างไว้ให้กดยืนยัน ไม่ลบเอง */
   if(s.dx<=-54){
     s.row.classList.add('latched');
