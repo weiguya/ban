@@ -1640,6 +1640,30 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .pmb[disabled]{opacity:.3}
 .pmb.del{color:var(--out)}
 </style>
+<style id="skin35">
+/* ============================================================
+   Ver.40 — ความลื่น (กลุ่มปลอดภัย + กลุ่มต้องระวัง)
+   ยังไม่แตะการวาดหน้าแรก อันนั้นแยกเป็นอีกรอบ
+   ============================================================ */
+
+/* ---------- ปัดซ้าย: ยกแถวขึ้นเป็นเลเยอร์ของตัวเองตอนลาก ----------
+   ตอนลาก เราสั่ง transform เองทีละเฟรมด้วย JS เบราว์เซอร์จึงไม่รู้ล่วงหน้าว่า
+   จะขยับ แล้วเลือกวาดใหม่ทั้งพื้นที่ทุกเฟรมแทนที่จะเลื่อนภาพสำเร็จรูป
+   will-change บอกล่วงหน้าไว้ตั้งแต่นิ้วลง — ใส่เฉพาะตอน .swiping
+   ปล่อยค้างไว้ตลอดคือกินหน่วยความจำเปล่าทุกแถวในลิสต์ */
+.line.swiping{will-change:transform;backface-visibility:hidden}
+
+/* ปุ่มลบถูกแปะไว้ตั้งแต่นิ้วแตะ (จะได้ไม่ต้องสร้างกลางทางลาก)
+   แต่ต้องซ่อนไว้ก่อน ไม่งั้นแค่แตะแถวเฉยๆ ปุ่มแดงจะโผล่ */
+.swdel{visibility:hidden}
+.swdel.armed{visibility:visible}
+
+/* ---------- ลดเวลารอ ----------
+   ไม่มีอะไรพัง แค่เดิมตั้งไว้ยาวเกินจนรู้สึกหน่วง */
+.sheet{transition:transform .40s var(--spring)}
+.bar{transition:height .34s var(--ez)}
+.donut.spin svg{animation:dspin .55s var(--ez)}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -2506,6 +2530,10 @@ function swStart(ev){
   _sw={row:row,x:ev.touches[0].clientX,y:ev.touches[0].clientY,dx:0,on:false,
        was:row.classList.contains('latched'),btn:(_latch&&_latch.row===row)?_latch.btn:null};
   if(_sw.was){row.classList.remove('latched');_latch=null;}
+  /* Ver.40: เตรียมปุ่มไว้ตั้งแต่นิ้วลง ยังซ่อนอยู่ (.armed ค่อยมาตอนรู้ว่าเป็นการปัดจริง)
+     งานแตะ DOM ทั้งหมดจึงจบก่อนเฟรมแรกของการลาก */
+  _sw.btn=latchBtn(row);
+  if(_sw.was&&_sw.btn)_sw.btn.classList.add('armed');
 }
 function swMove(ev){
   if(!_sw||!ev.touches||!ev.touches.length)return;
@@ -2516,6 +2544,7 @@ function swMove(ev){
     if(Math.abs(dy)>Math.abs(dx)||Math.abs(dy)>12){_sw=null;return;}
     if(Math.abs(dx)<11)return;
     _sw.on=true;_sw.row.classList.add('swiping');
+    if(_sw.btn)_sw.btn.classList.add('armed');
   }
   /* ปัดขวาตอนที่คาอยู่ = ปิด จึงต้องคิดจากตำแหน่งที่ค้างไว้ ไม่ใช่จาก 0 */
   var base=_sw.was?-108:0;
@@ -2523,14 +2552,28 @@ function swMove(ev){
   if(dx>0)dx*=.25;
   if(dx<-150)dx=-150;
   _sw.dx=dx;
-  if(!_sw.btn)_sw.btn=latchBtn(_sw.row);
-  _sw.row.style.transform='translateX('+dx+'px)';
+  /* Ver.40: touchmove ยิงถี่กว่าจอรีเฟรช (จอ 120Hz แต่ทัชอ่านเร็วกว่านั้น)
+     ของเดิมสั่ง transform ทุกครั้งที่ยิง = สั่งซ้ำหลายรอบต่อเฟรม เสียแรงเปล่า
+     เก็บค่าล่าสุดไว้แล้วเขียนทีเดียวตอนเบราว์เซอร์จะวาดเฟรมถัดไป */
+  if(!_swRaf)_swRaf=requestAnimationFrame(swPaint);
   if(ev.cancelable)ev.preventDefault();
+}
+var _swRaf=0;
+function swPaint(){
+  _swRaf=0;
+  if(!_sw||!_sw.on)return;
+  _sw.row.style.transform='translateX('+_sw.dx+'px)';
 }
 function swEnd(){
   if(!_sw)return;
+  if(_swRaf){cancelAnimationFrame(_swRaf);_swRaf=0;}   /* Ver.40: กันไม่ให้เฟรมที่ค้างอยู่เขียนทับตอนปล่อยนิ้ว */
   var s=_sw;_sw=null;
-  if(!s.on)return;
+  if(!s.on){
+    /* Ver.40: แตะเฉยๆ ไม่ได้ปัด — เก็บปุ่มที่เตรียมไว้ตอนนิ้วลงออกให้ด้วย
+       (ของเดิมเส้นทางนี้ก็ทิ้งปุ่มค้างไว้เหมือนกันตอนแตะแถวที่คาอยู่ แต่ตอนนั้นปุ่มไม่มีตัวซ่อน จึงค้างแบบเห็นได้) */
+    if(s.btn&&s.btn.parentNode&&(!_latch||_latch.btn!==s.btn))s.btn.parentNode.removeChild(s.btn);
+    return;
+  }
   _swBlock=Date.now();   /* กันไม่ให้คลิกที่ตามมาหลังปล่อยนิ้วไปเปิดฟอร์ม */
   s.row.classList.remove('swiping');
   s.row.style.transform='';
@@ -2582,21 +2625,31 @@ function latchClose(){
   L.row.style.transform='';
   if(L.btn&&L.btn.parentNode)L.btn.parentNode.removeChild(L.btn);
 }
+/* Ver.40: ปุ่มเดิมถูก createElement + แปะ SVG ใหม่ทุกครั้งที่เริ่มลาก
+   งานสร้าง element กับ parse SVG ไปตกอยู่กลางเฟรมแรกของการลากพอดี = สะดุดตอนออกตัว
+   ตอนนี้สร้างครั้งเดียวทั้งแอปแล้วย้ายที่เอา เหลือแค่ appendChild กับตั้ง top/height */
+var _swBtnEl=null;
 function latchBtn(row){
   var g=row.parentNode;if(!g)return null;
-  var b=document.createElement('button');
-  b.className='swdel';b.type='button';
-  b.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9.5 7V5.4h5V7"/>'
-   +'<path d="M6.6 7l.8 11.4a1.8 1.8 0 0 0 1.8 1.6h5.6a1.8 1.8 0 0 0 1.8-1.6L17.4 7"/></svg>ลบ';
+  var b=_swBtnEl;
+  if(!b){
+    b=_swBtnEl=document.createElement('button');
+    b.className='swdel';b.type='button';
+    b.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9.5 7V5.4h5V7"/>'
+     +'<path d="M6.6 7l.8 11.4a1.8 1.8 0 0 0 1.8 1.6h5.6a1.8 1.8 0 0 0 1.8-1.6L17.4 7"/></svg>ลบ';
+    b.onclick=function(ev){
+      ev.stopPropagation();
+      var r=b._row;if(!r)return;
+      var id=r.getAttribute('data-id');
+      latchClose();
+      swipeDel(id);
+    };
+  }
+  b._row=row;
+  b.classList.remove('armed');
   b.style.top=row.offsetTop+'px';
   b.style.height=row.offsetHeight+'px';
-  b.onclick=function(ev){
-    ev.stopPropagation();
-    var id=row.getAttribute('data-id');
-    latchClose();
-    swipeDel(id);
-  };
-  g.appendChild(b);
+  if(b.parentNode!==g)g.appendChild(b);
   return b;
 }
 
