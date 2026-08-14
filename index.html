@@ -3970,8 +3970,11 @@ function drawBackup(){
   paint('สำรองข้อมูล',
    '<div class="hintline" style="margin-bottom:14px">'+(D.backupAt?('สำรองล่าสุด '+thDate(dkey(new Date(D.backupAt)))):'ยังไม่เคยสำรองข้อมูลเลย')
    +' · ตอนนี้มี '+D.entries.length+' รายการ</div>'
-   +'<button class="btn btn-main" onclick="doExport()">บันทึกไฟล์สำรองลงเครื่อง</button>'
-   +'<div class="btn-row"><button class="btn btn-out" onclick="document.getElementById(\'impFile\').click()">นำไฟล์กลับเข้ามา</button></div>'
+   +'<button class="btn btn-main" onclick="doExport()">สำรองไว้กู้คืน (.json)</button>'
+   +'<div class="hintline" style="margin:7px 0 14px">ไฟล์นี้เอาไว้เอาข้อมูลกลับเข้าแอปเท่านั้น เปิดอ่านเองไม่รู้เรื่อง แต่มันเก็บครบทั้งหมวด ชิป และคำที่แอปจำได้</div>'
+   +'<button class="btn btn-out" onclick="doExportCsv()">เอาไปเปิดในตาราง (.csv)</button>'
+   +'<div class="hintline" style="margin:7px 0 14px">เปิดใน Excel หรือ Google Sheets ได้เลย เอาไปทำกราฟ ทำ pivot ต่อได้ · แต่เอากลับเข้าแอปไม่ได้ ต้องใช้ไฟล์ .json</div>'
+   +'<div class="btn-row"><button class="btn btn-out" onclick="document.getElementById(\'impFile\').click()">นำไฟล์ .json กลับเข้ามา</button></div>'
    +'<input type="file" id="impFile" accept="application/json,.json" class="hide" onchange="doImport(this)">'
    +'<div class="hintline" style="margin-top:14px">ข้อมูลอยู่ในเครื่องนี้เครื่องเดียว ถ้าล้างข้อมูลเบราว์เซอร์ ข้อมูลจะหายโดยไม่เตือน สำรองไฟล์ไว้เดือนละครั้งกำลังดี</div>');
 }
@@ -3992,12 +3995,38 @@ function clearLearned(){
     var n=Object.keys(D.learned).length;
     D.learned={};save();drawLearned();renderSet();toast('ล้างคำที่จำไว้ '+n+' คำแล้ว','del');},true);
 }
-function doExport(){
-  var blob=new Blob([JSON.stringify(D,null,1)],{type:'application/json'});
-  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='muifei-'+today()+'.json';
+function saveFile(text,name,mime){
+  var blob=new Blob([text],{type:mime});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(function(){URL.revokeObjectURL(a.href);},800);
-  D.backupAt=Date.now();save();render();drawBackup();toast('บันทึกไฟล์สำรองแล้ว','ok');
+}
+function doExport(){
+  saveFile(JSON.stringify(D,null,1),'muifei-'+today()+'.json','application/json');
+  D.backupAt=Date.now();save();render();drawBackup();toast('สำรองไฟล์กู้คืนแล้ว','ok');
+}
+/* Ver.38: ไฟล์ .json มีไว้กู้คืนอย่างเดียว เปิดอ่านเองไม่ได้ความ
+   เพิ่ม .csv สำหรับเอาไปใช้ต่อ — แยกช่องรับ/จ่ายเป็นคนละคอลัมน์ จะได้ SUM ในตารางได้ทันที
+   ไม่ใส่แถวรวมท้ายไฟล์ เพราะมันจะไปโผล่ปนกับข้อมูลตอนเรียงหรือทำ pivot */
+function csvCell(v){
+  v=String(v==null?'':v);
+  return /[",\n]/.test(v)?('"'+v.replace(/"/g,'""')+'"'):v;
+}
+function csvText(){
+  var rows=[['วันที่','ชื่อรายการ','หมวด','รับ','จ่าย']];
+  D.entries.slice().sort(function(a,b){
+    return a.date<b.date?-1:(a.date>b.date?1:(a.id<b.id?-1:1));
+  }).forEach(function(e){
+    rows.push([e.date,e.name,e.cat,
+      e.type==='in'?e.amount:'', e.type==='in'?'':e.amount]);
+  });
+  return rows.map(function(r){return r.map(csvCell).join(',');}).join('\r\n');
+}
+function doExportCsv(){
+  if(!D.entries.length){toast('ยังไม่มีรายการให้ส่งออก','del');return;}
+  /* \uFEFF (BOM) ต้องมี ไม่งั้น Excel เปิดมาภาษาไทยเป็นขยะ — Sheets ไม่ต้องแต่ใส่ไว้ไม่เสียหาย */
+  saveFile('\uFEFF'+csvText(),'muifei-'+today()+'.csv','text/csv;charset=utf-8');
+  toast('บันทึกไฟล์ตาราง '+D.entries.length+' รายการแล้ว','ok');
 }
 function doImport(inp){
   var f=inp.files&&inp.files[0];if(!f)return;
