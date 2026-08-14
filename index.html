@@ -1526,6 +1526,41 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .bcol.press .bar{transform-origin:50% 100%;animation:bsink .19s var(--ez)}
 @media (prefers-reduced-motion:reduce){.bcol.press .bar{animation:none}}
 </style>
+<style id="skin32">
+/* ============================================================
+   Ver.36
+   1 ปุ่มยืนยัน สลับข้าง — ตกลงซ้าย ยกเลิกขวา
+   2 แจ้งเตือนตอนบันทึกสั้นลง
+   3 ลบจากการปัดซ้าย ต้องยืนยันเหมือนลบจากในฟอร์ม
+   4 กล่องยืนยันเป็นการ์ด — ชื่อรายการเด่นเท่าราคา ไม่ใช่ราคาอย่างเดียว
+   5 กราฟรายสัปดาห์/รายเดือน เลื่อนได้เหมือนรายวัน มุมขวาบนบอกช่วงที่กำลังดู
+   ============================================================ */
+
+/* ---------- 1 ตกลงซ้าย ยกเลิกขวา ---------- */
+.askbox .askrow{flex-direction:row}
+
+/* ---------- 4 การ์ดในกล่องยืนยัน ----------
+   ของเดิมเด่นแต่ราคา ทั้งที่ตอนกดยืนยันสิ่งที่ต้องตรวจคือ "จดอะไร" พอๆ กับ "เท่าไหร่" */
+.askb{margin:0 0 4px;max-height:44vh;overflow:auto}
+.askb .ah{display:flex;justify-content:space-between;gap:10px;
+  font-size:12px;color:var(--ink3);padding-bottom:8px}
+.askb .ar{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.askb .an{flex:1;min-width:0;font-size:16.5px;font-weight:600;line-height:1.25;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.askb .an i{display:flex;align-items:center;gap:5px;font-style:normal;
+  font-size:11.5px;font-weight:400;color:var(--ink3);margin-top:3px}
+.askb .cd{width:7px;height:7px;border-radius:99px;flex:0 0 7px}
+.askb .av{font-family:"Kanit",sans-serif;font-size:18.5px;font-weight:600;
+  font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1}
+.askb .av.in{color:var(--in)}
+.askb .av.out{color:var(--out)}
+.askb .at{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  margin-top:2px;padding-top:9px;border-top:1px solid var(--line2);font-size:12.5px;color:var(--ink2)}
+
+/* ---------- 5 กราฟทุกช่วงเลื่อนได้ ----------
+   จำนวนแท่งที่เห็นพร้อมกันต่างกันตามช่วง จึงเป็นตัวแปร ไม่ใช่ 7 ตายตัว */
+.bars.scr .bcol{flex:0 0 calc(100% / var(--vis, 7))}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1661,7 +1696,8 @@ body.dark mark{background:rgba(90,175,240,.26)}
   <div class="askbox">
     <h4 id="askT"></h4>
     <p id="askP"></p>
-    <div class="btn-row askrow"><button class="btn btn-out" id="askNo">ยกเลิก</button><button class="btn btn-main" id="askOk">ตกลง</button></div>
+    <div class="askb" id="askB"></div>
+    <div class="btn-row askrow"><button class="btn btn-main" id="askOk">ตกลง</button><button class="btn btn-out" id="askNo">ยกเลิก</button></div>
   </div>
 </div>
 
@@ -1818,7 +1854,8 @@ function toast(m,kind){
   var mark=kind==='del'?'✕':(kind==='info'?'·':'✓');
   e.className='toast on '+kind;
   e.innerHTML='<span class="tk">'+mark+'</span>'+esc(m);
-  clearTimeout(_tt);_tt=setTimeout(function(){e.classList.remove('on');},3400);
+  /* Ver.36: 3.4 วิ นานไป (Ver.35) · 2.4 วิ เร็วไป (Ver.34) — ลงตัวที่ 2.8 */
+  clearTimeout(_tt);_tt=setTimeout(function(){e.classList.remove('on');},2800);
 }
 function catOf(name,type){
   var arr=D.cats[type]||[];
@@ -1833,6 +1870,7 @@ function askConfirm(title,body,okText,cb,danger){
   var a=document.getElementById('ask');
   document.getElementById('askT').textContent=title;
   document.getElementById('askP').textContent=body||'';
+  var ab=document.getElementById('askB');ab.innerHTML='';ab.style.display='none';
   var ok=document.getElementById('askOk');
   /* Ver.35: ป็อปอัพยืนยันถามเป็นคำถาม แล้วให้เลือก ตกลง / ยกเลิก เหมือนกันทุกที่
      คำกริยาเฉพาะเรื่อง (บันทึกเลย/ลบเลย) ย้ายไปอยู่ในหัวข้อคำถามแทน
@@ -1840,6 +1878,23 @@ function askConfirm(title,body,okText,cb,danger){
   ok.textContent='ตกลง';
   ok.className='btn '+(danger?'btn-danger':'btn-main');
   _askCb=cb;a.classList.add('on');
+}
+/* Ver.36: กล่องยืนยันแบบการ์ด — หัวเรื่องถามสั้นๆ ตัวการ์ดบอก "จดอะไร" กับ "เท่าไหร่"
+   ด้วยน้ำหนักพอๆ กัน (ของเดิมเด่นแต่ราคา ชื่อรายการเป็นตัวเล็กสีเทา) */
+function askRowHtml(name,cat,type,amt){
+  return '<div class="ar"><span class="an">'+esc(name||'(ยังไม่ได้ตั้งชื่อ)')
+    +'<i><span class="cd" style="background:'+esc(catColor(cat,type))+'"></span>'+esc(cat||'')+'</i></span>'
+    +'<b class="av '+(type==='in'?'in':'out')+'">'+(type==='in'?'+':'\u2212')+fmt(amt)+'</b></div>';
+}
+function askCard(head,when,rowsHtml,totLabel,type,totAmt){
+  return '<div class="ah"><span>'+esc(head)+'</span><span>'+esc(when)+'</span></div>'+rowsHtml
+    +(totLabel?('<div class="at"><span>'+esc(totLabel)+'</span><b class="av '+(type==='in'?'in':'out')+'">'
+       +(type==='in'?'+':'\u2212')+fmt(totAmt)+'</b></div>'):'');
+}
+function askCardConfirm(title,card,cb,danger){
+  askConfirm(title,'','',cb,danger);
+  var ab=document.getElementById('askB');
+  ab.innerHTML=card;ab.style.display='';
 }
 function askClose(run){
   document.getElementById('ask').classList.remove('on');
@@ -1973,23 +2028,46 @@ function buildChart(){
   if(chRange==='day7'){
     n=30;   /* Ver.34: เก็บ 30 วัน แต่จอเห็นทีละ 7 แล้วเลื่อนเอา */
     for(i=n-1;i>=0;i--){d=new Date();d.setDate(d.getDate()-i);k=dkey(d);
-      out.push({lab:d.getDate()+'',full:thDate(k),'in':(g[k]?g[k]['in']:0),out:(g[k]?g[k].out:0)});}
+      out.push({lab:d.getDate()+'',full:thDate(k),sh:d.getDate()+' '+MTHS[d.getMonth()],
+                'in':(g[k]?g[k]['in']:0),out:(g[k]?g[k].out:0)});}
   }else if(chRange==='wk8'){
-    n=8;
+    n=26;   /* Ver.36: เก็บครึ่งปี จอเห็นทีละ 6 สัปดาห์ แล้วเลื่อนย้อนเอา */
     for(i=n-1;i>=0;i--){
       var ws=weekStart(new Date());ws.setDate(ws.getDate()-i*7);
       var we=new Date(ws);we.setDate(we.getDate()+6);
       var si=0,so=0;
       for(var x=new Date(ws);x<=we;x.setDate(x.getDate()+1)){var kk=dkey(x);if(g[kk]){si+=g[kk]['in'];so+=g[kk].out;}}
-      out.push({lab:ws.getDate()+'/'+(ws.getMonth()+1),full:'สัปดาห์ '+ws.getDate()+' '+MTHS[ws.getMonth()],'in':si,out:so});}
+      out.push({lab:ws.getDate()+'/'+(ws.getMonth()+1),full:'สัปดาห์ '+ws.getDate()+' '+MTHS[ws.getMonth()],
+                sh:ws.getDate()+' '+MTHS[ws.getMonth()],'in':si,out:so});}
   }else{
-    n=6;
+    n=12;   /* Ver.36: เก็บ 1 ปี จอเห็นทีละ 6 เดือน แล้วเลื่อนย้อนเอา */
     for(i=n-1;i>=0;i--){
       var dt=new Date();dt.setDate(1);dt.setMonth(dt.getMonth()-i);
       var ym=dkey(dt).slice(0,7),s=sumMonth(ym);
-      out.push({lab:MTHS[dt.getMonth()],full:MTH[dt.getMonth()]+' '+((dt.getFullYear()+543)%100),'in':s['in'],out:s.out});}
+      out.push({lab:MTHS[dt.getMonth()],full:MTH[dt.getMonth()]+' '+((dt.getFullYear()+543)%100),
+                sh:MTHS[dt.getMonth()]+' '+((dt.getFullYear()+543)%100),'in':s['in'],out:s.out});}
   }
   return out;
+}
+/* Ver.36: จำนวนแท่งที่เห็นพร้อมกัน · ข้อความมุมขวาบนตอนยังไม่เลื่อน */
+var CHPER={day7:7,wk8:6,mo6:6};
+var CHDEF={day7:'7 วันล่าสุด · เลื่อนได้',wk8:'6 สัปดาห์ล่าสุด · เลื่อนได้',mo6:'6 เดือนล่าสุด · เลื่อนได้'};
+function chSubSync(){
+  var bx=document.getElementById('bars'),el=document.getElementById('chSub');
+  if(!bx||!el)return;
+  var data=window._chData||[];
+  if(!data.length){el.textContent='';return;}
+  var max=bx.scrollWidth-bx.clientWidth;
+  /* อยู่ท้ายสุด = ยังไม่ได้เลื่อน บอกเป็น "ล่าสุด" เหมือนเดิม
+     เลื่อนแล้วค่อยบอกช่วงจริงที่ตาเห็น ไม่งั้นป้ายกับกราฟจะพูดคนละเรื่อง */
+  if(max<=2||bx.scrollLeft>=max-2){el.textContent=CHDEF[chRange]||'';return;}
+  var per=CHPER[chRange]||7,cw=bx.scrollWidth/data.length;
+  var first=Math.max(0,Math.min(data.length-1,Math.round(bx.scrollLeft/cw)));
+  var last=Math.min(data.length-1,first+per-1);
+  /* เดือนซ้ำกันทั้งสองฝั่งไม่ต้องพูดสองครั้ง — "16 – 22 ก.ค." อ่านง่ายกว่า "16 ก.ค. – 22 ก.ค." */
+  var a=data[first].sh,z=data[last].sh,ma=a.split(' '),mz=z.split(' ');
+  if(ma.length>1&&mz.length>1&&ma.slice(1).join(' ')===mz.slice(1).join(' '))a=ma[0];
+  el.textContent=a+' – '+z;
 }
 function renderChart(){
   var data=buildChart();
@@ -2032,16 +2110,19 @@ function renderChart(){
      จะทำให้ป้ายยื่นไปชนป้ายของคอลัมน์ข้างๆ ตรงนั้นเลิกสแปลย์ ใช้ deColide จัดแนวตั้งพอ */
   /* Ver.34: รายวันไม่ต้อง tight เพราะคอลัมน์ยังกว้างเท่าเดิม (7 คอลัมน์เต็มจอ) แค่มีของเลยขอบไป
      tight มีไว้สำหรับตอนที่คอลัมน์แคบลงจริงๆ คือรายสัปดาห์ 8 ช่องอัดในจอเดียว */
-  bx.classList.toggle('tight',data.length>7&&chRange!=='day7');
-  bx.classList.toggle('scr',chRange==='day7');
+  /* Ver.36: ทุกช่วงเลื่อนได้แล้ว คอลัมน์จึงกว้างเต็มเสมอ tight ไม่ได้ใช้อีก */
+  bx.classList.remove('tight');
+  bx.classList.add('scr');
+  bx.style.setProperty('--vis',CHPER[chRange]||7);
+  if(!bx._chsy){bx._chsy=1;bx.addEventListener('scroll',chSubSync,{passive:true});}
   window._chData=data;
   requestAnimationFrame(function(){
     var bs=bx.querySelectorAll('.bar');
     for(var i=0;i<bs.length;i++)if(!bs[i].classList.contains('z'))bs[i].style.height=bs[i].getAttribute('data-h')+'%';
     deColide(bx);
-    /* เปิดมาให้เห็นวันล่าสุดก่อนเสมอ ย้อนหลังค่อยเลื่อนเอา */
-    if(chRange==='day7')bx.scrollLeft=bx.scrollWidth;});
-  document.getElementById('chSub').textContent=chRange==='day7'?'30 วันล่าสุด · เลื่อนได้':(chRange==='wk8'?'8 สัปดาห์ล่าสุด':'6 เดือนล่าสุด');
+    /* เปิดมาให้เห็นช่วงล่าสุดก่อนเสมอ ย้อนหลังค่อยเลื่อนเอา */
+    bx.scrollLeft=bx.scrollWidth;chSubSync();});
+  chSubSync();
   drawReadout();
 }
 /* Ver.15: ป้ายสองใบในคอลัมน์เดียวกันจะทับกันเฉพาะตอนแท่งสูงพอๆ กัน
@@ -2385,6 +2466,15 @@ function swipeDel(id){
   var e=null;
   for(var i=0;i<D.entries.length;i++)if(D.entries[i].id===id){e=D.entries[i];break;}
   if(!e)return;
+  /* Ver.36: ปัดซ้ายแล้วกดปุ่มลบก็ต้องถามก่อนเหมือนลบจากในฟอร์ม
+     ปุ่มที่โผล่มาจากการปัดยิ่งกดโดนง่าย ไม่ควรเป็นทางลัดที่ปลอดภัยน้อยกว่า */
+  askCardConfirm('ลบรายการนี้?',
+    askCard(e.type==='in'?'รายรับ':'รายจ่าย',thDate(e.date),
+      askRowHtml(e.name,e.cat,e.type,e.amount),'',e.type,0),
+    function(){swipeDelGo(e);},true);
+}
+function swipeDelGo(e){
+  var id=e.id;
   D.entries=D.entries.filter(function(x){return x.id!==id;});
   save();buzzDel();_fxDonut=true;render();
   toastUndo('ลบ '+e.name+' แล้ว',function(){
@@ -2433,11 +2523,10 @@ function confirmSave(rows,cb){
   var sum=0;rows.forEach(function(r){sum+=parseFloat(r.a)||0;});
   var side=draft.type==='in'?'รายรับ':'รายจ่าย';
   var when=(draft.date===today())?'วันนี้':thDate(draft.date||today());
-  var body=rows.length===1
-    ? (rows[0].n+' · '+rows[0].cat+'\n'+when)
-    : (rows.length+' รายการ\n'
-       +rows.map(function(r,i){return (i+1)+'. '+r.n+' '+fmt(parseFloat(r.a)||0);}).join('\n')+'\n'+when);
-  askConfirm('บันทึก'+side+' '+fmt(sum)+' บาท?',body,'',cb,false);
+  var rh='';
+  rows.forEach(function(r){rh+=askRowHtml(r.n,r.cat,draft.type,parseFloat(r.a)||0);});
+  askCardConfirm(rows.length>1?('บันทึก '+rows.length+' รายการนี้?'):'บันทึกรายการนี้?',
+    askCard(side,when,rh,rows.length>1?('รวม '+rows.length+' รายการ'):'',draft.type,sum),cb,false);
 }
 
 /* ---- 10 เลขบนแถบยอดรวมนับขึ้นตอนเปลี่ยนฟิลเตอร์ ---- */
@@ -3616,9 +3705,10 @@ function delEntry(){
   if(!editId)return;
   var e=D.entries.filter(function(x){return x.id===editId;})[0];
   if(!e)return;
-  askConfirm('ลบ '+e.name+' ?',
-    (e.type==='in'?'รับ ':'จ่าย ')+fmt(e.amount)+' บาท · '+e.cat+'\n'+thDate(e.date),
-    'ลบเลย',function(){delEntryGo(e);},true);
+  askCardConfirm('ลบรายการนี้?',
+    askCard(e.type==='in'?'รายรับ':'รายจ่าย',thDate(e.date),
+      askRowHtml(e.name,e.cat,e.type,e.amount),'',e.type,0),
+    function(){delEntryGo(e);},true);
 }
 function delEntryGo(e){
   /* Ver.34: การยืนยันกลับมาแล้ว (เขาสั่ง) แต่ "เลิกทำ" 6 วินาทีก็ยังอยู่
