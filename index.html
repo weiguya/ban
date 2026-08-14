@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================
-   Muifei  Ver.33 — ไอคอนลูกศรเข้า-ออกถาด + เอฟเฟค 12 อย่าง
+   Muifei  Ver.34 — ปัดแล้วคาไว้ให้ยืนยัน + ยืนยันก่อนบันทึก/ลบ + แจ้งเตือนขึ้นบน + กราฟรายวันเลื่อนได้
    (Ver.29 เดิม: เมนูหมวดกางแนวยาว + อ่านสลิป/ใบเสร็จจากรูป
    (Ver.28 เดิม: หมวดมาอยู่แถวเดียวกับชื่อ + เดาคำจากที่เคยลง + การ์ดเฉลี่ยใส่สีหมวด))
    (Ver.27 เดิม: เอฟเฟค 5 อย่าง + การ์ดเฉลี่ยต่อวัน + ค้นหา + ลบแล้วเลิกทำได้)
@@ -1425,33 +1425,71 @@ body.dark mark{background:rgba(90,175,240,.26)}
   background:var(--out);color:#fff;font-size:14px;font-weight:600;
   display:none;align-items:center;padding-left:24px;letter-spacing:.02em}
 .line.swiping::after{display:flex}
-.line.swgo::after{padding-left:15px}
-
-/* ---------- 7 แตะแท่งกราฟแล้วเด้ง + ตัวเลขเลื่อนขึ้น ---------- */
-#bars .bcol.pop .bar{animation:barpop .36s var(--ez)}
-@keyframes barpop{0%{transform:translateY(0)}38%{transform:translateY(-6px)}100%{transform:translateY(0)}}
-.readout.rin{animation:rvup .3s var(--ez)}
-@keyframes rvup{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 
 /* ---------- 8 โดนัทหมุนเข้าที่ ---------- */
 .donut.spin svg{animation:dspin .85s var(--ez)}
 @keyframes dspin{from{transform:rotate(-104deg)}to{transform:rotate(-90deg)}}
-
-/* ---------- 9 ดึงลงเพื่อโหลดข้อมูลล่าสุด ---------- */
-.ptr{position:fixed;left:50%;top:-56px;z-index:60;width:46px;height:46px;
-  border-radius:50%;background:var(--card);box-shadow:var(--sh3);
-  display:flex;align-items:center;justify-content:center;
-  color:var(--fill);opacity:0;transform:translate(-50%,0);pointer-events:none}
-.ptr svg{width:30px;height:30px}
-.ptr.go{color:var(--in)}
 
 /* ---------- 10+12 แถบยอดรวม เลื่อนเข้ามา + เลขนับขึ้น ---------- */
 .qbar.qin{animation:qbin .3s var(--ez)}
 @keyframes qbin{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
 
 @media (prefers-reduced-motion:reduce){
-  .line.newfx,#bars .bcol.pop .bar,.readout.rin,.donut.spin svg,.qbar.qin{animation:none!important}
+  .line.newfx,.donut.spin svg,.qbar.qin{animation:none!important}
 }
+</style>
+<style id="skin30">
+/* ============================================================
+   Ver.34 — ตามฟีดแบครอบที่แล้ว
+   · ถอดเอฟเฟค 7 (แท่งเด้ง) และ 9 (ดึงลงรีเฟรช) ออก
+   · ปัดซ้ายแล้ว "คาไว้" ให้กดยืนยัน ไม่ลบทันที
+   · ฟอร์มมีเลขลำดับหน้าแถว
+   · แจ้งเตือนย้ายขึ้นบน ตัวใหญ่ขึ้น
+   · โดนัทย้ายมาต่อกราฟแท่ง
+   · กราฟรายวันเลื่อนได้ เห็นทีละ 7 วัน
+   · วันที่วันนี้ขึ้นบนหัวแอป
+   ============================================================ */
+
+/* ---------- ปัดซ้ายแล้วคาไว้ ---------- */
+.daygrp{position:relative}
+.line::after{content:none}                    /* Ver.33 ใช้ ::after เป็นแผ่นแดง ตอนนี้ใช้ปุ่มจริงแทน */
+.line.swiping,.line.latched{z-index:3;background:var(--card)}
+.line.latched{transform:translateX(-108px);transition:transform .24s var(--ez)}
+.swdel{position:absolute;right:0;width:108px;z-index:1;
+  background:var(--out);color:#fff;font:inherit;font-size:14.5px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:7px;border:0}
+.swdel svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.swdel:active{background:#a5372e}
+
+/* ---------- เลขลำดับหน้าแถวในฟอร์ม ---------- */
+.frow .rn{flex:0 0 15px;text-align:center;font-size:11.5px;font-weight:600;
+  color:var(--ink3);font-variant-numeric:tabular-nums}
+.frow{gap:5px}
+.frow .fn{min-width:64px}
+
+/* ---------- แจ้งเตือน: ขึ้นบน ใหญ่ขึ้น อ่านทัน ---------- */
+.toast{top:calc(12px + env(safe-area-inset-top,0px));bottom:auto;
+  transform:translate(-50%,-14px) scale(.96);
+  font-size:14.5px;font-weight:600;padding:13px 18px;border-radius:16px;
+  white-space:normal;line-height:1.4;max-width:min(340px,92vw);text-align:left}
+.toast.on{transform:translate(-50%,0) scale(1)}
+.sheet.on ~ .toast{top:calc(12px + env(safe-area-inset-top,0px));bottom:auto}
+.toast .tk{width:24px;height:24px;flex:0 0 24px;font-size:14px;font-weight:700}
+.toast .tu{margin-left:12px;padding:7px 14px;font-size:13.5px;font-weight:600}
+
+/* ---------- กราฟรายวัน เลื่อนได้ เห็นทีละ 7 วัน ---------- */
+.bars.scr{overflow-x:auto;overflow-y:visible;padding-top:20px;
+  scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none}
+.bars.scr::-webkit-scrollbar{display:none}
+.bars.scr .bcol{flex:0 0 calc(100% / 7);scroll-snap-align:end}
+.chhint{font-size:11px;color:var(--ink3);text-align:right;padding:5px 2px 0}
+
+/* ---------- วันที่บนหัวแอป ---------- */
+.brand .today{display:block;font-size:11.5px;color:var(--ink2);
+  font-variant-numeric:tabular-nums;letter-spacing:.01em}
+#askP{white-space:pre-line}
 </style>
 </head>
 <body>
@@ -1461,7 +1499,7 @@ body.dark mark{background:rgba(90,175,240,.26)}
 <header class="top">
   <div class="trow">
     <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 40c.6-6.4 4.6-10.4 9.4-11.4"/><path d="M36.6 40c-.6-6.4-4.6-10.4-9.4-11.4"/><path d="M9.6 32.4 12.6 40M30.6 32.4 27.6 40"/><path d="M13.9 8.9 10 9.1 6.9 12.6l.7 4 3.3 1-1-4.4Z"/><path d="M26.3 8.9l3.9.2 3.1 3.5-.7 4-3.3 1 1-4.4Z"/><path d="M20.1 8.6c6.2 0 11.2 5.6 11.2 12.4S26.3 33.4 20.1 33.4 8.9 27.8 8.9 21 13.9 8.6 20.1 8.6Z"/><path d="M13.2 13.4 16.4 14.8M27 13.4 23.8 14.8"/><path stroke-width=".8" d="M22.6 10 24.3 13.6M21.9 10.9l1.7-.7M22.5 12.2l1.7-.7M23.1 13.5l1.7-.7"/><path d="M10.2 15.8h8.8v2.9c0 1.5-1.2 2.6-2.8 2.6h-3.4c-1.6 0-2.6-1.1-2.6-2.6Z"/><path d="M21.2 15.8h8.8v2.9c0 1.5-1 2.6-2.6 2.6h-3.4c-1.6 0-2.8-1.1-2.8-2.6Z"/><path d="M19 16.5h2.2"/><path d="M26.6 25.2c.5 3.2-1.4 6-4 6.8"/><path class="mksn" fill="currentColor" d="M19.9 18.2c2.7 0 4.4 1.4 4.4 3.2s-1.7 3.3-4.4 3.3-4.4-1.5-4.4-3.3 1.7-3.2 4.4-3.2Z"/><ellipse cx="18.3" cy="21" rx=".7" ry="1.6"/><ellipse cx="21.3" cy="21" rx=".7" ry="1.6"/><rect class="mksn" fill="currentColor" x="0" y="-1.25" width="10.6" height="2.5" rx="1" transform="translate(11.2 29.2) rotate(-28.8)"/><circle class="mksn" fill="currentColor" cx="11.9" cy="28.9" r="1.35"/><circle cx="11.9" cy="28.9" r=".45"/></g></svg></span>
-    <span class="brand"><b>Muifei</b><i>บัญชีรับ-จ่ายในบ้าน</i></span>
+    <span class="brand"><b>Muifei</b><i class="today" id="todayLbl">บัญชีรับ-จ่ายในบ้าน</i></span>
     <button class="bk tap" id="bkChip" onclick="openBackup()">สำรองข้อมูล</button>
   </div>
 </header>
@@ -1485,14 +1523,14 @@ body.dark mark{background:rgba(90,175,240,.26)}
   </section>
 
   <section class="card">
-    <div class="ct"><h2>เฉลี่ยต่อวัน</h2><span class="sub" id="avgSub"></span></div>
-    <div class="selrow" id="avgSel"></div>
-    <div id="avgBody"></div>
+    <div class="ct"><h2>เดือนนี้จ่ายไปกับอะไร</h2><span class="sub" id="sumSub"></span></div>
+    <div id="sumBody"></div>
   </section>
 
   <section class="card">
-    <div class="ct"><h2>เดือนนี้จ่ายไปกับอะไร</h2><span class="sub" id="sumSub"></span></div>
-    <div id="sumBody"></div>
+    <div class="ct"><h2>เฉลี่ยต่อวัน</h2><span class="sub" id="avgSub"></span></div>
+    <div class="selrow" id="avgSel"></div>
+    <div id="avgBody"></div>
   </section>
 
   <div class="sechd"><h2>รายการล่าสุด</h2><span class="sub" id="recentR"></span></div>
@@ -1896,7 +1934,7 @@ function buildChart(){
     if(!g[e.date])g[e.date]={'in':0,out:0};
     g[e.date][e.type]+=e.amount;});
   if(chRange==='day7'){
-    n=7;
+    n=30;   /* Ver.34: เก็บ 30 วัน แต่จอเห็นทีละ 7 แล้วเลื่อนเอา */
     for(i=n-1;i>=0;i--){d=new Date();d.setDate(d.getDate()-i);k=dkey(d);
       out.push({lab:d.getDate()+'',full:thDate(k),'in':(g[k]?g[k]['in']:0),out:(g[k]?g[k].out:0)});}
   }else if(chRange==='wk8'){
@@ -1955,13 +1993,18 @@ function renderChart(){
   var bx=document.getElementById('bars');bx.innerHTML=h;
   /* Ver.16: 8 คอลัมน์ขึ้นไป (รายสัปดาห์) ช่องแคบลงเหลือ ~37px การสแปลย์ป้ายออกด้านข้าง
      จะทำให้ป้ายยื่นไปชนป้ายของคอลัมน์ข้างๆ ตรงนั้นเลิกสแปลย์ ใช้ deColide จัดแนวตั้งพอ */
-  bx.classList.toggle('tight',data.length>7);
+  /* Ver.34: รายวันไม่ต้อง tight เพราะคอลัมน์ยังกว้างเท่าเดิม (7 คอลัมน์เต็มจอ) แค่มีของเลยขอบไป
+     tight มีไว้สำหรับตอนที่คอลัมน์แคบลงจริงๆ คือรายสัปดาห์ 8 ช่องอัดในจอเดียว */
+  bx.classList.toggle('tight',data.length>7&&chRange!=='day7');
+  bx.classList.toggle('scr',chRange==='day7');
   window._chData=data;
   requestAnimationFrame(function(){
     var bs=bx.querySelectorAll('.bar');
     for(var i=0;i<bs.length;i++)if(!bs[i].classList.contains('z'))bs[i].style.height=bs[i].getAttribute('data-h')+'%';
-    deColide(bx);});
-  document.getElementById('chSub').textContent=chRange==='day7'?'7 วันล่าสุด':(chRange==='wk8'?'8 สัปดาห์ล่าสุด':'6 เดือนล่าสุด');
+    deColide(bx);
+    /* เปิดมาให้เห็นวันล่าสุดก่อนเสมอ ย้อนหลังค่อยเลื่อนเอา */
+    if(chRange==='day7')bx.scrollLeft=bx.scrollWidth;});
+  document.getElementById('chSub').textContent=chRange==='day7'?'30 วันล่าสุด · เลื่อนได้':(chRange==='wk8'?'8 สัปดาห์ล่าสุด':'6 เดือนล่าสุด');
   drawReadout();
 }
 /* Ver.15: ป้ายสองใบในคอลัมน์เดียวกันจะทับกันเฉพาะตอนแท่งสูงพอๆ กัน
@@ -2050,10 +2093,7 @@ document.addEventListener('click',function(ev){
 
 function setRange(r){chRange=r;chSel=-1;renderChart();buzz(8);}
 function setShow(s){chShow=s;renderChart();buzz(8);}
-function pickBar(i){
-  chSel=(chSel===i?-1:i);renderChart();buzz(8);
-  if(chSel>=0)fxBarPop(chSel);   /* Ver.33 ข้อ 7 — เล่นเฉพาะตอนเลือก ไม่เล่นตอนกดปิด */
-}
+function pickBar(i){chSel=(chSel===i?-1:i);renderChart();buzz(8);}
 
 /* ================= กราฟเส้นเงินคงเหลือ (แบบกราฟหุ้น) =================
    เส้นคือยอดคงเหลือ ณ สิ้นวัน ไม่ใช่ยอดรับ-จ่ายรายวัน
@@ -2164,7 +2204,19 @@ function renderSummary(){
 /* ================= วาดหน้า ================= */
 var curTab='home',curMonth=monthOf(today()),curFilter='',_lastBal=null;
 var curType='';      /* Ver.12: '' | 'in' | 'out' — ฟิลเตอร์ชนิดของหน้ารายการ */
+function todayLabel(){
+  /* Ver.34: เอาวันที่มาแทนคำโปรยใต้ชื่อแอป — คำโปรยบอกสิ่งที่เขารู้อยู่แล้วทุกวัน
+     ส่วนปุ่มสำรองข้อมูลไม่ได้ย้าย เพราะมันคือตัวเตือนว่ายังไม่เคยสำรอง ย้ายแล้วจะไม่มีใครเตือน */
+  var DL=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+  var ML=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+          'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  var d=new Date();
+  return DL[d.getDay()]+' '+d.getDate()+' '+ML[d.getMonth()]+' '+(d.getFullYear()+543);
+}
 function render(){
+  var tl=document.getElementById('todayLbl');
+  if(tl)tl.textContent=todayLabel();
+  latchClose();
   renderBk();
   /* Ver.18: กราฟเส้นแนวโน้มถูกตัดออกจากหน้าแรกตามที่สั่ง (ตัวการ์ดหายไปจากมาร์กอัปแล้ว)
      ตัวฟังก์ชัน renderTrend/trendData ยังอยู่เฉยๆ เผื่ออยากได้กลับ — ใส่การ์ดคืนแล้วเรียกตรงนี้ */
@@ -2222,14 +2274,6 @@ function fxFly(from,toSel){
   setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c);},430);
 }
 
-/* ---- 7 แตะแท่งกราฟแล้วเด้ง ตัวเลขข้างล่างเลื่อนขึ้นมา ---- */
-function fxBarPop(i){
-  var col=document.querySelectorAll('#bars .bcol')[i];
-  if(col){col.classList.remove('pop');void col.offsetWidth;col.classList.add('pop');}
-  var r=document.getElementById('readout');
-  if(r){r.classList.remove('rin');void r.offsetWidth;r.classList.add('rin');}
-}
-
 /* ---- 6 ลากแถวไปทางซ้ายเพื่อลบ ----
    เกณฑ์ -96px มาจากความกว้างของคำว่า "ลบ" ที่โผล่มา ลากจนอ่านคำได้ครบ = ตั้งใจลบ
    ลากขวาหน่วงไว้ที่ 25% ให้รู้สึกว่ามันไปทางนั้นไม่ได้ ไม่ใช่แค่ไม่ตอบสนอง */
@@ -2237,8 +2281,11 @@ var _sw=null,_swBlock=0;
 function swStart(ev){
   if(_sw||!ev.touches||ev.touches.length!==1)return;
   var t=ev.target,row=t&&t.closest?t.closest('.line[data-id]'):null;
-  if(!row)return;
-  _sw={row:row,x:ev.touches[0].clientX,y:ev.touches[0].clientY,dx:0,on:false};
+  if(!row){latchClose();return;}
+  if(_latch&&_latch.row!==row)latchClose();
+  _sw={row:row,x:ev.touches[0].clientX,y:ev.touches[0].clientY,dx:0,on:false,
+       was:row.classList.contains('latched'),btn:(_latch&&_latch.row===row)?_latch.btn:null};
+  if(_sw.was){row.classList.remove('latched');_latch=null;}
 }
 function swMove(ev){
   if(!_sw||!ev.touches||!ev.touches.length)return;
@@ -2250,11 +2297,14 @@ function swMove(ev){
     if(Math.abs(dx)<11)return;
     _sw.on=true;_sw.row.classList.add('swiping');
   }
+  /* ปัดขวาตอนที่คาอยู่ = ปิด จึงต้องคิดจากตำแหน่งที่ค้างไว้ ไม่ใช่จาก 0 */
+  var base=_sw.was?-108:0;
+  dx=base+dx;
   if(dx>0)dx*=.25;
   if(dx<-150)dx=-150;
   _sw.dx=dx;
+  if(!_sw.btn)_sw.btn=latchBtn(_sw.row);
   _sw.row.style.transform='translateX('+dx+'px)';
-  _sw.row.classList.toggle('swgo',dx<=-96);
   if(ev.cancelable)ev.preventDefault();
 }
 function swEnd(){
@@ -2262,11 +2312,17 @@ function swEnd(){
   var s=_sw;_sw=null;
   if(!s.on)return;
   _swBlock=Date.now();   /* กันไม่ให้คลิกที่ตามมาหลังปล่อยนิ้วไปเปิดฟอร์ม */
-  s.row.classList.remove('swgo');
-  s.row.style.transition='transform .22s var(--ez)';
+  s.row.classList.remove('swiping');
   s.row.style.transform='';
-  setTimeout(function(){s.row.classList.remove('swiping');s.row.style.transition='';},240);
-  if(s.dx<=-96)swipeDel(s.row.getAttribute('data-id'));
+  /* เกิน 54px = ครึ่งทางของปุ่ม ถือว่าตั้งใจเปิด ค้างไว้ให้กดยืนยัน ไม่ลบเอง */
+  if(s.dx<=-54){
+    s.row.classList.add('latched');
+    _latch={row:s.row,btn:s.btn};
+    buzz(10);
+  }else{
+    if(s.btn&&s.btn.parentNode)s.btn.parentNode.removeChild(s.btn);
+    _latch=null;
+  }
 }
 function swipeDel(id){
   var e=null;
@@ -2279,61 +2335,53 @@ function swipeDel(id){
     toast('เอา '+e.name+' กลับมาแล้ว','ok');});
 }
 
-/* ---- 9 ดึงลงเพื่อโหลดข้อมูลล่าสุดในเครื่อง ----
-   แอปนี้ไม่มีเซิร์ฟเวอร์ให้รีเฟรช แต่เขาเปิดหลายแท็บอยู่จริง (เห็นในสกรีนช็อต)
-   แท็บที่ค้างไว้จะไม่รู้ว่าอีกแท็บบันทึกอะไรไป ดึงลงตรงนี้จึงอ่าน localStorage ใหม่
-   ไม่ใช่แอนิเมชันหลอกว่ามีอะไรเกิดขึ้น */
-var _ptr=null;
-function ptrEl(){
-  var e=document.getElementById('ptr');
-  if(!e){
-    e=document.createElement('div');e.id='ptr';e.className='ptr';
-    var mk=document.querySelector('.mark');
-    e.innerHTML=mk?mk.innerHTML:'';
-    document.body.appendChild(e);
-  }
-  return e;
+document.addEventListener('touchstart',swStart,{passive:true});
+document.addEventListener('touchmove',swMove,{passive:false});
+document.addEventListener('touchend',swEnd,{passive:true});
+document.addEventListener('touchcancel',swEnd,{passive:true});
+
+
+/* ================= Ver.34 — ปัดซ้ายแล้วคาไว้ ให้ยืนยันอีกที =================
+   Ver.33 ปัดเลย -96px แล้วลบทันที เขาไม่เอา — ปัดผิดทีเดียวของหายไปแล้ว
+   ตอนนี้ปัดแล้วแถวค้างไว้ที่ -108px โชว์ปุ่มลบจริงๆ ปิดได้ 3 ทาง
+   แตะปุ่มลบ / แตะที่แถวเอง / ปัดกลับทางขวา */
+var _latch=null;
+function latchClose(){
+  if(!_latch)return;
+  var L=_latch;_latch=null;
+  L.row.classList.remove('latched','swiping');
+  L.row.style.transform='';
+  if(L.btn&&L.btn.parentNode)L.btn.parentNode.removeChild(L.btn);
 }
-function ptrStart(ev){
-  if(_sw||curTab!=='home'||curSheet||window.scrollY>2)return;
-  if(!ev.touches||ev.touches.length!==1)return;
-  _ptr={y:ev.touches[0].clientY,on:false};
+function latchBtn(row){
+  var g=row.parentNode;if(!g)return null;
+  var b=document.createElement('button');
+  b.className='swdel';b.type='button';
+  b.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9.5 7V5.4h5V7"/>'
+   +'<path d="M6.6 7l.8 11.4a1.8 1.8 0 0 0 1.8 1.6h5.6a1.8 1.8 0 0 0 1.8-1.6L17.4 7"/></svg>ลบ';
+  b.style.top=row.offsetTop+'px';
+  b.style.height=row.offsetHeight+'px';
+  b.onclick=function(ev){
+    ev.stopPropagation();
+    var id=row.getAttribute('data-id');
+    latchClose();
+    swipeDel(id);
+  };
+  g.appendChild(b);
+  return b;
 }
-function ptrMove(ev){
-  if(!_ptr||!ev.touches||!ev.touches.length)return;
-  var dy=ev.touches[0].clientY-_ptr.y;
-  if(dy<=0||window.scrollY>2){if(!_ptr.on)_ptr=null;return;}
-  if(!_ptr.on){if(dy<10)return;_ptr.on=true;}
-  var p=Math.min(dy*.5,104),e=ptrEl();
-  e.style.transition='';
-  e.style.transform='translate(-50%,'+p+'px) rotate('+Math.round(p*4)+'deg)';
-  e.style.opacity=Math.min(1,p/38);
-  e.classList.toggle('go',p>=70);
-  if(ev.cancelable)ev.preventDefault();
+
+/* ================= Ver.34 — ยืนยันก่อนทำธุรกรรม ================= */
+function confirmSave(rows,cb){
+  var sum=0;rows.forEach(function(r){sum+=parseFloat(r.a)||0;});
+  var side=draft.type==='in'?'รายรับ':'รายจ่าย';
+  var when=(draft.date===today())?'วันนี้':thDate(draft.date||today());
+  var body=rows.length===1
+    ? (rows[0].n+' · '+rows[0].cat+'\n'+when)
+    : (rows.map(function(r,i){return (i+1)+'. '+r.n+' '+fmt(parseFloat(r.a)||0);}).join('\n')+'\n'+when);
+  askConfirm(side+' '+fmt(sum)+' บาท'+(rows.length>1?(' · '+rows.length+' รายการ'):''),
+    body,'บันทึกเลย',cb,false);
 }
-function ptrEnd(){
-  if(!_ptr)return;
-  var on=_ptr.on;_ptr=null;
-  if(!on)return;
-  var e=ptrEl(),go=e.classList.contains('go');
-  e.style.transition='transform .3s var(--ez),opacity .28s linear';
-  e.style.transform='translate(-50%,0) rotate(720deg)';
-  e.style.opacity='0';
-  setTimeout(function(){e.style.transition='';e.classList.remove('go');},330);
-  if(go)ptrRun();
-}
-function ptrRun(){
-  buzz(12);
-  var before=D.entries.length;
-  try{D=load();}catch(err){}
-  _lastBal=null;_fxDonut=true;render();
-  var d=D.entries.length-before;
-  toast(d?('โหลดข้อมูลล่าสุดแล้ว · '+(d>0?('+'+d):d)+' รายการ'):'ข้อมูลเป็นอันล่าสุดอยู่แล้ว','info');
-}
-document.addEventListener('touchstart',function(ev){swStart(ev);ptrStart(ev);},{passive:true});
-document.addEventListener('touchmove',function(ev){swMove(ev);ptrMove(ev);},{passive:false});
-document.addEventListener('touchend',function(){swEnd();ptrEnd();},{passive:true});
-document.addEventListener('touchcancel',function(){swEnd();ptrEnd();},{passive:true});
 
 /* ---- 10 เลขบนแถบยอดรวมนับขึ้นตอนเปลี่ยนฟิลเตอร์ ---- */
 var _lastQV=null;
@@ -2942,6 +2990,10 @@ document.addEventListener('click',function(ev){
   /* Ver.33 ข้อ 6: ปล่อยนิ้วจากการปัด เบราว์เซอร์ยังยิง click ตามมาอีกที ต้องกินทิ้ง
      ไม่งั้นปัดลบเสร็จแล้วฟอร์มแก้รายการจะเด้งขึ้นมาทับทันที */
   if(Date.now()-_swBlock<420){disarm();return;}
+  if(_latch){   /* Ver.34: แตะที่ไหนก็ได้ตอนที่มีแถวคาอยู่ = ปิดแถวนั้น ไม่ทำอย่างอื่นต่อ */
+    var inBtn=ev.target.closest&&ev.target.closest('.swdel');
+    if(!inBtn){latchClose();disarm();return;}
+  }
   var row=ev.target.closest?ev.target.closest('.line,.mvr[data-id]'):null;
   if(!row){disarm();return;}
   var id=row.getAttribute('data-id');
@@ -2951,7 +3003,7 @@ document.addEventListener('click',function(ev){
   var n=+(LS.getItem('fam_hint')||0);
   if(n<3){toast('แตะอีกครั้งเพื่อเปิด','info');LS.setItem('fam_hint',n+1);}
 },false);
-window.addEventListener('scroll',disarm,{passive:true});
+window.addEventListener('scroll',function(){disarm();latchClose();},{passive:true});
 
 /* ================= ปุ่มบวก + สปีดไดอัล ================= */
 var dialOpen=false;
@@ -3224,6 +3276,7 @@ function rowHtml(r,i){
   var hasN=!!(r.n&&r.n.trim());
   /* Ver.28: หมวดมาอยู่ต่อจากช่องชื่อในแถวเดียวกัน ชื่อรายการสั้นอยู่แล้ว ไม่ต้องกินความกว้างทั้งแถว */
   var h='<div class="rowwrap"><div class="frow">'
+   +'<span class="rn">'+(i+1)+'</span>'
    +'<span class="fn"><input type="text" id="fNm'+i+'" value="'+esc(r.n)+'" oninput="onRowNm('+i+',this.value)" onfocus="drawSug('+i+')" autocomplete="off" placeholder="เช่น ค่าข้าว">'
    +'<div class="sugw" id="sug'+i+'"></div></span>'
    +'<span class="rcw">'+rcBtn(r,i)
@@ -3478,6 +3531,12 @@ function saveEntry(){
   for(var i=0;i<rows.length;i++){
     if(!rows[i].n||!rows[i].n.trim()){err.textContent='มีแถวที่ใส่เงินแต่ยังไม่ได้ใส่ชื่อรายการ';err.classList.remove('hide');return;}
     if(!(parseFloat(rows[i].a)>0)){err.textContent='แถว “'+rows[i].n+'” ยังไม่ได้ใส่จำนวนเงิน';err.classList.remove('hide');return;}}
+  /* Ver.34: ยืนยันก่อนทุกครั้งที่จะแตะข้อมูลจริง ยกเว้นตะกร้าจากเสียงซึ่งยังไม่ใช่การบันทึก
+     Ver.27 เคยตัดการยืนยันตอนลบทิ้งแล้วให้ "เลิกทำ" แทน รอบนี้เขาสั่งเอาการยืนยันกลับมา
+     ทั้งสองอย่างจึงมีพร้อมกัน — ยืนยันก่อน แล้วยังเลิกทำได้อีก 6 วินาที */
+  if(draft.mode!=='basketEdit'&&draft.mode!=='basketNew'&&!_saveOK){
+    confirmSave(rows,function(){_saveOK=true;saveEntry();});return;}
+  _saveOK=false;
   var mk=function(r,id){return {id:id||uid(),name:r.n.trim(),amount:parseFloat(r.a),type:draft.type,cat:r.cat,date:draft.date||today()};};
   if(draft.mode==='basketEdit'){D.basket[draft.bidx]=mk(rows[0]);save();buzz(14);sheetBack();drawSay();toast('แก้ '+rows[0].n+' แล้ว','ok');return;}
   if(draft.mode==='basketNew'){D.basket.push(mk(rows[0]));save();buzz(14);sheetBack();drawSay();toast('เพิ่ม '+rows[0].n+' เข้ารายการรอบันทึก','ok');return;}
@@ -3495,13 +3554,18 @@ function saveEntry(){
   toast(rows.length>1?('บันทึก '+rows.length+' รายการ · รวม '+fmt(sum))
     :('บันทึก'+(draft.type==='in'?'รายรับ ':'รายจ่าย ')+first+' '+fmt(sum)+' แล้ว'),'ok');
 }
+var _saveOK=false;
 function delEntry(){
   if(!editId)return;
   var e=D.entries.filter(function(x){return x.id===editId;})[0];
   if(!e)return;
-  /* Ver.27: เลิกถามยืนยันก่อนลบ เปลี่ยนเป็นลบเลยแล้วให้ "เลิกทำ" 6 วินาที
-     ถามก่อนลบกันพลาดได้ก็จริง แต่ต้องมากดยืนยันทุกครั้งแม้ตั้งใจลบ
-     ส่วนเลิกทำ เสียเวลาเฉพาะตอนที่พลาดจริง ซึ่งนานๆ ที */
+  askConfirm('ลบ '+e.name+' ?',
+    (e.type==='in'?'รับ ':'จ่าย ')+fmt(e.amount)+' บาท · '+e.cat+'\n'+thDate(e.date),
+    'ลบเลย',function(){delEntryGo(e);},true);
+}
+function delEntryGo(e){
+  /* Ver.34: การยืนยันกลับมาแล้ว (เขาสั่ง) แต่ "เลิกทำ" 6 วินาทีก็ยังอยู่
+     ยืนยันกันพลาดตอนกดผิด · เลิกทำกันพลาดตอนกดถูกแต่คิดผิด คนละเรื่องกัน */
   D.entries=D.entries.filter(function(x){return x.id!==e.id;});
   save();buzzDel();closeSheet(true);_fxDonut=true;render();
   toastUndo('ลบ '+e.name+' แล้ว',function(){
@@ -3586,7 +3650,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.33 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.34 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
