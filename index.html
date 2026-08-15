@@ -1681,6 +1681,61 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .line.settle{transition:transform .28s var(--ez)}
 .line.latched{transition:transform .28s var(--ez)}
 </style>
+<style id="skin37">
+/* ============================================================
+   Ver.42
+   1. สีหมวดย้ายเข้าไปอยู่ในตัวชิปเลย เลิกใช้จุดสีนำหน้าตัวอักษรทั้งแอป
+      สีตัวอักษรบนพื้นสีคำนวณจากค่าคอนทราสต์จริง (WCAG) ไม่ได้เดา
+   2. ชิปประจำ: กดค้าง = เข้าโหมดจัด ชิปสั่น มีปุ่ม ✕ ลากสลับที่ได้
+   3. เพิ่ม/ลบชิป ถามยืนยันก่อนเสมอ เสร็จแล้วขึ้นคำว่า เรียบร้อย
+   ============================================================ */
+
+/* ---------- ป้ายหมวด: สีอยู่ในป้าย ไม่มีจุดนำหน้าแล้ว ---------- */
+.cpill{display:inline-flex;align-items:center;max-width:100%;box-sizing:border-box;
+  padding:2px 7px;border-radius:7px;font-size:11px;font-weight:600;line-height:1.55;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+.cpill.md{font-size:12px;padding:2.5px 8px}
+.cpill.lg{font-size:12.5px;padding:3px 9px;border-radius:8px}
+
+/* ปุ่มเลือกหมวดในแถวฟอร์ม — ทั้งปุ่มเป็นสีของหมวดนั้น */
+.frow .rc.fill b{color:inherit}
+.frow .rc.fill i{color:inherit;opacity:.72}
+.frow .rc.fill{font-weight:600}
+.frow .rc.ph{background:var(--card2);color:var(--ink3)}
+
+/* เมนูหมวด / คำที่เดาให้ / โดนัท / การ์ดเฉลี่ย — ระยะห่างปรับใหม่หลังถอดจุดออก */
+.rcmi{gap:8px}
+.sugb{gap:8px}
+.sugb .sc{max-width:112px;overflow:visible}
+.crow{gap:8px}
+.avr{gap:8px}
+.avk .cpill{margin-bottom:2px}
+.askb .an i{gap:0}
+.setrow .cpill{flex:0 0 auto}
+
+/* ---------- ชิปประจำ: โหมดจัดแบบกดค้าง ---------- */
+.chip.pin{position:relative;font-weight:600;touch-action:none}
+.chip.pin .px{position:absolute;top:-8px;right:-8px;width:21px;height:21px;border-radius:50%;
+  background:var(--out);color:#fff;border:2px solid var(--card);
+  font-size:11px;line-height:17px;text-align:center;font-weight:700;z-index:2;
+  box-shadow:0 1px 3px rgba(0,0,0,.22)}
+.chip.padd{background:none;color:var(--ink2);font-weight:500;
+  border:1px dashed var(--line2);touch-action:auto}
+.pinwrap{position:relative}
+.pinwrap.managing{gap:13px 10px;padding:4px 0 2px}
+.pinwrap.managing .chip.pin{animation:pinWig .34s ease-in-out infinite;will-change:transform}
+.pinwrap.managing .chip.pin:nth-child(2n){animation-delay:-.17s}
+.pinwrap.managing .chip.pin:nth-child(3n){animation-delay:-.09s}
+@keyframes pinWig{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.4deg)}}
+.chip.pin.dragging{animation:none;box-shadow:var(--sh3);transform:scale(1.07)}
+.chip.pin.slot{visibility:hidden;animation:none}
+@media (prefers-reduced-motion:reduce){.pinwrap.managing .chip.pin{animation:none}}
+
+/* ชิปเลือกหมวดในหน้าแก้ชิป — ทุกใบเป็นสีของหมวดตัวเอง ใบที่เลือกใส่วงหมึกรอบ + ✓ */
+.chip.catpick{font-weight:600}
+.chip.catpick.on{box-shadow:0 0 0 2.5px var(--ink)}
+.chip.catpick i{font-style:normal;margin-left:5px;font-size:11px;opacity:.85}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1987,6 +2042,40 @@ function catOf(name,type){
 }
 function catColor(name,type){return catOf(name,type).c;}
 
+/* ================= Ver.42 — สีหมวดอยู่ในป้าย ไม่ใช่จุดนำหน้า =================
+   ของเดิมทุกที่ในแอปเป็น [จุดสี] + [ชื่อหมวด] จุดกินที่ประมาณ 13-15px ต่อจุด
+   แล้วยังบอกอะไรไม่ได้เลยนอกจาก "หมวดนี้มีสี" — ย้ายสีไปเป็นพื้นของป้ายเลย
+   ได้พื้นที่คืน และตัวหมวดเองกลายเป็นสิ่งที่มองปราดเดียวเห็น
+   สีตัวอักษรบนพื้นสีไม่เดา: คิดค่าคอนทราสต์จริงทั้งกับขาวและกับหมึกเข้ม
+   แล้วเลือกฝั่งที่ได้อัตราสูงกว่า — สีเหลือง #FFD43B จึงได้อักษรดำ
+   ส่วนสีแดง #FF6B6B ได้อักษรขาว โดยไม่ต้องมีตารางสีไว้ล่วงหน้า */
+var _CI='#14171F';           /* หมึกเข้มที่ใช้เป็นตัวเลือกคู่กับสีขาว */
+function _hx(h){
+  h=String(h||'').trim();
+  if(h.charAt(0)==='#')h=h.slice(1);
+  if(h.length===3)h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);
+  var n=parseInt(h,16);
+  if(isNaN(n)||h.length!==6)return [173,181,189];
+  return [(n>>16)&255,(n>>8)&255,n&255];
+}
+function _lin(c){c/=255;return c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4);}
+function _lum(h){var r=_hx(h);return 0.2126*_lin(r[0])+0.7152*_lin(r[1])+0.0722*_lin(r[2]);}
+var _onCache={};
+function onCat(h){
+  if(_onCache[h])return _onCache[h];
+  var L=_lum(h);
+  var cw=1.05/(L+0.05);                 /* คู่กับขาว */
+  var cd=(L+0.05)/(_lum(_CI)+0.05);     /* คู่กับหมึกเข้ม */
+  return (_onCache[h]=(cw>=cd?'#FFFFFF':_CI));
+}
+/* ป้ายหมวดหนึ่งใบ — cls ใส่ md / lg ได้ถ้าต้องการใหญ่ขึ้น */
+function catPillC(txt,col,cls){
+  return '<span class="cpill'+(cls?' '+cls:'')+'" style="background:'+esc(col)+';color:'+onCat(col)+'">'
+    +esc(txt||'')+'</span>';
+}
+function catPill(cat,type,cls){return catPillC(cat,catColor(cat,type),cls);}
+
+
 /* ---- ถามยืนยันแบบในแอป (ไม่ใช้ popup ของเบราว์เซอร์) ---- */
 var _askCb=null;
 function askConfirm(title,body,okText,cb,danger){
@@ -2006,7 +2095,7 @@ function askConfirm(title,body,okText,cb,danger){
    ด้วยน้ำหนักพอๆ กัน (ของเดิมเด่นแต่ราคา ชื่อรายการเป็นตัวเล็กสีเทา) */
 function askRowHtml(name,cat,type,amt){
   return '<div class="ar"><span class="an">'+esc(name||'(ยังไม่ได้ตั้งชื่อ)')
-    +'<i><span class="cd" style="background:'+esc(catColor(cat,type))+'"></span>'+esc(cat||'')+'</i></span>'
+    +'<i>'+catPill(cat,type)+'</i></span>'
     +'<b class="av '+(type==='in'?'in':'out')+'">'+(type==='in'?'+':'\u2212')+fmt(amt)+'</b></div>';
 }
 function askCard(head,when,rowsHtml,totLabel,type,totAmt){
@@ -2473,8 +2562,8 @@ function renderSummary(){
   var rows=ks.slice(0,5).map(function(k){
     /* Ver.17: เดิมยอดกับเปอร์เซ็นต์อยู่ในสแปนเดียว ความยาวเลขต่างกันขอบขวาจึงไม่ตรงกันสักแถว
        แยกเป็นสองคอลัมน์กว้างคงที่ ชิดขวาทั้งคู่ ขอบขวาจึงตรงกันแน่นอนไม่ว่าเลขจะกี่หลัก */
-    return '<div class="crow"><span class="dot" style="background:'+catColor(k,'out')+'"></span>'
-     +'<span class="cnm">'+esc(k)+'</span><span class="cam">'+fmt(by[k])+'</span>'
+    return '<div class="crow">'
+     +'<span class="cnm">'+catPill(k,'out','md')+'</span><span class="cam">'+fmt(by[k])+'</span>'
      +'<span class="cpc">'+Math.round(by[k]/tot*100)+'%</span></div>';}).join('');
   document.getElementById('sumBody').innerHTML=
    /* Ver.10: ตัดประโยค "จ่ายมากที่สุดคือ..." ออก — ตัวเลขและอันดับอยู่ในโดนัท
@@ -2874,8 +2963,8 @@ function renderAvg(){
   var pick=(D.avgPins&&D.avgPins.length)?D.avgPins.slice():ks.slice(0,4);
   var rows=pick.map(function(c){
     var v=cur.by[c]||0,pv=prev.by[c]||0;
-    return '<div class="avr"><span class="adot" style="background:'+catColor(c,'out')+'"></span>'
-     +'<span class="avk"><b>'+esc(c)+'</b>'
+    return '<div class="avr">'
+     +'<span class="avk">'+catPill(c,'out','lg')
      +'<i>รวม '+fmt(v)+' ใน '+w.d+' วัน</i></span>'
      +avgDelta(v/w.d,pv?pv/w.d:0)
      +'<span class="avv">'+fmt(Math.round(v/w.d))+'<u>/วัน</u></span></div>';}).join('');
@@ -2891,8 +2980,7 @@ function drawAvgPick(){
   var rows=D.cats.out.map(function(c,i){
     var on=(D.avgPins||[]).indexOf(c.n)>=0;
     return '<button class="setrow" onclick="toggleAvgPin('+i+')">'
-     +'<span class="dot" style="background:'+c.c+';width:14px;height:14px;flex:0 0 14px"></span>'
-     +'<span class="cn">'+esc(c.n)+'</span>'
+     +'<span class="cn">'+catPillC(c.n,c.c,'lg')+'</span>'
      +'<span class="go">'+(on?'✓':'')+'</span></button>';}).join('');
   paint('เลือกหมวดที่จะโชว์',
    '<div class="hintline">ไม่เลือกเลย = โชว์ 4 หมวดที่จ่ายเยอะสุดของช่วงนั้นให้เอง</div>'
@@ -2975,8 +3063,8 @@ function renderList(){
      ส่งเป็น index ไม่ใช่ชื่อหมวด เพราะชื่อหมวดมีเครื่องหมายคำพูดได้ จะทำ onclick พัง */
   var copts=[['-1','ทุกหมวด']];
   ks.forEach(function(c,i){
-    copts.push([String(i),'<span class="dot" style="background:'+catColor(c,types[c])+'"></span>'
-      +esc(c)+' <b style="font-weight:500;color:var(--ink3)">'+fmtK(by[c])+'</b>']);});
+    copts.push([String(i),catPill(c,types[c],'md')
+      +' <b style="font-weight:500;color:var(--ink3)">'+fmtK(by[c])+'</b>']);});
   chips+=mselHtml('cat',(curFilter?String(ks.indexOf(curFilter)):'-1'),copts,'setFilterS');
   document.getElementById('filterChips').innerHTML=chips;
   if(curFilter)list=list.filter(function(e){return e.cat===curFilter;});
@@ -2988,7 +3076,7 @@ function renderList(){
   list.forEach(function(e){if(e.type==='in')fIn+=e.amount;else fOut+=e.amount;});
   if(q||filtered){
     var lbl=[];
-    if(curFilter)lbl.push(esc(curFilter));
+    if(curFilter)lbl.push(catPill(curFilter,types[curFilter]||'out','md'));
     else if(curType)lbl.push(curType==='in'?'เฉพาะรับ':'เฉพาะจ่าย');
     if(q)lbl.push('“'+esc(curQ.trim())+'”');
     if(!lbl.length)lbl.push('ทั้งหมด');
@@ -3636,7 +3724,7 @@ function rowHtml(r,i){
    +'<span class="rcw">'+rcBtn(r,i)
    +(r.catOpen?('<div class="rcm">'+cats.map(function(c,ci){
       return '<button class="rcmi'+((c.n===r.cat&&(hasN||r.catSet))?' on':'')+'" onclick="pickRowCat('+i+','+ci+')">'
-       +'<span class="dot" style="background:'+c.c+'"></span><span class="cn">'+esc(c.n)+'</span><i>✓</i></button>';}).join('')+'</div>'):'')
+       +'<span class="cn">'+catPillC(c.n,c.c,'md')+'</span><i>✓</i></button>';}).join('')+'</div>'):'')
    +'</span>'
    +'<span class="fm money sm'+(filled?' filled':'')+'" id="moneyBox'+i+'"><span class="cur">฿</span>'
    +'<input type="number" inputmode="decimal" id="fAmt'+i+'" value="'+(r.a===''?'':r.a)+'" oninput="onRowAmt('+i+',this.value)" onfocus="hideSug()" placeholder="0"></span>'
@@ -3651,8 +3739,11 @@ function rcBtn(r,i){
   /* โชว์ชื่อหมวดเมื่อ พิมชื่อแล้ว (แอปเดาให้) หรือ เขาเลือกเอง
      เลือกเองทั้งที่ยังไม่ได้พิมชื่อ ก็ต้องขึ้นหมวดนั้น ไม่ใช่กลับไปเป็นคำว่าเลือกหมวด */
   var show=!!((r.n&&r.n.trim())||r.catSet);
-  return '<button class="rc'+(show?'':' ph')+'" onclick="toggleRowCat('+i+')" id="rcat'+i+'">'
-   +'<span class="dot" style="background:'+(show?catColor(r.cat,draft.type):'var(--ink3)')+'"></span>'
+  /* Ver.42: ไม่มีจุดสีนำหน้าแล้ว ทั้งปุ่มเป็นสีของหมวดนั้นไปเลย ตัวอักษรคิดคอนทราสต์ให้ */
+  var col=show?catColor(r.cat,draft.type):'';
+  return '<button class="rc'+(show?' fill':' ph')+'"'
+   +(show?(' style="background:'+col+';color:'+onCat(col)+'"'):'')
+   +' onclick="toggleRowCat('+i+')" id="rcat'+i+'">'
    +'<b>'+(show?esc(r.cat):'เลือกหมวด')+'</b><i>'+(r.catOpen?'\u25b4':'\u25be')+'</i></button>';
 }
 /* ================= Ver.39 — จัดการชิปประจำจากในฟอร์ม =================
@@ -3664,61 +3755,196 @@ function pinIdxList(){
   return ix;
 }
 function togglePinEdit(){draft.pinEdit=!draft.pinEdit;buzz(8);drawForm(false);}
-function movePin(i,d){
-  var ix=window._formPinIdx||[],a=ix[i],b=ix[i+d];
-  if(a==null||b==null)return;
-  var t=D.pins[a];D.pins[a]=D.pins[b];D.pins[b]=t;
-  save();buzz(8);drawForm(false);
+/* ตัวชิปเอง เป็นทั้งปุ่มใช้งานและตัวที่จับลากได้ ขึ้นกับว่าอยู่โหมดไหน */
+function pinBodyHtml(pins){
+  var man=!!draft.pinEdit;
+  if(!pins.length&&!man)
+    return '<div class="hintline" style="padding:0">ยังไม่มีชิปฝั่งนี้ กด จัดชิป เพื่อเพิ่มจากรายการที่พิมไว้</div>';
+  return '<div class="chipwrap pinwrap'+(man?' managing':'')+'" id="pinWrap">'
+   +pins.map(function(p,i){
+      var col=catColor(p.cat,p.type||'out');
+      return '<button class="chip pin" data-pi="'+i+'" style="background:'+col+';color:'+onCat(col)+'"'
+       +(man?'':' onclick="useFormPin('+i+',this)"')+'>'+esc(p.n)
+       +(man?'<span class="px" onclick="event.stopPropagation();askDelPin('+i+')">✕</span>':'')
+       +'</button>';}).join('')
+   +(man?'<button class="chip padd" onclick="askAddPins()">＋ เพิ่มชิป</button>':'')
+   +'</div>';
 }
-function delFormPin(i){
+/* ================= Ver.42 — จัดชิปประจำแบบกดค้าง =================
+   Ver.39 ทำโหมดจัดเป็นลิสต์แนวตั้งมีปุ่ม ↑ ↓ ✕ เพราะกลัวลากในกริดที่ชิปตกบรรทัดแล้วพลาด
+   รอบนี้เขาสั่งชัดว่าอยากได้แบบกดค้างแล้วสั่น ลากไปวางเอง — เอาตามนั้น
+   ลิสต์แนวตั้งกับ movePin ถูกถอดออกทั้งชุด ชิปกลายเป็นตัวมันเองที่จับลากได้เลย
+
+   จุดที่ต้องระวังและแก้ไว้แล้ว
+   - .chip.pin ตั้ง touch-action:none ถาวร ไม่ใช่เฉพาะตอนจัด
+     เพราะเบราว์เซอร์ตัดสินตั้งแต่นิ้วแตะว่าจะให้เลื่อนจอไหม พอกดค้างครบ 480ms
+     แล้วค่อยเปลี่ยนใจไม่ทันแล้ว ผลคือจะลากชิปไปด้วยเลื่อนจอไปด้วย
+     ค่าที่ต้องจ่าย: เอานิ้วจิ้มบนชิปแล้วปัดเลื่อนจอไม่ได้ ต้องจิ้มที่อื่น
+   - ตัวที่ลากใช้ position:absolute เทียบกับ #pinWrap ไม่ใช่ fixed
+     เพราะชีทที่ครอบอยู่มี transform ของตัวเอง fixed จะไปยึดกับชีทแทนจอ พิกัดเพี้ยน
+   - เก็บ style เดิมเป็นสตริงไว้ก่อนยก แล้วใส่กลับทั้งก้อนตอนวาง
+     (ในนั้นมีสีพื้น/สีอักษรของหมวดอยู่ ถ้าล้าง cssText ทิ้งชิปจะกลายเป็นสีเทา) */
+var _pg={};
+function pgWrap(){return document.getElementById('pinWrap');}
+function pgEnter(){
+  var idx=_pg.el?_pg.el.getAttribute('data-pi'):null;
+  _pg.lp=0;buzz(14);
+  draft.pinEdit=true;drawForm(false);
+  var w=pgWrap();if(!w||idx==null){_pg={};return;}
+  var el=w.querySelector('.chip.pin[data-pi="'+idx+'"]');
+  if(!el){_pg={};return;}
+  _pg.el=el;
+  pgLift(_pg.x,_pg.y);
+}
+function pgLift(cx,cy){
+  var w=pgWrap(),el=_pg.el;if(!w||!el)return;
+  var r=el.getBoundingClientRect(),wr=w.getBoundingClientRect();
+  var slot=document.createElement('span');
+  slot.className='chip pin slot';
+  slot.style.width=r.width+'px';slot.style.height=r.height+'px';
+  el.parentNode.insertBefore(slot,el);
+  _pg.slot=slot;_pg.st0=el.getAttribute('style')||'';
+  _pg.dx=cx-r.left;_pg.dy=cy-r.top;
+  el.style.position='absolute';el.style.margin='0';
+  el.style.width=r.width+'px';el.style.height=r.height+'px';
+  el.style.left=(r.left-wr.left)+'px';el.style.top=(r.top-wr.top)+'px';
+  el.style.zIndex='9';el.style.pointerEvents='none';
+  el.classList.add('dragging');
+  _pg.drag=true;_pg.cx=cx;_pg.cy=cy;
+}
+function pgHit(x,y){
+  var w=pgWrap(),slot=_pg.slot;if(!w||!slot)return;
+  var kids=[].slice.call(w.children),best=null,bd=1e9;
+  for(var i=0;i<kids.length;i++){
+    var c=kids[i];
+    if(c===_pg.el||c===slot||!c.classList.contains('pin'))continue;
+    var r=c.getBoundingClientRect();
+    /* แนวตั้งถ่วงหนักกว่าแนวนอน เพราะชิปตกหลายบรรทัด ต้องล็อกบรรทัดให้ได้ก่อน */
+    var d=Math.abs(x-(r.left+r.width/2))+Math.abs(y-(r.top+r.height/2))*1.7;
+    if(d<bd){bd=d;best=c;}
+  }
+  if(!best)return;
+  var br=best.getBoundingClientRect();
+  /* เผื่อระยะ 8px รอบจุดกึ่งกลาง และสลับได้ไม่ถี่กว่า 110ms
+     ไม่งั้นพอสลับปุ๊บของก็ขยับ นิ้วที่ยังอยู่ที่เดิมจะเข้าเงื่อนไขซ้ำ ชิปจะกระพริบไปมา */
+  var mid=br.left+br.width/2;
+  if(y>=br.top&&y<=br.bottom&&Math.abs(x-mid)<8)return;
+  var now=Date.now();
+  if(_pg.hitAt&&now-_pg.hitAt<110)return;
+  var after=(y>br.bottom)||(y>=br.top&&x>mid);
+  var ref=after?best.nextSibling:best;
+  if(ref===slot)return;
+  _pg.hitAt=now;
+  w.insertBefore(slot,ref);
+}
+function pgFrame(){
+  _pg.raf=0;
+  var w=pgWrap(),el=_pg.el;
+  if(!w||!el||!_pg.drag)return;
+  var wr=w.getBoundingClientRect();
+  el.style.left=(_pg.cx-wr.left-_pg.dx)+'px';
+  el.style.top=(_pg.cy-wr.top-_pg.dy)+'px';
+  pgHit(_pg.cx,_pg.cy);
+}
+function pgDown(e){
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  var t=e.target;if(!t||!t.closest)return;
+  var ch=t.closest('.chip.pin');
+  var w=pgWrap();
+  if(!ch||!w||!w.contains(ch)||t.closest('.px'))return;
+  _pg={el:ch,x:e.clientX,y:e.clientY,drag:false,lp:0,raf:0};
+  if(draft.pinEdit)_pg.arm=true;                       /* อยู่ในโหมดจัดแล้ว จับลากได้ทันที */
+  else _pg.lp=setTimeout(pgEnter,480);                 /* ยังไม่จัด ต้องกดค้างก่อน */
+}
+function pgMove(e){
+  if(!_pg.el)return;
+  var dx=Math.abs(e.clientX-_pg.x),dy=Math.abs(e.clientY-_pg.y);
+  if(!_pg.drag){
+    if(_pg.arm&&(dx>6||dy>6))pgLift(e.clientX,e.clientY);
+    else if(_pg.lp&&(dx>10||dy>10)){clearTimeout(_pg.lp);_pg={};return;}
+    if(!_pg.drag)return;
+  }
+  if(e.cancelable)e.preventDefault();
+  _pg.cx=e.clientX;_pg.cy=e.clientY;
+  if(!_pg.raf)_pg.raf=requestAnimationFrame(pgFrame);
+}
+function pgUp(){
+  if(_pg.lp)clearTimeout(_pg.lp);
+  if(_pg.raf)cancelAnimationFrame(_pg.raf);
+  if(_pg.drag&&_pg.el){
+    var el=_pg.el,slot=_pg.slot;
+    el.classList.remove('dragging');
+    el.setAttribute('style',_pg.st0||'');
+    if(slot&&slot.parentNode){
+      slot.parentNode.insertBefore(el,slot);
+      slot.parentNode.removeChild(slot);
+    }
+    _pg.drag=false;
+    pgCommit();
+  }
+  _pg={};
+}
+/* อ่านลำดับใหม่จาก DOM แล้วเขียนกลับลง D.pins
+   ชิปที่เห็นอยู่เป็นแค่ฝั่งเดียว (รับ หรือ จ่าย) จึงต้องแมปกลับผ่าน _formPinIdx
+   สลับเฉพาะช่องของฝั่งนี้ ฝั่งตรงข้ามอยู่ที่เดิมทุกใบ */
+function pgCommit(){
+  var w=pgWrap();if(!w)return;
+  var els=w.querySelectorAll('.chip.pin[data-pi]'),order=[];
+  for(var i=0;i<els.length;i++)order.push(+els[i].getAttribute('data-pi'));
+  var ix=window._formPinIdx||[];
+  if(order.length!==ix.length)return;
+  var same=order.every(function(v,i){return v===i;});
+  var old=ix.map(function(j){return D.pins[j];});
+  order.forEach(function(oldPos,newPos){D.pins[ix[newPos]]=old[oldPos];});
+  if(!same){save();buzz(10);}
+  drawForm(false);
+}
+document.addEventListener('pointerdown',pgDown,{passive:true});
+document.addEventListener('pointermove',pgMove,{passive:false});
+document.addEventListener('pointerup',pgUp,{passive:true});
+document.addEventListener('pointercancel',pgUp,{passive:true});
+
+/* ---- ลบ / เพิ่ม ต้องถามยืนยันเสมอ แล้วปิดท้ายด้วยคำว่า เรียบร้อย ----
+   Ver.39 จงใจใช้ "เลิกทำ" แทนการถาม เพราะคิดว่าตอนไล่จัดหลายใบจะรำคาญ
+   เขาสั่งกลับเป็นถามยืนยัน คำสั่งล่าสุดชนะ — เลิกทำจึงถูกถอดออกจากทางนี้ */
+function askDelPin(i){
   var ix=window._formPinIdx||[],a=ix[i];if(a==null)return;
-  var p=D.pins[a];
-  D.pins.splice(a,1);save();buzz(10);drawForm(false);
-  /* ชิปไม่ใช่รายการเงิน ลบผิดก็ปักใหม่ได้ — ใช้เลิกทำแทนการถามยืนยันทีละใบ
-     ไม่งั้นตอนไล่จัดชิปทีเดียวหลายใบต้องมากดยืนยันทุกครั้ง */
-  toastUndo('ลบชิป '+p.n+' แล้ว',function(){
-    D.pins.splice(Math.min(a,D.pins.length),0,p);save();drawForm(false);});
+  var p=D.pins[a];if(!p)return;
+  buzz(8);
+  askConfirm('ลบชิป “'+p.n+'” ?','ชิปจะหายไปจากฟอร์ม ส่วนรายการที่เคยบันทึกไว้ยังอยู่ครบ','ตกลง',function(){
+    D.pins.splice(a,1);save();buzzDel();drawForm(false);
+    toast('ลบชิป '+p.n+' เรียบร้อย','del');
+  },true);
 }
-function addPinsFromRows(){
-  var made=0,dup=0;
+function askAddPins(){
+  var add=[],dup=0;
   draft.rows.forEach(function(r){
     var n=(r.n||'').trim();if(!n)return;
     var k=learnKey(n),ex=false;
     for(var j=0;j<D.pins.length;j++)
       if((D.pins[j].type||'out')===draft.type&&learnKey(D.pins[j].n)===k)ex=true;
-    if(ex){dup++;return;}
-    D.pins.push({n:n,cat:r.cat||D.cats[draft.type][0].n,type:draft.type,last:0});made++;
+    if(!ex&&add.every(function(x){return learnKey(x.n)!==k;}))
+      add.push({n:n,cat:r.cat||D.cats[draft.type][0].n,type:draft.type,last:0});
+    else dup++;
   });
-  if(!made){toast(dup?'มีชิปชื่อนี้อยู่แล้ว':'พิมพ์ชื่อรายการข้างบนก่อน แล้วค่อยกดเพิ่ม','del');return;}
-  save();buzz(12);drawForm(false);toast('เพิ่ม '+made+' ชิปแล้ว','ok');
+  if(!add.length){toast(dup?'มีชิปชื่อนี้อยู่แล้ว':'พิมพ์ชื่อรายการข้างบนก่อน แล้วค่อยกดเพิ่ม','del');return;}
+  buzz(8);
+  askConfirm(add.length>1?('เพิ่ม '+add.length+' ชิป?'):('เพิ่มชิป “'+add[0].n+'” ?'),
+    add.map(function(x){return '• '+x.n+'  ('+x.cat+')';}).join('\n'),'ตกลง',function(){
+    add.forEach(function(x){D.pins.push(x);});
+    save();buzz(12);drawForm(false);
+    toast('เพิ่ม '+add.length+' ชิป เรียบร้อย','ok');
+  });
 }
-function pinAddBtn(){
-  return '<button class="addrowbtn" style="margin-top:9px" onclick="addPinsFromRows()">＋ เพิ่มชิปจากรายการที่พิมไว้</button>';
-}
-function pinManHtml(pins){
-  if(!pins.length)return '<div class="hintline" style="padding:0">ยังไม่มีชิปฝั่งนี้</div>'+pinAddBtn();
-  return '<div class="pinman">'+pins.map(function(p,i){
-    return '<div class="pmrow">'
-     +'<span class="dot" style="background:'+catColor(p.cat,p.type||'out')+'"></span>'
-     +'<span class="pmn">'+esc(p.n)+'<i>'+esc(p.cat)+'</i></span>'
-     +'<button class="pmb" onclick="movePin('+i+',-1)"'+(i===0?' disabled':'')+'>↑</button>'
-     +'<button class="pmb" onclick="movePin('+i+',1)"'+(i===pins.length-1?' disabled':'')+'>↓</button>'
-     +'<button class="pmb del" onclick="delFormPin('+i+')">✕</button>'
-     +'</div>';}).join('')+'</div>'+pinAddBtn();
-}
+
 function drawForm(fromVoice){
   curSheet='form';
   var pins=D.pins.filter(function(p){return (p.type||'out')===draft.type;});
   window._formPins=pins;window._formPinIdx=pinIdxList();
   var pinLbl=draft.type==='in'?'รับประจำ':'ซื้อประจำ';
-  var pinBody=draft.pinEdit?pinManHtml(pins)
-   :(pins.length?('<div class="chipwrap">'+pins.map(function(p,i){
-        return '<button class="chip" onclick="useFormPin('+i+',this)">'
-         +'<span class="dot" style="background:'+catColor(p.cat,p.type||'out')+'"></span>'+esc(p.n)+'</button>';}).join('')
-      +'</div>')
-     :'<div class="hintline" style="padding:0">ยังไม่มีชิปฝั่งนี้ กด จัดชิป เพื่อเพิ่มจากรายการที่พิมไว้</div>');
+  var pinBody=pinBodyHtml(pins);
   var pinChips='<div class="field sec"><div class="sechead"><span class="fl">'+pinLbl
-   +(draft.pinEdit?'':' — แตะแล้วชื่อกับหมวดมาเอง')+'</span>'
+   +(draft.pinEdit?' — ลากสลับที่ได้':' — แตะใช้ · กดค้างเพื่อจัด')+'</span>'
    +'<button class="secbtn'+(draft.pinEdit?' on':'')+'" onclick="togglePinEdit()">'
    +(draft.pinEdit?'เสร็จแล้ว':'จัดชิป')+'</button></div>'+pinBody+'</div>';
   /* Ver.12: ตัดแถว "ล่าสุด" ออกตามที่สั่ง — ชิปประจำทำหน้าที่นี้แทนทั้งสองฝั่ง */
@@ -3804,9 +4030,8 @@ function drawSug(i){
   if(!list.length){box.className='sugw';box.innerHTML='';return;}
   box.innerHTML=list.map(function(o,j){
     return '<button class="sugb" onmousedown="event.preventDefault()" onclick="pickSug('+i+','+j+')">'
-     +'<span class="dot" style="background:'+catColor(o.cat,draft.type)+'"></span>'
      +'<span class="sn">'+sugHl(o.n,r.n)+'</span>'
-     +'<span class="sc">'+esc(o.cat)+'</span></button>';}).join('');
+     +'<span class="sc">'+catPill(o.cat,draft.type)+'</span></button>';}).join('');
   box.className='sugw on';
 }
 function hideSug(i){
@@ -4071,7 +4296,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.34 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.42 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
@@ -4100,8 +4325,7 @@ function drawCatList(){
   var rows=arr.map(function(c,i){
     var used=D.entries.filter(function(e){return e.cat===c.n&&e.type===curCatType;}).length;
     return '<button class="setrow" onclick="editCat(\''+curCatType+'\','+i+')">'
-     +'<span class="dot" style="background:'+c.c+';width:14px;height:14px;flex:0 0 14px"></span>'
-     +'<span class="cn">'+esc(c.n)+'</span><span class="go">'+(used?used+' รายการ ':'')+'›</span></button>';}).join('');
+     +'<span class="cn">'+catPillC(c.n,c.c,'lg')+'</span><span class="go">'+(used?used+' รายการ ':'')+'›</span></button>';}).join('');
   paint(curCatType==='out'?'หมวดรายจ่าย':'หมวดรายรับ',
    '<div class="grp">'+rows+'</div>'
    +'<button class="btn btn-out" onclick="editCat(\''+curCatType+'\',-1)">+ เพิ่มหมวดใหม่</button>');
@@ -4111,8 +4335,7 @@ function drawPinList(){
   curSheet='pins';
   var rows=D.pins.length?D.pins.map(function(p,i){
     return '<button class="setrow" onclick="editPin('+i+')">'
-     +'<span class="dot" style="background:'+catColor(p.cat,p.type||'out')+';width:14px;height:14px;flex:0 0 14px"></span>'
-     +'<span class="cn">'+esc(p.n)+'<span style="color:var(--ink3);font-size:11.5px"> · '+esc(p.cat)+'</span></span>'
+     +'<span class="cn">'+esc(p.n)+' '+catPill(p.cat,p.type||'out')+'</span>'
      +'<span class="go">›</span></button>';}).join('')
    :'<div class="hintline">ยังไม่มีชิป ชิปคือของที่ซื้อบ่อย กดแล้วชื่อกับหมวดมาเอง เหลือแค่ใส่ราคา</div>';
   paint('ชิปซื้อประจำ','<div class="grp">'+rows+'</div>'
@@ -4143,8 +4366,9 @@ function drawEdit(){
   }
   var cats=D.cats[edit.type];
   var chips=cats.map(function(c,i){
-    return '<button class="chip'+(c.n===edit.cat?' on':'')+'" onclick="pickEditCat('+i+')">'
-     +'<span class="dot" style="background:'+c.c+'"></span>'+esc(c.n)+'</button>';}).join('');
+    var on=c.n===edit.cat;
+    return '<button class="chip catpick'+(on?' on':'')+'" style="background:'+c.c+';color:'+onCat(c.c)+'"'
+     +' onclick="pickEditCat('+i+')">'+esc(c.n)+(on?'<i>✓</i>':'')+'</button>';}).join('');
   paint(edit.idx<0?'เพิ่มชิปใหม่':'แก้ชิป',
    '<div class="field"><span class="fl">ชื่อของที่ซื้อประจำ</span><input type="text" id="eNm" value="'+esc(edit.n)+'" oninput="edit.n=this.value" placeholder="เช่น ค่าข้าว, ค่าน้ำมัน"></div>'
    +'<div class="seg"><button class="'+(edit.type==='out'?'on o':'')+'" onclick="setEditType(\'out\')">จ่ายออก</button>'
@@ -4217,8 +4441,8 @@ function drawLearned(){
   var ks=Object.keys(D.learned);
   var rows=ks.length?ks.slice(0,60).map(function(k){
     var v=D.learned[k];
-    return '<div class="setrow"><span class="dot" style="background:'+catColor(v.cat,v.type||'out')+';width:12px;height:12px;flex:0 0 12px"></span>'
-     +'<span class="cn">'+esc(k)+'</span><span class="go">'+esc(v.cat)+'</span></div>';}).join('')
+    return '<div class="setrow">'
+     +'<span class="cn">'+esc(k)+'</span><span class="go">'+catPill(v.cat,v.type||'out')+'</span></div>';}).join('')
    :'<div class="hintline">ยังไม่มี เมื่อไหร่ที่คุณแก้หมวดที่แอปเดาผิด Muifei จะจำคำนั้นไว้</div>';
   paint('คำที่แอปจำได้','<div class="grp">'+rows+'</div>'
    +(ks.length?'<button class="btn btn-danger" onclick="clearLearned()">ล้างคำที่จำไว้ทั้งหมด</button>':''));
