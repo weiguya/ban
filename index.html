@@ -1760,6 +1760,30 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .bar.clip::before{top:5px}
 .bar.clip::after{top:11px}
 </style>
+<style id="skin40">
+/* ============================================================
+   Ver.45 — จุดสีกลับมาเฉพาะห้าจุดที่กดไม่ได้ ที่กดได้ยังเป็นป้ายทึบเหมือนเดิม
+   จุดใช้คลาสใหม่ .cdot ไม่ใช่ .dot ของเก่า เพราะกฎ .dot เดิมยังค้างอยู่หลายชั้น
+   และผูกกับบริบทเก่าที่ไม่ตรงกับที่ใช้ตอนนี้
+   ============================================================ */
+.cdot{display:inline-block;width:10px;height:10px;flex:0 0 10px;border-radius:50%;
+  vertical-align:middle;margin-right:7px}
+.cdot.lg{width:12px;height:12px;flex:0 0 12px}
+
+/* การ์ดเฉลี่ยต่อวัน — จุดเป็นลูกของ .avr โดยตรง ระยะจึงมาจาก gap ของแถว */
+.avr .cdot{margin-right:0}
+.avk b{display:block;font-size:14.5px;font-weight:700;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.avk i{margin-top:1px}
+
+/* legend โดนัท — เหมือนกัน จุดเป็นลูกของ .crow ระยะมาจาก gap */
+.crow .cdot{margin-right:0}
+.crow .cnm{font-size:13px;font-weight:600;color:var(--ink)}
+
+/* แถบยอดรวม กล่องยืนยัน คำที่จำได้ — จุดอยู่ในบรรทัดข้อความ ใช้ margin ของตัวเอง */
+.askb .an i{display:flex;align-items:center}
+.setrow .go{display:inline-flex;align-items:center}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -2133,6 +2157,18 @@ function catPair(col){
   return (_pairCache[col]=[bg,fg]);
 }
 function catStyle(col){var p=catPair(col);return 'background:'+p[0]+';color:'+p[1];}
+/* ================= Ver.45 — จุดสีกลับมา เฉพาะที่กดไม่ได้ =================
+   กฎที่ตกลงกันได้รอบนี้ ใช้รูปทรงเป็นตัวบอกว่ากดได้หรือไม่ได้
+     ป้ายทึบ  = ของที่กดได้   (ชิปประจำ ปุ่มหมวด เมนู ชีทตั้งค่า — ไม่แตะ คงเดิม)
+     จุดสี    = ป้ายชื่อเฉยๆ  (การ์ดเฉลี่ย legend โดนัท แถบยอดรวม กล่องยืนยัน คำที่จำได้)
+   Ver.42 เคยถอดจุดออกทั้งแอปเพราะ "เปลืองพื้นที่" ซึ่งจริงตอนที่จุดอยู่ทุกที่รวมทั้งของที่กดได้
+   ตอนนี้จุดเหลือแค่ห้าจุดที่เป็นป้ายชื่อจริงๆ ค่าที่จ่ายจึงเล็กลงมาก
+   สีของจุดใช้ catSoft ตัวเดียวกับชิ้นโดนัท (ความสว่างเท่ากันหมดที่ 68%)
+   ไม่ใช่สีดิบแบบจุดรุ่นก่อน Ver.42 ซึ่งสว่างไม่เท่ากันตั้งแต่ 47% ถึง 74% */
+function catDot(col,cls){
+  return '<span class="cdot'+(cls?' '+cls:'')+'" style="background:'+catSoft(col)+'"></span>';
+}
+function catDotN(cat,type,cls){return catDot(catColor(cat,type),cls);}
 /* โดนัทกับไอคอนหน้าแถว: สีหมวดชุดเดิมมีความสว่างไม่เท่ากันเลย
    (#22B8CF สว่าง 47% แต่ #F783AC สว่าง 74%) ชิ้นเข้มจึงกระโดดออกมาข่มชิ้นอ่อน
    ดึงให้เท่ากันหมดที่ 68% ฮิวไม่แตะ โดนัทจึงอ่อนลงและอยู่โทนเดียวกับป้าย */
@@ -2170,7 +2206,7 @@ function askConfirm(title,body,okText,cb,danger){
    ด้วยน้ำหนักพอๆ กัน (ของเดิมเด่นแต่ราคา ชื่อรายการเป็นตัวเล็กสีเทา) */
 function askRowHtml(name,cat,type,amt){
   return '<div class="ar"><span class="an">'+esc(name||'(ยังไม่ได้ตั้งชื่อ)')
-    +'<i>'+catPill(cat,type)+'</i></span>'
+    +'<i>'+catDotN(cat,type)+esc(cat||'')+'</i></span>'
     +'<b class="av '+(type==='in'?'in':'out')+'">'+(type==='in'?'+':'\u2212')+fmt(amt)+'</b></div>';
 }
 function askCard(head,when,rowsHtml,totLabel,type,totAmt){
@@ -2672,8 +2708,8 @@ function renderSummary(){
   var rows=ks.slice(0,5).map(function(k){
     /* Ver.17: เดิมยอดกับเปอร์เซ็นต์อยู่ในสแปนเดียว ความยาวเลขต่างกันขอบขวาจึงไม่ตรงกันสักแถว
        แยกเป็นสองคอลัมน์กว้างคงที่ ชิดขวาทั้งคู่ ขอบขวาจึงตรงกันแน่นอนไม่ว่าเลขจะกี่หลัก */
-    return '<div class="crow">'
-     +'<span class="cnm">'+catPill(k,'out','md')+'</span><span class="cam">'+fmt(by[k])+'</span>'
+    return '<div class="crow">'+catDotN(k,'out')
+     +'<span class="cnm">'+esc(k)+'</span><span class="cam">'+fmt(by[k])+'</span>'
      +'<span class="cpc">'+Math.round(by[k]/tot*100)+'%</span></div>';}).join('');
   document.getElementById('sumBody').innerHTML=
    /* Ver.10: ตัดประโยค "จ่ายมากที่สุดคือ..." ออก — ตัวเลขและอันดับอยู่ในโดนัท
@@ -3073,8 +3109,8 @@ function renderAvg(){
   var pick=(D.avgPins&&D.avgPins.length)?D.avgPins.slice():ks.slice(0,4);
   var rows=pick.map(function(c){
     var v=cur.by[c]||0,pv=prev.by[c]||0;
-    return '<div class="avr">'
-     +'<span class="avk">'+catPill(c,'out','lg')
+    return '<div class="avr">'+catDotN(c,'out','lg')
+     +'<span class="avk"><b>'+esc(c)+'</b>'
      +'<i>รวม '+fmt(v)+' ใน '+w.d+' วัน</i></span>'
      +avgDelta(v/w.d,pv?pv/w.d:0)
      +'<span class="avv">'+fmt(Math.round(v/w.d))+'<u>/วัน</u></span></div>';}).join('');
@@ -3186,7 +3222,7 @@ function renderList(){
   list.forEach(function(e){if(e.type==='in')fIn+=e.amount;else fOut+=e.amount;});
   if(q||filtered){
     var lbl=[];
-    if(curFilter)lbl.push(catPill(curFilter,types[curFilter]||'out','md'));
+    if(curFilter)lbl.push(catDotN(curFilter,types[curFilter]||'out')+esc(curFilter));
     else if(curType)lbl.push(curType==='in'?'เฉพาะรับ':'เฉพาะจ่าย');
     if(q)lbl.push('“'+esc(curQ.trim())+'”');
     if(!lbl.length)lbl.push('ทั้งหมด');
@@ -4406,7 +4442,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.44 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.45 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
@@ -4552,7 +4588,7 @@ function drawLearned(){
   var rows=ks.length?ks.slice(0,60).map(function(k){
     var v=D.learned[k];
     return '<div class="setrow">'
-     +'<span class="cn">'+esc(k)+'</span><span class="go">'+catPill(v.cat,v.type||'out')+'</span></div>';}).join('')
+     +'<span class="cn">'+esc(k)+'</span><span class="go">'+catDotN(v.cat,v.type||'out')+esc(v.cat)+'</span></div>';}).join('')
    :'<div class="hintline">ยังไม่มี เมื่อไหร่ที่คุณแก้หมวดที่แอปเดาผิด Muifei จะจำคำนั้นไว้</div>';
   paint('คำที่แอปจำได้','<div class="grp">'+rows+'</div>'
    +(ks.length?'<button class="btn btn-danger" onclick="clearLearned()">ล้างคำที่จำไว้ทั้งหมด</button>':''));
