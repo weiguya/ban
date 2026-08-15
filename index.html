@@ -1765,6 +1765,11 @@ body.dark mark{background:rgba(90,175,240,.26)}
    Ver.45 — จุดสีกลับมาเฉพาะห้าจุดที่กดไม่ได้ ที่กดได้ยังเป็นป้ายทึบเหมือนเดิม
    จุดใช้คลาสใหม่ .cdot ไม่ใช่ .dot ของเก่า เพราะกฎ .dot เดิมยังค้างอยู่หลายชั้น
    และผูกกับบริบทเก่าที่ไม่ตรงกับที่ใช้ตอนนี้
+
+   Ver.46: ชื่อหมวดในสองการ์ดนี้ไม่ใช้ตัวหนา — [stated] "ไม่เอาตัวหนาสิ เพราะหัวข้อก็หนา"
+   หัวการ์ด (เดือนนี้จ่ายไปกับอะไร / เฉลี่ยต่อวัน) เป็น 700 อยู่แล้ว
+   ถ้าชื่อหมวดหนาด้วยก็กลายเป็นสองระดับที่หนักเท่ากันอยู่ในการ์ดเดียว ไม่มีอะไรนำอะไร
+   ตอนนี้ 500 = ระดับกลาง เด่นกว่าบรรทัดรองสีเทา แต่ยอมให้หัวการ์ดนำ
    ============================================================ */
 .cdot{display:inline-block;width:10px;height:10px;flex:0 0 10px;border-radius:50%;
   vertical-align:middle;margin-right:7px}
@@ -1772,13 +1777,13 @@ body.dark mark{background:rgba(90,175,240,.26)}
 
 /* การ์ดเฉลี่ยต่อวัน — จุดเป็นลูกของ .avr โดยตรง ระยะจึงมาจาก gap ของแถว */
 .avr .cdot{margin-right:0}
-.avk b{display:block;font-size:14.5px;font-weight:700;color:var(--ink);
+.avk b{display:block;font-size:14px;font-weight:500;color:var(--ink);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .avk i{margin-top:1px}
 
 /* legend โดนัท — เหมือนกัน จุดเป็นลูกของ .crow ระยะมาจาก gap */
 .crow .cdot{margin-right:0}
-.crow .cnm{font-size:13px;font-weight:600;color:var(--ink)}
+.crow .cnm{font-size:13px;font-weight:500;color:var(--ink)}
 
 /* แถบยอดรวม กล่องยืนยัน คำที่จำได้ — จุดอยู่ในบรรทัดข้อความ ใช้ margin ของตัวเอง */
 .askb .an i{display:flex;align-items:center}
@@ -4442,7 +4447,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.45 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.46 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
