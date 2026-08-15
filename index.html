@@ -1736,6 +1736,19 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .chip.catpick.on{box-shadow:0 0 0 2.5px var(--ink)}
 .chip.catpick i{font-style:normal;margin-left:5px;font-size:11px;opacity:.85}
 </style>
+<style id="skin38">
+/* ============================================================
+   Ver.43 — ป้ายหมวดเปลี่ยนเป็นพาสเทล พื้นอ่อน อักษรเป็นสีเดียวกันแต่เข้ม
+   ตัวอักษรบนพื้นอ่อนต้องหนากว่าตัวอักษรขาวบนพื้นทึบ ไม่งั้นจะดูจาง
+   ============================================================ */
+.cpill{font-weight:700}
+.chip.pin{font-weight:700}
+.frow .rc.fill{font-weight:700}
+.frow .rc.fill i{opacity:.85}
+.chip.catpick{font-weight:700}
+/* ปุ่ม ✕ ตอนจัดชิป: ขอบเดิมเป็นสีการ์ด พอชิปอ่อนลงต้องมีเส้นคั่นให้ชัด */
+.chip.pin .px{box-shadow:0 1px 4px rgba(0,0,0,.28)}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -2060,17 +2073,68 @@ function _hx(h){
 }
 function _lin(c){c/=255;return c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4);}
 function _lum(h){var r=_hx(h);return 0.2126*_lin(r[0])+0.7152*_lin(r[1])+0.0722*_lin(r[2]);}
-var _onCache={};
-function onCat(h){
-  if(_onCache[h])return _onCache[h];
-  var L=_lum(h);
-  var cw=1.05/(L+0.05);                 /* คู่กับขาว */
-  var cd=(L+0.05)/(_lum(_CI)+0.05);     /* คู่กับหมึกเข้ม */
-  return (_onCache[h]=(cw>=cd?'#FFFFFF':_CI));
+/* ================= Ver.43 — ป้ายหมวดเป็นสีพาสเทล =================
+   Ver.42 เอาสีหมวดดิบๆ มาถมทั้งใบแล้วหาสีอักษรที่คอนทราสต์ผ่าน ผลคือทึบเกินไป
+   [stated] "เข้มไปไหน เอาสีอ่อนสิ ... เน้นสีอ่อน พาสเทลดูง่าย"
+   วิธีใหม่: แปลงเป็น HSL แล้วแยกเป็นสองค่าจากสีเดียวกัน
+     พื้น = ฮิวเดิม ความอิ่มตัวลดเพดาน ความสว่าง 91%  (พาสเทล)
+     อักษร = ฮิวเดิม ความอิ่มตัวยกพื้น แล้วไล่ความสว่างลงจนคอนทราสต์กับพื้นถึง 4.5:1
+   ฮิวไม่เปลี่ยน ป้ายจึงยังเป็นสีของหมวดตัวเอง แค่อ่อนลงและอ่านง่ายขึ้น
+   โดนัทยังใช้สีดิบเหมือนเดิม — ตรงนั้นสีต้องแรงถึงจะแยกชิ้นออก ป้ายไม่ต้องไปแข่งด้วย */
+function _rgb2hsl(r,g,b){
+  r/=255;g/=255;b/=255;
+  var mx=Math.max(r,g,b),mn=Math.min(r,g,b),h=0,s=0,l=(mx+mn)/2,d=mx-mn;
+  if(d){
+    s=l>0.5?d/(2-mx-mn):d/(mx+mn);
+    if(mx===r)h=((g-b)/d+(g<b?6:0));
+    else if(mx===g)h=(b-r)/d+2;
+    else h=(r-g)/d+4;
+    h*=60;
+  }
+  return [h,s*100,l*100];
 }
+function _hsl2hex(h,s,l){
+  h=((h%360)+360)%360;s/=100;l/=100;
+  var c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2,r,g,b;
+  if(h<60){r=c;g=x;b=0;}else if(h<120){r=x;g=c;b=0;}else if(h<180){r=0;g=c;b=x;}
+  else if(h<240){r=0;g=x;b=c;}else if(h<300){r=x;g=0;b=c;}else{r=c;g=0;b=x;}
+  function q(v){var n=Math.round((v+m)*255);n=n<0?0:(n>255?255:n);
+    return (n<16?'0':'')+n.toString(16);}
+  return ('#'+q(r)+q(g)+q(b)).toUpperCase();
+}
+function _ratio(a,b){
+  var la=_lum(a),lb=_lum(b);
+  if(la<lb){var t=la;la=lb;lb=t;}
+  return (la+0.05)/(lb+0.05);
+}
+var _pairCache={};
+function catPair(col){
+  if(_pairCache[col])return _pairCache[col];
+  var r=_hx(col),hsl=_rgb2hsl(r[0],r[1],r[2]),h=hsl[0],s=hsl[1];
+  var bg=_hsl2hex(h,Math.min(s,72),91);
+  /* สีเทาแท้ๆ ยกความอิ่มตัวขึ้นไม่ได้ ไม่งั้นจะกลายเป็นสีอื่น */
+  var fs=s<12?s:Math.max(s,52);
+  var fg=_hsl2hex(h,fs,38);
+  for(var L=38;L>=14;L-=2){
+    fg=_hsl2hex(h,fs,L);
+    if(_ratio(fg,bg)>=4.5)break;
+  }
+  return (_pairCache[col]=[bg,fg]);
+}
+function catStyle(col){var p=catPair(col);return 'background:'+p[0]+';color:'+p[1];}
+/* โดนัทกับไอคอนหน้าแถว: สีหมวดชุดเดิมมีความสว่างไม่เท่ากันเลย
+   (#22B8CF สว่าง 47% แต่ #F783AC สว่าง 74%) ชิ้นเข้มจึงกระโดดออกมาข่มชิ้นอ่อน
+   ดึงให้เท่ากันหมดที่ 68% ฮิวไม่แตะ โดนัทจึงอ่อนลงและอยู่โทนเดียวกับป้าย */
+var _donCache={};
+function catSoft(col){
+  if(_donCache[col])return _donCache[col];
+  var r=_hx(col),hsl=_rgb2hsl(r[0],r[1],r[2]);
+  return (_donCache[col]=_hsl2hex(hsl[0],hsl[1]<12?hsl[1]:Math.min(Math.max(hsl[1],62),82),68));
+}
+
 /* ป้ายหมวดหนึ่งใบ — cls ใส่ md / lg ได้ถ้าต้องการใหญ่ขึ้น */
 function catPillC(txt,col,cls){
-  return '<span class="cpill'+(cls?' '+cls:'')+'" style="background:'+esc(col)+';color:'+onCat(col)+'">'
+  return '<span class="cpill'+(cls?' '+cls:'')+'" style="'+catStyle(col)+'">'
     +esc(txt||'')+'</span>';
 }
 function catPill(cat,type,cls){return catPillC(cat,catColor(cat,type),cls);}
@@ -2554,7 +2618,7 @@ function renderSummary(){
     /* Ver.27: เส้นโค้งโตออกมาเองด้วยการขยับ stroke-dasharray จาก "0" ไปเป็นความยาวจริง
        dashoffset เป็นค่าคงที่ ทำหน้าที่แค่บอกว่าหมวดนี้เริ่มตรงไหนของวง
        (ถ้าไปขยับ dashoffset วงจะหมุน ไม่ใช่โต) */
-    segs+='<circle class="dseg" cx="55" cy="55" r="37" fill="none" stroke="'+catColor(k,'out')+'" stroke-width="14" '
+    segs+='<circle class="dseg" cx="55" cy="55" r="37" fill="none" stroke="'+catSoft(catColor(k,'out'))+'" stroke-width="14" '
       +'data-da="'+len+' '+(C-len)+'" stroke-dasharray="'+(_fxDonut?('0 '+C):(len+' '+(C-len)))+'" '
       +'style="transition-delay:'+(_fxDonut?_dsi*90:0)+'ms" stroke-dashoffset="'+(-off)+'"></circle>';
     _dsi++;
@@ -3260,7 +3324,7 @@ function dayHtml(list,showTot,oneNum){
     rows.forEach(function(e){
       var col=catColor(e.cat,e.type);
       h+='<button class="line" data-id="'+esc(e.id)+'">'
-       +'<span class="ico" style="background:'+col+'1F;color:'+col+'">'+esc((e.cat||'?').trim().charAt(0))+'</span>'
+       +'<span class="ico" style="'+catStyle(col)+'">'+esc((e.cat||'?').trim().charAt(0))+'</span>'
        +'<span class="nm"><span class="t1">'+hlq(esc(e.name))+'</span><span class="t2">'+hlq(esc(e.cat))+'</span></span>'
        +'<span class="amt '+(e.type==='in'?'i':'o')+'">'+(e.type==='in'?'+':'−')+fmt(e.amount)+'</span></button>';});
     /* Ver.31: กรองหมวด หรือ กรองเฉพาะรับ/จ่าย อยู่ = ในวันนั้นมีชนิดเดียวอยู่แล้ว
@@ -3663,7 +3727,7 @@ function basketHtml(){
     var v=(it.amount===''||isNaN(it.amount))?0:it.amount;
     tot+=it.type==='in'?v:-v;
     return '<button class="brow" onclick="editBasket('+i+')">'
-     +'<span class="bi" style="background:'+col+'22;color:'+col+'">'+esc((it.cat||'?').trim().charAt(0))+'</span>'
+     +'<span class="bi" style="'+catStyle(col)+'">'+esc((it.cat||'?').trim().charAt(0))+'</span>'
      +'<span class="bn"><span class="a">'+esc(it.name||'—')+'</span><span class="b">'+esc(it.cat)+' · '+esc(thDate(it.date))+(v?'':' · ยังไม่ใส่เงิน')+'</span></span>'
      +'<span class="bv" style="color:'+(it.type==='in'?'var(--in)':'var(--out)')+'">'+(it.type==='in'?'+':'−')+fmt(v)+'</span>'
      +'<span class="bx" onclick="event.stopPropagation();delBasket('+i+')">✕</span></button>';}).join('');
@@ -3742,7 +3806,7 @@ function rcBtn(r,i){
   /* Ver.42: ไม่มีจุดสีนำหน้าแล้ว ทั้งปุ่มเป็นสีของหมวดนั้นไปเลย ตัวอักษรคิดคอนทราสต์ให้ */
   var col=show?catColor(r.cat,draft.type):'';
   return '<button class="rc'+(show?' fill':' ph')+'"'
-   +(show?(' style="background:'+col+';color:'+onCat(col)+'"'):'')
+   +(show?(' style="'+catStyle(col)+'"'):'')
    +' onclick="toggleRowCat('+i+')" id="rcat'+i+'">'
    +'<b>'+(show?esc(r.cat):'เลือกหมวด')+'</b><i>'+(r.catOpen?'\u25b4':'\u25be')+'</i></button>';
 }
@@ -3763,7 +3827,7 @@ function pinBodyHtml(pins){
   return '<div class="chipwrap pinwrap'+(man?' managing':'')+'" id="pinWrap">'
    +pins.map(function(p,i){
       var col=catColor(p.cat,p.type||'out');
-      return '<button class="chip pin" data-pi="'+i+'" style="background:'+col+';color:'+onCat(col)+'"'
+      return '<button class="chip pin" data-pi="'+i+'" style="'+catStyle(col)+'"'
        +(man?'':' onclick="useFormPin('+i+',this)"')+'>'+esc(p.n)
        +(man?'<span class="px" onclick="event.stopPropagation();askDelPin('+i+')">✕</span>':'')
        +'</button>';}).join('')
@@ -4296,7 +4360,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.42 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.43 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
@@ -4367,7 +4431,7 @@ function drawEdit(){
   var cats=D.cats[edit.type];
   var chips=cats.map(function(c,i){
     var on=c.n===edit.cat;
-    return '<button class="chip catpick'+(on?' on':'')+'" style="background:'+c.c+';color:'+onCat(c.c)+'"'
+    return '<button class="chip catpick'+(on?' on':'')+'" style="'+catStyle(c.c)+'"'
      +' onclick="pickEditCat('+i+')">'+esc(c.n)+(on?'<i>✓</i>':'')+'</button>';}).join('');
   paint(edit.idx<0?'เพิ่มชิปใหม่':'แก้ชิป',
    '<div class="field"><span class="fl">ชื่อของที่ซื้อประจำ</span><input type="text" id="eNm" value="'+esc(edit.n)+'" oninput="edit.n=this.value" placeholder="เช่น ค่าข้าว, ค่าน้ำมัน"></div>'
