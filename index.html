@@ -1749,6 +1749,17 @@ body.dark mark{background:rgba(90,175,240,.26)}
 /* ปุ่ม ✕ ตอนจัดชิป: ขอบเดิมเป็นสีการ์ด พอชิปอ่อนลงต้องมีเส้นคั่นให้ชัด */
 .chip.pin .px{box-shadow:0 1px 4px rgba(0,0,0,.28)}
 </style>
+<style id="skin39">
+/* ============================================================
+   Ver.44 — แท่งที่ทะลุเพดานถูกตัดยอด แล้วขีดทแยงสองเส้นกำกับไว้
+   เส้นเป็นสีการ์ด จึงอ่านเหมือนแท่งถูกฉีกขาด ไม่ใช่การไล่เฉดสี
+   ตัวเลขจริงยังอยู่เหนือแท่งเหมือนเดิม แท่งที่ถูกตัดจึงไม่ได้ปิดบังอะไร
+   ============================================================ */
+.bar.clip::before,.bar.clip::after{content:'';position:absolute;left:-1px;right:-1px;
+  height:4px;background:var(--brk,var(--card));transform:skewY(-15deg);pointer-events:none}
+.bar.clip::before{top:5px}
+.bar.clip::after{top:11px}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -2336,14 +2347,14 @@ function chSubSync(){
   var max=bx.scrollWidth-bx.clientWidth;
   /* อยู่ท้ายสุด = ยังไม่ได้เลื่อน บอกเป็น "ล่าสุด" เหมือนเดิม
      เลื่อนแล้วค่อยบอกช่วงจริงที่ตาเห็น ไม่งั้นป้ายกับกราฟจะพูดคนละเรื่อง */
-  if(max<=2||bx.scrollLeft>=max-2){el.textContent=CHDEF[chRange]||'';return;}
+  if(max<=2||bx.scrollLeft>=max-2){el.textContent=(CHDEF[chRange]||'')+_chCapNote;return;}
   var per=CHPER[chRange]||7,cw=bx.scrollWidth/data.length;
   var first=Math.max(0,Math.min(data.length-1,Math.round(bx.scrollLeft/cw)));
   var last=Math.min(data.length-1,first+per-1);
   /* เดือนซ้ำกันทั้งสองฝั่งไม่ต้องพูดสองครั้ง — "16 – 22 ก.ค." อ่านง่ายกว่า "16 ก.ค. – 22 ก.ค." */
   var a=data[first].sh,z=data[last].sh,ma=a.split(' '),mz=z.split(' ');
   if(ma.length>1&&mz.length>1&&ma.slice(1).join(' ')===mz.slice(1).join(' '))a=ma[0];
-  el.textContent=a+' – '+z;
+  el.textContent=a+' – '+z+_chCapNote;
 }
 function renderChart(){
   var data=buildChart();
@@ -2351,14 +2362,44 @@ function renderChart(){
   var sc=[['both','รับ-จ่าย'],['in','เฉพาะรับ'],['out','เฉพาะจ่าย']];
   document.getElementById('chSel2').innerHTML=
     mselHtml('range',chRange,rc,'setRange')+mselHtml('show',chShow,sc,'setShow');
-  /* รายจ่ายคือสิ่งที่ดูทุกวัน จึงให้เต็มสเกลเสมอ ส่วนวันที่มีเงินเข้าใช้แท่งเขียวเตี้ยกำกับ
-     ไม่งั้นเงินเดือนก้อนเดียวจะกดแท่งจ่ายให้แบนติดพื้นทั้งแถว */
-  var mxI=1,mxO=1;
-  data.forEach(function(d){mxI=Math.max(mxI,d['in']);mxO=Math.max(mxO,d.out);});
-  /* Ver.13: กลับมาใช้สเกลเดียวกันทั้งสองสี ตามที่เขายืนยันว่ารายรับเขาเข้าทุกวันจากแกร็บ
-     ไม่มีก้อนเงินเดือนเดือนละครั้งมากดกราฟให้แบน แท่งจึงสูงต่ำตามค่าจริงเทียบกันได้ตรงๆ
-     ถ้าวันไหนมีก้อนใหญ่ผิดปกติแล้วแท่งอื่นแบน ให้กลับไปใช้ mxI/mxO แยกกันได้ */
-  var mxB=Math.max(mxI,mxO);
+  /* ================= Ver.44 — สเกลไม่ให้ก้อนเดียวกดทั้งกราฟ =================
+     Ver.5 เคยตัดแท่งรับไว้ที่ 26% เพราะกลัวเงินเดือนหลักหมื่น
+     Ver.13 ถอดออกเพราะเขาบอกว่าไม่มีเงินเดือน ได้รายวันจากแกร็บ ใช้สเกลเดียวกันสองสี
+     รอบนี้เขาเจอของจริง: วันนึงมีเงินเข้า 3,100 แล้วอีก 6 วันแบนหมด
+     [stated] "เงินรายวัน 1,000-2,000 บาท มีบางครั้งที่มีเงินส่วนอื่นเข้ามาเล็กน้อย"
+
+     ทางที่เลือก: ไม่ตัดที่เปอร์เซ็นต์ตายตัวแบบ Ver.5 (26% นั้นเดามาจากเงินเดือนที่เขาไม่มี)
+     ให้ข้อมูลบอกเองว่า "ปกติ" ของเขาอยู่ตรงไหน ใช้กติกาค่าผิดปกติมาตรฐาน (รั้วของทูคีย์)
+       เพดาน = ควอร์ไทล์บน + 1.5 เท่าของระยะระหว่างควอร์ไทล์
+     ลองกับเปอร์เซ็นไทล์ 90 ก่อนแล้วไม่ผ่าน: พอมีวันก้อนใหญ่สองวันในเจ็ดวัน
+     ตัวที่สองจะกลายเป็นเพดานเสียเอง แล้วแท่งอื่นก็ยังแบนอยู่ดี
+     รั้วของทูคีย์ไม่พังแบบนั้นเพราะคิดจากช่วงกลางของข้อมูล ไม่ใช่จากปลายบน
+     ถ้าไม่มีตัวโดดจริง (สูงสุดไม่เกินเพดาน 1.15 เท่า) ใช้ค่าสูงสุดจริงตามเดิม ไม่มีอะไรถูกตัด
+     แท่งที่ไม่ถูกตัดยังเทียบกันได้ตรงๆ เพราะเป็นสเกลเส้นตรงเส้นเดียวเหมือนเดิม */
+  function chQ(v,p){
+    if(v.length===1)return v[0];
+    var i=(v.length-1)*p,lo=Math.floor(i),hi=Math.min(lo+1,v.length-1);
+    return v[lo]+(v[hi]-v[lo])*(i-lo);
+  }
+  function chCap(vals){
+    var v=[],i;
+    for(i=0;i<vals.length;i++)if(vals[i]>0)v.push(vals[i]);
+    if(!v.length)return 1;
+    v.sort(function(a,b){return a-b;});
+    var mx=v[v.length-1];
+    /* ข้อมูลน้อยเกินกว่าจะรู้ว่าอะไรคือปกติ — อย่าเพิ่งไปตัดของใคร */
+    if(v.length<5)return mx;
+    var q1=chQ(v,0.25),q3=chQ(v,0.75),cap=Math.round(q3+1.5*(q3-q1));
+    if(cap<1)cap=1;
+    return mx<cap*1.15?mx:cap;
+  }
+  var vIn=data.map(function(d){return d['in'];}),vOut=data.map(function(d){return d.out;});
+  var mxI=chCap(vIn),mxO=chCap(vOut),mxB=chCap(vIn.concat(vOut));
+  var capNow=(chShow==='in'?mxI:(chShow==='out'?mxO:mxB));
+  var rawMax=0;
+  (chShow==='in'?vIn:(chShow==='out'?vOut:vIn.concat(vOut))).forEach(function(x){if(x>rawMax)rawMax=x;});
+  _chCapNote=(rawMax>capNow)?(' · ตัดยอดที่ '+fmtK(capNow)):'';
+  function bh(v,cap){return v?Math.min(100,Math.max(4,Math.round(v/cap*100))):0;}
   /* Ver.41: ข้อมูลเปลี่ยนเฉยๆ ใส่ความสูงลงไปในมาร์กอัปตั้งแต่แรก
      เบราว์เซอร์เห็นแค่ค่าปลายทางค่าเดียว จึงไม่นับเป็นการเปลี่ยนค่า = ไม่มีทรานสิชัน
      ผลคือกดบันทึกแล้วแท่งไม่ต้องงอกใหม่ทั้ง 30 แท่งทุกครั้ง */
@@ -2366,11 +2407,11 @@ function renderChart(){
   function sty(v){return structural?'':(' style="height:'+v+'%"');}
   var h='';
   data.forEach(function(d,i){
-    var bi,bo,num='';
-    if(chShow==='in'){bi=d['in']?Math.max(4,Math.round(d['in']/mxI*100)):0;bo=0;}
-    else if(chShow==='out'){bo=d.out?Math.max(4,Math.round(d.out/mxO*100)):0;bi=0;}
-    else{bo=d.out?Math.max(4,Math.round(d.out/mxB*100)):0;
-         bi=d['in']?Math.max(4,Math.round(d['in']/mxB*100)):0;}
+    var bi,bo,num='',ci=false,co=false;
+    if(chShow==='in'){bi=bh(d['in'],mxI);ci=d['in']>mxI;bo=0;}
+    else if(chShow==='out'){bo=bh(d.out,mxO);co=d.out>mxO;bi=0;}
+    else{bo=bh(d.out,mxB);co=d.out>mxB;
+         bi=bh(d['in'],mxB);ci=d['in']>mxB;}
     /* Ver.14: โหมดคู่ต้องเห็นเลขทั้งสองฝั่ง ของเดิมโชว์เฉพาะฝั่งที่มากกว่า
        วันไหนรับมากกว่าจ่าย เลขแดงจึงหายไปเฉยๆ
        ลองยัดสองเลขไว้ในป้ายเดียวแล้วป้ายยาวเกิน ไปชนป้ายของคอลัมน์ข้างๆ
@@ -2383,8 +2424,8 @@ function renderChart(){
     else{nIn=d['in']?fmtK(d['in']):'';nOut=d.out?fmtK(d.out):'';}
     h+='<div class="bcol'+(chSel===i?' sel':'')+'" onclick="pickBar('+i+')">'
      +'<div class="bpair'+(chShow==='both'?'':' one')+'">';
-    if(chShow!=='out')h+='<div class="bar i'+(d['in']?'':' z')+(chShow==='both'?' bmark':'')+'" data-h="'+bi+'"'+sty(bi)+'><span class="bnum i">'+nIn+'</span></div>';
-    if(chShow!=='in')h+='<div class="bar o'+(d.out?'':' z')+'" data-h="'+bo+'"'+sty(bo)+'><span class="bnum o">'+nOut+'</span></div>';
+    if(chShow!=='out')h+='<div class="bar i'+(d['in']?'':' z')+(ci?' clip':'')+(chShow==='both'?' bmark':'')+'" data-h="'+bi+'"'+sty(bi)+'><span class="bnum i">'+nIn+'</span></div>';
+    if(chShow!=='in')h+='<div class="bar o'+(d.out?'':' z')+(co?' clip':'')+'" data-h="'+bo+'"'+sty(bo)+'><span class="bnum o">'+nOut+'</span></div>';
     h+='</div><div class="blab">'+esc(d.lab)+'</div></div>';});
   var bx=document.getElementById('bars'),keepLeft=bx.scrollLeft;bx.innerHTML=h;
   /* Ver.16: 8 คอลัมน์ขึ้นไป (รายสัปดาห์) ช่องแคบลงเหลือ ~37px การสแปลย์ป้ายออกด้านข้าง
@@ -2395,6 +2436,11 @@ function renderChart(){
   bx.classList.remove('tight');
   bx.classList.add('scr');
   bx.style.setProperty('--vis',CHPER[chRange]||7);
+  /* ขีดที่ตัดยอดแท่งต้องเป็นสีพื้นการ์ด "ที่ตาเห็นจริง" — ในโหมดมืด --card (25,29,38)
+     ไม่ตรงกับสีที่การ์ดถูกวาดจริง (28,33,48) เพราะมีเลเยอร์สกินทับกันอยู่หลายชั้น
+     อ่านค่าที่คำนวณแล้วมาใช้เลย จะได้ไม่ต้องเดาว่าโทเคนตัวไหนชนะ */
+  var _cd=bx.closest?bx.closest('.card'):null;
+  if(_cd)bx.style.setProperty('--brk',getComputedStyle(_cd).backgroundColor);
   if(!bx._chsy){bx._chsy=1;bx.addEventListener('scroll',chSubSync,{passive:true});}
   window._chData=data;
   /* ================= Ver.41 — แยกการวาดใหม่สองแบบ =================
@@ -2417,7 +2463,7 @@ function renderChart(){
     chSubSync();});
   drawReadout();
 }
-var _chSig='';
+var _chSig='',_chCapNote='';
 /* Ver.15: ป้ายสองใบในคอลัมน์เดียวกันจะทับกันเฉพาะตอนแท่งสูงพอๆ กัน
    (คนละที่กันอยู่แล้วถ้าแท่งสูงต่างกัน) จึงยกเฉพาะใบที่อยู่บนกว่าให้ห่างกันอย่างน้อย 11px
    ไม่ดันใบล่างลง เพราะมันจะไปทับตัวแท่งจนอ่านไม่ออก */
@@ -4360,7 +4406,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.43 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.44 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
