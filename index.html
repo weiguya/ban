@@ -1834,6 +1834,55 @@ body.dark mark{background:rgba(90,175,240,.26)}
 #fCal .cal-g .wd{font-size:10px;padding:0 0 2px}
 #fCal .cal-d{aspect-ratio:auto;height:36px;border-radius:9px;font-size:13.5px}
 </style>
+<style id="skin42">
+/* ============================================================
+   Ver.48
+   1. [stated] "เรื่องชิปบอกตรงๆ ไม่สวย เอากลับไปเป็นแบบจุดเดิมดีกว่า"
+      ป้ายสีทึบถูกถอดออกหมดทั้งแอป เหลือระบบเดียว: กรอบกลาง + จุดสีนำหน้า
+      Ver.42 เคยเอาสีเข้าไปถมในป้าย ผ่านมาหกรอบแล้วเขาไม่เอาสักที่ — จบเรื่องนี้ตรงนี้
+      สิ่งเดียวที่ยังใช้สีพาสเทลเป็นพื้นคือไอคอนตัวอักษรหน้าแถวรายการ ซึ่งไม่ใช่ป้ายหมวด
+   2. [stated] "ปรับให้เล็กลง ดูกระชับขึ้น มันดูใหญ่ไปหมด ทั้งช่องกรอกข้อมูลด้วย"
+      ย่อทั้งหน้าลงหนึ่งขั้น ช่องกรอก 46 → 42 · กล่องกลุ่มบางลง · ชิปเตี้ยลง
+      ยังไม่ต่ำกว่า 30px ต่อของที่ต้องแตะ เพราะต่ำกว่านั้นเริ่มกดพลาด
+   ============================================================ */
+
+/* ---------- จุดสีในของที่กดได้ ---------- */
+.chip .cdot,.frow .rc .cdot,.rcmi .cdot,.sugb .cdot{margin-right:0}
+.chip .cdot{width:8px;height:8px;flex:0 0 8px}
+.frow .rc .cdot{width:8px;height:8px;flex:0 0 8px;margin-right:1px}
+.frow .rc .cdot.ph{background:var(--ink3);opacity:.45}
+.chip.pin{background:var(--card2);color:var(--ink2);font-weight:500}
+.chip.catpick{background:var(--card2);color:var(--ink2);font-weight:500}
+.chip.catpick.on{background:var(--fill);color:var(--on-fill);box-shadow:none}
+.chip.catpick.on .cdot{box-shadow:0 0 0 1.5px rgba(255,255,255,.65)}
+.setrow>.cdot{margin-right:0}
+.sugb .sc{font-size:11px;color:var(--ink3);max-width:96px}
+
+/* ---------- ย่อหน้าฟอร์มลงหนึ่งขั้น ---------- */
+.shttl{font-size:16px}
+.sheet .seg{margin-bottom:10px}
+.sheet .seg button{font-size:14.5px;padding:8px 0}
+.sheet .field.sec{padding:10px 10px 11px;margin-bottom:9px}
+.sheet .field.sec>.fl,.sheet .field.sec .sechead .fl{font-size:13px;margin-bottom:7px}
+.sheet .field.sec .sechead{margin-bottom:7px}
+.fhint{font-size:11px}
+.sheet .chip.sm{font-size:12px;height:30px;padding:0 12px}
+.sheet .chip.pin{font-size:12px;padding:0 11px;height:30px}
+/* ปุ่มเล็กในหัวข้อกลุ่ม: ย่อได้แต่ห้ามต่ำกว่า 30px เพราะเป็นของที่ต้องแตะ */
+.sheet .secbtn{font-size:12px;padding:0 12px;height:30px;display:inline-flex;align-items:center}
+.frow .fn input{height:42px;padding:0 11px;font-size:14.5px}
+.frow .rc{height:42px;font-size:14.5px;padding:0 9px;gap:6px}
+.frow .rc i{font-size:11px}
+.frow .fm.money.sm input{height:42px;padding:0 10px 0 25px;font-size:16px}
+.frow .fm.money.sm .cur{font-size:11px;left:10px}
+.frow .rn{font-size:11px}
+.rowwrap{margin-bottom:7px}
+.sheet .addrowbtn{height:38px;font-size:13px}
+.sheet .stick .btn{height:46px;font-size:15.5px}
+.shx,.shback{width:30px;height:30px;flex:0 0 30px;font-size:14.5px}
+.sheet .chipwrap{gap:6px}
+.pinwrap.managing{gap:13px 10px}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -3176,7 +3225,7 @@ function drawAvgPick(){
   var rows=D.cats.out.map(function(c,i){
     var on=(D.avgPins||[]).indexOf(c.n)>=0;
     return '<button class="setrow" onclick="toggleAvgPin('+i+')">'
-     +'<span class="cn">'+catPillC(c.n,c.c,'lg')+'</span>'
+     +catDot(c.c,'lg')+'<span class="cn">'+esc(c.n)+'</span>'
      +'<span class="go">'+(on?'✓':'')+'</span></button>';}).join('');
   paint('เลือกหมวดที่จะโชว์',
    '<div class="hintline">ไม่เลือกเลย = โชว์ 4 หมวดที่จ่ายเยอะสุดของช่วงนั้นให้เอง</div>'
@@ -3259,7 +3308,7 @@ function renderList(){
      ส่งเป็น index ไม่ใช่ชื่อหมวด เพราะชื่อหมวดมีเครื่องหมายคำพูดได้ จะทำ onclick พัง */
   var copts=[['-1','ทุกหมวด']];
   ks.forEach(function(c,i){
-    copts.push([String(i),catPill(c,types[c],'md')
+    copts.push([String(i),catDotN(c,types[c])+esc(c)
       +' <b style="font-weight:500;color:var(--ink3)">'+fmtK(by[c])+'</b>']);});
   chips+=mselHtml('cat',(curFilter?String(ks.indexOf(curFilter)):'-1'),copts,'setFilterS');
   document.getElementById('filterChips').innerHTML=chips;
@@ -3920,7 +3969,7 @@ function rowHtml(r,i){
    +'<span class="rcw">'+rcBtn(r,i)
    +(r.catOpen?('<div class="rcm">'+cats.map(function(c,ci){
       return '<button class="rcmi'+((c.n===r.cat&&(hasN||r.catSet))?' on':'')+'" onclick="pickRowCat('+i+','+ci+')">'
-       +'<span class="cn">'+catPillC(c.n,c.c,'md')+'</span><i>✓</i></button>';}).join('')+'</div>'):'')
+       +catDot(c.c)+'<span class="cn">'+esc(c.n)+'</span><i>✓</i></button>';}).join('')+'</div>'):'')
    +'</span>'
    +'<span class="fm money sm'+(filled?' filled':'')+'" id="moneyBox'+i+'"><span class="cur">฿</span>'
    +'<input type="number" inputmode="decimal" id="fAmt'+i+'" value="'+(r.a===''?'':r.a)+'" oninput="onRowAmt('+i+',this.value)" onfocus="hideSug()" placeholder="0"></span>'
@@ -3938,8 +3987,8 @@ function rcBtn(r,i){
   /* Ver.42: ไม่มีจุดสีนำหน้าแล้ว ทั้งปุ่มเป็นสีของหมวดนั้นไปเลย ตัวอักษรคิดคอนทราสต์ให้ */
   var col=show?catColor(r.cat,draft.type):'';
   return '<button class="rc'+(show?' fill':' ph')+'"'
-   +(show?(' style="'+catStyle(col)+'"'):'')
    +' onclick="toggleRowCat('+i+')" id="rcat'+i+'">'
+   +(show?catDot(col):'<span class="cdot ph"></span>')
    +'<b>'+(show?esc(r.cat):'เลือกหมวด')+'</b><i>'+(r.catOpen?'\u25b4':'\u25be')+'</i></button>';
 }
 /* ================= Ver.39 — จัดการชิปประจำจากในฟอร์ม =================
@@ -3959,8 +4008,8 @@ function pinBodyHtml(pins){
   return '<div class="chipwrap pinwrap'+(man?' managing':'')+'" id="pinWrap">'
    +pins.map(function(p,i){
       var col=catColor(p.cat,p.type||'out');
-      return '<button class="chip pin" data-pi="'+i+'" style="'+catStyle(col)+'"'
-       +(man?'':' onclick="useFormPin('+i+',this)"')+'>'+esc(p.n)
+      return '<button class="chip pin" data-pi="'+i+'"'
+       +(man?'':' onclick="useFormPin('+i+',this)"')+'>'+catDot(col)+esc(p.n)
        +(man?'<span class="px" onclick="event.stopPropagation();askDelPin('+i+')">✕</span>':'')
        +'</button>';}).join('')
    +(man?'<button class="chip padd" onclick="askAddPins()">＋ เพิ่มชิป</button>':'')
@@ -4227,8 +4276,8 @@ function drawSug(i){
   if(!list.length){box.className='sugw';box.innerHTML='';return;}
   box.innerHTML=list.map(function(o,j){
     return '<button class="sugb" onmousedown="event.preventDefault()" onclick="pickSug('+i+','+j+')">'
-     +'<span class="sn">'+sugHl(o.n,r.n)+'</span>'
-     +'<span class="sc">'+catPill(o.cat,draft.type)+'</span></button>';}).join('');
+     +catDotN(o.cat,draft.type)+'<span class="sn">'+sugHl(o.n,r.n)+'</span>'
+     +'<span class="sc">'+esc(o.cat)+'</span></button>';}).join('');
   box.className='sugw on';
 }
 function hideSug(i){
@@ -4505,7 +4554,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.47 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.48 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
@@ -4534,7 +4583,7 @@ function drawCatList(){
   var rows=arr.map(function(c,i){
     var used=D.entries.filter(function(e){return e.cat===c.n&&e.type===curCatType;}).length;
     return '<button class="setrow" onclick="editCat(\''+curCatType+'\','+i+')">'
-     +'<span class="cn">'+catPillC(c.n,c.c,'lg')+'</span><span class="go">'+(used?used+' รายการ ':'')+'›</span></button>';}).join('');
+     +catDot(c.c,'lg')+'<span class="cn">'+esc(c.n)+'</span><span class="go">'+(used?used+' รายการ ':'')+'›</span></button>';}).join('');
   paint(curCatType==='out'?'หมวดรายจ่าย':'หมวดรายรับ',
    '<div class="grp">'+rows+'</div>'
    +'<button class="btn btn-out" onclick="editCat(\''+curCatType+'\',-1)">+ เพิ่มหมวดใหม่</button>');
@@ -4544,7 +4593,8 @@ function drawPinList(){
   curSheet='pins';
   var rows=D.pins.length?D.pins.map(function(p,i){
     return '<button class="setrow" onclick="editPin('+i+')">'
-     +'<span class="cn">'+esc(p.n)+' '+catPill(p.cat,p.type||'out')+'</span>'
+     +catDotN(p.cat,p.type||'out','lg')
+     +'<span class="cn">'+esc(p.n)+'<span style="color:var(--ink3);font-size:11.5px"> · '+esc(p.cat)+'</span></span>'
      +'<span class="go">›</span></button>';}).join('')
    :'<div class="hintline">ยังไม่มีชิป ชิปคือของที่ซื้อบ่อย กดแล้วชื่อกับหมวดมาเอง เหลือแค่ใส่ราคา</div>';
   paint('ชิปซื้อประจำ','<div class="grp">'+rows+'</div>'
@@ -4576,8 +4626,8 @@ function drawEdit(){
   var cats=D.cats[edit.type];
   var chips=cats.map(function(c,i){
     var on=c.n===edit.cat;
-    return '<button class="chip catpick'+(on?' on':'')+'" style="'+catStyle(c.c)+'"'
-     +' onclick="pickEditCat('+i+')">'+esc(c.n)+(on?'<i>✓</i>':'')+'</button>';}).join('');
+    return '<button class="chip catpick'+(on?' on':'')+'"'
+     +' onclick="pickEditCat('+i+')">'+catDot(c.c)+esc(c.n)+'</button>';}).join('');
   paint(edit.idx<0?'เพิ่มชิปใหม่':'แก้ชิป',
    '<div class="field"><span class="fl">ชื่อของที่ซื้อประจำ</span><input type="text" id="eNm" value="'+esc(edit.n)+'" oninput="edit.n=this.value" placeholder="เช่น ค่าข้าว, ค่าน้ำมัน"></div>'
    +'<div class="seg"><button class="'+(edit.type==='out'?'on o':'')+'" onclick="setEditType(\'out\')">จ่ายออก</button>'
