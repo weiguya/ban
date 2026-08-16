@@ -1883,6 +1883,36 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .sheet .chipwrap{gap:6px}
 .pinwrap.managing{gap:13px 10px}
 </style>
+<style id="skin43">
+/* ============================================================
+   Ver.49 — [stated] "ในส่วนรายการและจำนวนเงิน ให้ปรับให้เล็กลงมามันดูใหญ่เกินไป"
+   ย่อกลุ่มนี้ลงอีกหนึ่งขั้น (Ver.48 ย่อทั้งหน้าไปแล้วรอบนึง รอบนี้เจาะเฉพาะกลุ่มนี้)
+     ช่องกรอก 42 → 38px · ชื่อกับหมวด 14.5 → 13.5 · เงิน 16 → 15 · ยอดรวมท้ายกลุ่ม 19 → 15
+
+   ได้สเกลแน่นขึ้นเป็น 5 ระดับ จาก 6: 11 · 12 · 13.5 · 15 · 16
+   หัวข้อกลุ่มขยับขึ้น 13 → 13.5 ให้ไปอยู่ระดับเดียวกับช่องกรอก
+   (โตขึ้นครึ่งพิกเซล มองไม่เห็น แต่ตัดระดับทิ้งไปได้หนึ่งขั้น หัวข้อยังนำด้วยน้ำหนัก 600)
+
+   ปุ่ม ✕ ลบแถวคงไว้ที่ 26px ไม่ย่อตาม — เป็นของที่ต้องแตะและเตี้ยกว่าเพดาน 30px อยู่แล้ว
+   ============================================================ */
+.sheet .field.sec>.fl,.sheet .field.sec .sechead .fl{font-size:13.5px}
+.frow{gap:7px}
+.frow .fn input{height:38px;padding:0 10px;font-size:13.5px}
+.frow .rc{height:38px;font-size:13.5px;padding:0 8px;gap:5px}
+.frow .rc i{font-size:11px}
+.frow .fm.money.sm input{height:38px;padding:0 9px 0 23px;font-size:15px}
+.frow .fm.money.sm .cur{font-size:11px;left:9px}
+.frow .rn{font-size:11px}
+.rowwrap{margin-bottom:6px}
+.sheet .addrowbtn{height:34px;font-size:13.5px}
+.ftot{padding-top:8px;gap:6px}
+.ftot .k{font-size:12px}
+.ftot .v{font-size:15px}
+.sheet .stick .btn{font-size:15px}
+/* ✕ ลบแถว: ย่อแค่ตัวอักษรให้ไปอยู่ระดับ 12 ส่วนกล่อง 26px คงไว้
+   มันต่ำกว่าเพดาน 30px มาหลายเวอร์ชันแล้ว ถ้าย่ออีกจะเริ่มกดพลาดจริงๆ */
+.frow .fx{font-size:12px}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -4554,7 +4584,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.48 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.49 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
