@@ -1789,6 +1789,51 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .askb .an i{display:flex;align-items:center}
 .setrow .go{display:inline-flex;align-items:center}
 </style>
+<style id="skin41">
+/* ============================================================
+   Ver.47 — หน้าฟอร์ม
+   1. สเกลตัวอักษรเหลือ 6 ระดับ จากเดิม 10 ระดับ (แบบ ข: ช่องเงินยังใหญ่กว่าเพื่อน)
+      17 หัวชีท · 15 ช่องกรอก · 13.5 หัวข้อกลุ่ม · 12.5 ชิปกับปุ่มรอง · 11.5 คำอธิบาย · 11 ลูกศร
+   2. สามช่องในแถวสูง 46px เท่ากันเป๊ะ
+      ของเดิมได้ความสูงมาคนละทาง: ช่องชื่อจาก padding · ปุ่มหมวดจาก height ตายตัว
+      ช่องเงินจาก padding บวกฟอนต์ Kanit 17px → 45.8 / 46 / 48.6 กึ่งกลางตรงแต่ขอบไม่ตรง
+   3. ปฏิทินลอยเกาะใต้ปุ่มแบบหน้าเคลื่อนไหว ไม่ดันเนื้อหาลงไป
+      (กติกาเดิมของแอปตั้งแต่ Ver.20 ที่ฟอร์มยังไม่ได้ทำตาม)
+   ============================================================ */
+
+/* ---------- แถวกรอก: สูงเท่ากันหมด ---------- */
+.frow .fn input{height:46px;padding:0 12px;font-size:15px;font-weight:400}
+.frow .rc{height:46px;font-size:15px;padding:0 10px}
+.frow .rc b{font-weight:500}
+.frow .rc i{font-size:11px;opacity:.9}
+.frow .fm.money.sm input{height:46px;padding:0 11px 0 27px;font-size:17px;font-weight:500}
+.frow .fm.money.sm .cur{font-size:11.5px;left:11px}
+.frow .rn{font-size:11.5px;font-weight:500}
+
+/* ---------- สเกลตัวอักษรที่เหลือของชีท ---------- */
+.shttl{font-size:17px}
+.sheet .seg button{font-size:15px;padding:10px 0}
+.sheet .field.sec>.fl,.sheet .field.sec .sechead .fl{font-size:13.5px}
+.fhint{font-style:normal;font-size:11.5px;font-weight:400;color:var(--ink3);letter-spacing:0}
+.sheet .chip.sm{font-size:12.5px;height:34px;padding:0 13px}
+.sheet .chip.pin{font-size:12.5px;font-weight:500}
+.sheet .secbtn{font-size:12.5px}
+.sheet .addrowbtn{font-size:13.5px;height:44px;padding:0}
+.sheet .stick .btn{font-size:15px;height:50px;padding:0}
+
+/* ---------- ปฏิทิน: ลอกขนาดมาจาก #mvCal ทั้งชุด ---------- */
+.caldw{position:relative;z-index:30}
+#fCal{position:absolute;top:100%;left:0;width:min(302px,100%);margin-top:6px;z-index:30}
+#fCal:empty{display:none}
+#fCal .cal{margin:0;padding:11px;background:var(--card);box-shadow:var(--sh3);
+  border:1px solid var(--line2)}
+#fCal .cal-h{margin-bottom:6px}
+#fCal .cal-h button{width:28px;height:28px;border-radius:9px;font-size:14px}
+#fCal .cal-h .cm{font-size:13.5px}
+#fCal .cal-g{gap:2px}
+#fCal .cal-g .wd{font-size:10px;padding:0 0 2px}
+#fCal .cal-d{aspect-ratio:auto;height:36px;border-radius:9px;font-size:13.5px}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -4095,7 +4140,7 @@ function drawForm(fromVoice){
   var pinLbl=draft.type==='in'?'รับประจำ':'ซื้อประจำ';
   var pinBody=pinBodyHtml(pins);
   var pinChips='<div class="field sec"><div class="sechead"><span class="fl">'+pinLbl
-   +(draft.pinEdit?' — ลากสลับที่ได้':' — แตะใช้ · กดค้างเพื่อจัด')+'</span>'
+   +'<i class="fhint">'+(draft.pinEdit?' — ลากสลับที่ได้':' — แตะใช้ · กดค้างเพื่อจัด')+'</i></span>'
    +'<button class="secbtn'+(draft.pinEdit?' on':'')+'" onclick="togglePinEdit()">'
    +(draft.pinEdit?'เสร็จแล้ว':'จัดชิป')+'</button></div>'+pinBody+'</div>';
   /* Ver.12: ตัดแถว "ล่าสุด" ออกตามที่สั่ง — ชิปประจำทำหน้าที่นี้แทนทั้งสองฝั่ง */
@@ -4110,9 +4155,10 @@ function drawForm(fromVoice){
   paint(ttl,
    '<div class="seg"><button class="'+(draft.type==='out'?'on o':'')+'" onclick="setType(\'out\')">จ่ายออก</button>'
   +'<button class="'+(draft.type==='in'?'on i':'')+'" onclick="setType(\'in\')">รับเข้า</button></div>'
-  +'<div class="field sec"><span class="fl">วันที่</span><div class="chipwrap">'
+  +'<div class="field sec"><span class="fl">วันที่</span><div class="caldw"><div class="chipwrap">'
   +dateChips(draft.date,draft.calOpen,'pickDate(0)','pickDate(1)','toggleCal()')+'</div>'
-  +(draft.calOpen?calGrid(draft.calYm,draft.date,'formPickDate','calShiftForm'):'')+'</div>'
+  +'<div id="fCal">'+(draft.calOpen?calGrid(draft.calYm,draft.date,'formPickDate','calShiftForm'):'')+'</div>'
+  +'</div></div>'
   +'<div class="field sec"><span class="fl">รายการ และ จำนวนเงิน</span>'
   +draft.rows.map(rowHtml).join('')
   +(draft.multi?'<button class="addrowbtn" onclick="addRow()">＋ เพิ่มแถว</button>':'')
@@ -4401,8 +4447,20 @@ function pickDate(n){
   draft.date=dkey(d);draft.calOpen=false;buzz(10);drawForm(false);
 }
 function toggleCal(){draft.calOpen=!draft.calOpen;draft.calYm=monthOf(draft.date);buzz(8);drawForm(false);showCal();}
-function showCal(){setTimeout(function(){var c=document.querySelector('.cal');
-  if(c&&c.scrollIntoView)c.scrollIntoView({behavior:'smooth',block:'center'});},70);}
+/* Ver.47: ปฏิทินฟอร์มลอยเกาะใต้ปุ่มแบบเดียวกับหน้าเคลื่อนไหว ไม่ดันเนื้อหาลงไปแล้ว
+   จึงไม่ต้องเลื่อนจอไปหามัน — แต่ถ้าเปิดแล้วตกขอบล่าง ก็เลื่อนให้พอเห็นครบ */
+function showCal(){setTimeout(function(){
+  var c=document.querySelector('#fCal .cal');if(!c)return;
+  var r=c.getBoundingClientRect(),vh=window.innerHeight||0;
+  if(r.bottom>vh-8&&c.scrollIntoView)c.scrollIntoView({behavior:'smooth',block:'nearest'});},80);}
+/* แตะนอกปฏิทินแล้วปิด — กติกาเดียวกับ #mvCal (ใช้ capture + setTimeout ด้วยเหตุผลเดิม:
+   ตอน drawForm วาดใหม่ ตัวที่ถูกกดหลุดจาก DOM ไปแล้ว closest() จะคืน null) */
+document.addEventListener('click',function(ev){
+  if(!(typeof draft!=='undefined'&&draft&&draft.calOpen))return;
+  var t=ev.target;
+  if(t.closest&&(t.closest('#fCal')||t.closest('.caldw .chipwrap')))return;
+  setTimeout(function(){if(draft&&draft.calOpen){draft.calOpen=false;drawForm(false);}},0);
+},true);
 function calShiftForm(d){draft.calYm=shiftYM(draft.calYm,d);buzz(8);drawForm(false);showCal();}
 function formPickDate(k){draft.date=k;draft.calOpen=false;buzz(10);drawForm(false);}
 /* ================= หน้าตั้งค่า (จัดใหม่เป็นกลุ่มเมนู) ================= */
@@ -4447,7 +4505,7 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.46 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.47 · ข้อมูลเก็บอยู่ในเครื่องนี้เครื่องเดียว</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
