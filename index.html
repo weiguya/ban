@@ -2387,7 +2387,7 @@ body.dark .ptr{background:var(--card2)}
   <h1>ตอนนี้มีเงินอยู่เท่าไหร่</h1>
   <p>ใส่ครั้งเดียว แล้ว Muifei จะบวกลบให้เองจากที่จดต่อจากนี้</p>
   <div class="money filled"><span class="cur">฿</span>
-    <input type="number" inputmode="decimal" id="firstBal" placeholder="0" style="text-align:center;font-size:24px">
+    <input type="number" inputmode="decimal" enterkeyhint="done" id="firstBal" placeholder="0" style="text-align:center;font-size:24px">
   </div>
   <div style="height:14px"></div>
   <button class="btn btn-main" onclick="finishFirst()">เริ่มใช้งาน</button>
@@ -3455,6 +3455,14 @@ function mselCloseAll(){
   for(var i=0;i<a.length;i++)a[i].classList.remove('open');
 }
 document.addEventListener('click',function(){mselCloseAll();});
+/* Ver.74: [stated] "แป้นตัวเลข ปุ่มล่างขวาอยากให้เป็นถูกต้อง กดถูกจะปิดเลย"
+   enterkeyhint="done" ทำให้แป้นเลขของมือถือ (Gboard ฯลฯ) เปลี่ยนปุ่มมุมขวาล่างเป็นเครื่องหมายถูกให้เอง
+   ที่ยังขาดคือกดแล้วต้องปิดแป้นจริง — ดัก Enter แล้ว blur() ทุกช่องจำนวนเงินแบบ delegated */
+document.addEventListener('keydown',function(ev){
+  if(ev.key==='Enter'&&ev.target&&ev.target.matches&&ev.target.matches('input[inputmode="decimal"]')){
+    ev.preventDefault();ev.target.blur();
+  }
+});
 /* Ver.20: ปฏิทินหน้าเคลื่อนไหวเป็นป๊อปอัปลอย ต้องปิดเมื่อแตะที่ว่างข้างนอก
    สองเรื่องที่ต้องระวัง เจอมาแล้วทั้งคู่:
    1. ต้องดักที่ capture phase (พารามิเตอร์ true) ไม่ใช่ bubble — เพราะ renderMv() เขียนทับ
@@ -3590,21 +3598,18 @@ function renderSummary(){
     off+=C*frac;});
   /* Ver.58: [stated] ยุบการ์ด เฉลี่ยต่อวัน มาไว้ใต้ชื่อหมวด ตัวเล็กกว่า และตามฟิลเตอร์เดียวกัน
      หารด้วยจำนวนวันที่หมวดนั้นมีรายการจริง แบบเดียวกับการ์ดเฉลี่ยต่อวันเดิม
-     Ver.73 — [bug] เมื่อหมวดมีรายการแค่วันเดียว dn=1 ทำให้ per1=by[k] คือค่าเดียวกับยอดรวมเป๊ะ
-     (เช่น ค่าเสื่อมรถ 1,110 ก็ขึ้น "1,110/วัน" ซ้ำกับยอดรวม — อ่านว่าจ่ายวันละ 1,110 ทั้งที่จริงคือรายการเดียว)
-     แก้: dn=1 ไม่ใช่ค่าเฉลี่ยที่มีความหมาย ให้ขึ้นจำนวนครั้งแทน ไม่หารเป็น/วัน */
-  var dayN={},cntN={};
+     Ver.74 — [stated] "เรื่องค่าเสื่อมรถ ใช้หลักการเดียวกับตัวอื่นเลย ถึงแม้จะจ่ายนานๆครั้ง"
+     กลับไปหารแบบเดิมทุกหมวดเหมือนกัน ไม่มีข้อยกเว้นตอน dn=1 (Ver.73 ยกเลิก) */
+  var dayN={};
   D.entries.forEach(function(e){
     if(e.type!==side)return;
     if(per!=='all'&&monthOf(e.date)!==ym)return;
     if(!dayN[e.cat])dayN[e.cat]={};
-    dayN[e.cat][e.date]=1;
-    cntN[e.cat]=(cntN[e.cat]||0)+1;});
+    dayN[e.cat][e.date]=1;});
   var rows=ks.slice(0,5).map(function(k){
-    var dn=Object.keys(dayN[k]||{}).length||1;
-    var sub=dn>1?(fmt(Math.round(by[k]/dn))+'/วัน'):((cntN[k]||1)+' ครั้ง');
+    var dn=Object.keys(dayN[k]||{}).length||1,per1=Math.round(by[k]/dn);
     return '<div class="crow">'+catIcoTile(k,side)
-     +'<span class="cnm"><b>'+esc(k)+'</b><i>'+sub+'</i></span>'
+     +'<span class="cnm"><b>'+esc(k)+'</b><i>'+fmt(per1)+'/วัน</i></span>'
      +'<span class="cam">'+fmt(by[k])+'<i class="cpci">'+Math.round(by[k]/tot*100)+'%</i></span>'
      +'</div>';}).join('');
   document.getElementById('sumBody').innerHTML=
@@ -4847,7 +4852,7 @@ function rowHtml(r,i){
        +'<span class="cn">'+esc(c.n)+'</span><i>✓</i></button>';}).join('')+'</div>'):'')
    +'</span>'
    +'<span class="fm money sm'+(filled?' filled':'')+'" id="moneyBox'+i+'"><span class="cur">฿</span>'
-   +'<input type="number" inputmode="decimal" id="fAmt'+i+'" value="'+(r.a===''?'':r.a)+'" oninput="onRowAmt('+i+',this.value)" onfocus="hideSug()" placeholder="0"></span>'
+   +'<input type="number" inputmode="decimal" enterkeyhint="done" id="fAmt'+i+'" value="'+(r.a===''?'':r.a)+'" oninput="onRowAmt('+i+',this.value)" onfocus="hideSug()" placeholder="0"></span>'
    +(draft.rows.length>1?'<button class="fx tap" onclick="delRow('+i+')" aria-label="ลบแถวนี้">✕</button>':'')
    +'</div>';
   return h+'</div>';
@@ -5447,7 +5452,7 @@ function drawOpening(){
   curSheet='opening';
   paint('เงินตั้งต้น','<div class="sh-t">ยอดคงเหลือ = เงินตั้งต้น + รับทั้งหมด − จ่ายทั้งหมด</div>'
    +'<div class="field"><span class="fl">เงินที่มีอยู่ก่อนเริ่มใช้แอป</span>'
-   +'<div class="money filled"><span class="cur">฿</span><input type="number" inputmode="decimal" id="openBal" value="'+D.opening+'"></div></div>'
+   +'<div class="money filled"><span class="cur">฿</span><input type="number" inputmode="decimal" enterkeyhint="done" id="openBal" value="'+D.opening+'"></div></div>'
    +'<button class="btn btn-main" onclick="saveOpening()">บันทึกเงินตั้งต้น</button>');
 }
 function saveOpening(){
